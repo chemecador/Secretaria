@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp">
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="@dimen/icon_medium"
+            android:layout_height="@dimen/icon_medium"
+            android:layout_gravity="center"
+            android:contentDescription="@string/task_icon"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            app:layout_constraintBottom_toTopOf="@id/btn_update"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/ic_menu_edit" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_title"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/sides_margin"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_icon"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="@string/list_name"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                tools:text="Título de la lista" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cb_check_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/check_list"
+            android:layout_marginVertical="@dimen/default_margin"
+            android:layout_marginStart="@dimen/default_margin"
+            app:layout_constraintStart_toStartOf="@id/til_title"
+            app:layout_constraintTop_toBottomOf="@+id/til_title" />
+
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_public"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:gravity="center"
+            android:text="@string/public_question_mark"
+            android:layout_marginStart="@dimen/default_margin"
+            app:layout_constraintStart_toEndOf="@id/cb_check_list"
+            app:layout_constraintTop_toBottomOf="@+id/til_title"
+            app:layout_constraintTop_toTopOf="@+id/cb_check_list" />
+
+        <Button
+            android:id="@+id/btn_update"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/update"
+            android:layout_marginTop="@dimen/default_margin"
+            android:layout_marginHorizontal="@dimen/default_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_delete"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cb_check_list" />
+
+        <Button
+            android:id="@+id/btn_delete"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/delete"
+            android:layout_marginHorizontal="@dimen/default_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_update"
+            app:layout_constraintTop_toTopOf="@id/btn_update"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

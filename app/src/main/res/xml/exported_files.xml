@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <files-path
+        name="apk"
+        path="apk/" />
+    <files-path
+        name="logs"
+        path="logs/" />
+    <files-path
+        name="fotos"
+        path="fotos/" />
+    <files-path
+        name="pdf"
+        path="pdf/" />
+    <files-path
+        name="csv"
+        path="csv/" />
+</paths>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+
+    <string-array name="context_entries">
+        <item>Modo calendario</item>
+        <item>Modo lista</item>
+    </string-array>
+
+    <string-array name="context_values">
+        <item>calendar</item>
+        <item>list</item>
+    </string-array>
+
+</resources>

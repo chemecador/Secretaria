@@ -1,0 +1,123 @@
+<resources>
+    <string name="app_name" translatable="false">Secretaria</string>
+    <string name="title_activity_main" translatable="false">Secretaria</string>
+
+    <!-- Login -->
+    <string name="prompt_email" translatable="false">Email</string>
+    <string name="prompt_password">Contraseña</string>
+    <string name="action_sign_in">Iniciar sesión</string>
+    <string name="action_register">Registrarse</string>
+    <string name="guest_login">Continuar como invitado</string>
+    <string name="invalid_username">Usuario no válido</string>
+    <string name="password_not_valid">La contraseña debe tener más de 5 caracteres</string>
+    <string name="incorrect_password">La contraseña actual es incorrecta</string>
+    <string name="login_incorrect">Usuario o contraseña incorrecto</string>
+    <string name="user_already_exists">Este usuario ya está registrado</string>
+    <string name="server_error">Servidor no disponible. Por favor, inicie sesión como invitado.</string>
+    <string name="connection_error">Error de conexión con el servidor.</string>
+    <string name="login_again">Su sesión ha expirado.\nPor favor, vuelva a iniciar sesión.</string>
+    <string name="never_spam">Nunca enviaremos publicidad ni spam</string>
+    <string name="only_use">Solo lo usaremos si olvidas tu contraseña</string>
+
+    <!-- Cambiar contraseña -->
+    <string name="type_old_password">Introduce la contraseña antigua</string>
+    <string name="type_new_password">Introduce la nueva contraseña</string>
+    <string name="old_password">Contraseña antigua</string>
+    <string name="change_password">Cambiar contraseña</string>
+    <string name="new_password">Nueva contraseña</string>
+    <string name="confirm_password">Confirmar contraseña</string>
+    <string name="insert_password">Inserta aquí tu nueva contraseña</string>
+    <string name="unmatched_passwords">Las contraseñas no coinciden</string>
+    <string name="change_password_success">Contraseña cambiada correctamente</string>
+
+
+
+
+    <!-- Tareas, notas y listas -->
+
+    <string name="insert_task">Insertar tarea</string>
+    <string name="task_title">Título de la tarea</string>
+    <string name="task_content">Contenido de la tarea</string>
+    <string name="public_question_mark">¿Pública?</string>
+    <string name="is_public">Pública</string>
+    <string name="select_time">Seleccionar hora</string>
+    <string name="type_note_title">Escribe aquí el nombre de la nota...</string>
+    <string name="type_content">Escribe aquí el contenido...</string>
+    <string name="all_day_long">Todo el día</string>
+    <string name="insert_note">Insertar nota</string>
+    <string name="note_name">Nombre de la nota</string>
+    <string name="list_already_exists">Esa lista ya existe</string>
+    <string name="new_task">Nueva tarea</string>
+    <string name="tasks">Tareas</string>
+    <string name="calendar">Calendario</string>
+    <string name="lists">Listas</string>
+    <string name="task_icon">Icono de la tarea</string>
+    <string name="tarea_de_ejemplo">Tarea de ejemplo</string>
+    <string name="new_list">Nueva lista</string>
+    <string name="use_existing_list">Lista existente</string>
+    <string name="ask_list">Selecciona la lista</string>
+    <string name="list_name">Nombre de la lista</string>
+    <string name="name_your_list">Dale un nombre a tu lista</string>
+    <string name="name_your_note">Dale un nombre a tu nota</string>
+    <string name="name_your_task">Dale un nombre a tu task</string>
+    <string name="add_content">Añadir contenido</string>
+    <string name="add_extra_content">Añade un contenido extra</string>
+    <string name="check_list" translatable="false">Check List?</string>
+    <string name="public_info">Si la lista es pública, podrán verla tus amigos.</string>
+    <string name="check_list_info">Una check list es una lista de tareas que puedes marcar como completadas (por ejemplo, una lista de la compra)</string>
+    <string name="context">Contexto</string>
+
+
+    <string name="create_list_success">Lista añadida correctamente</string>
+    <string name="create_note_success">Nota añadida correctamente</string>
+    <string name="create_task_success">Tarea añadida correctamente</string>
+
+    <string name="create_success">Creado correctamente.</string>
+    <string name="update_success">Modificado correctamente</string>
+    <string name="delete_success">Eliminado correctamente</string>
+    <string name="update_error">Se ha producido un error al actualizar el elemento</string>
+    <string name="delete_error">Se ha producido un error al eliminar el elemento</string>
+    <string name="updated_zero">No se ha actualizado ningún elemento</string>
+    <string name="delete_zero">No se ha eliminado ningún elemento</string>
+    <string name="error_empty_field">El campo no puede estar vacío</string>
+
+    <!-- Amigos -->
+
+    <string name="friends">Amigos</string>
+    <string name="requests">Solicitudes</string>
+    <string name="question_friend_name">¿Cómo se llama tu amigo?</string>
+    <string name="insert_friend_name">Escribe el nombre de tu amigo</string>
+    <string name="friend_not_found">No hemos encontrado a tu amigo :(</string>
+    <string name="invitation_sent_to">Invitación enviada a</string>
+    <string name="no_friends">Todavía no has agregado a ningún amigo</string>
+    <string name="no_requests">No tienes peticiones de amistad pendientes</string>
+
+
+    <!-- Menús -->
+    <string name="settings">Opciones</string>
+    <string name="add_friend">Añadir amigo</string>
+    <string name="about_us">Sobre nosotros...</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="contact_us">¡Contáctanos!</string>
+    <string name="front_end_developer" translatable="false">Front End Developer: Chemecador</string>
+    <string name="back_end_developer" translatable="false">Back End Developer: PaesaCloud</string>
+
+
+    <!-- Otros -->
+    <string name="today">Hoy</string>
+    <string name="sync">Sincronizar</string>
+    <string name="ok" translatable="false">OK</string>
+    <string name="cancel">Cancelar</string>
+    <string name="confirm">Confirmar</string>
+    <string name="rename">Renombrar</string>
+    <string name="delete">Eliminar</string>
+    <string name="send">Enviar</string>
+    <string name="update">Actualizar</string>
+    <string name="unauthorized">No autorizado</string>
+    <string name="general">General</string>
+    <string name="user">Usuario</string>
+    <string name="something_went_wrong">Algo ha ido mal. Por favor, inténtalo de nuevo.</string>
+    <string name="fab" translatable="false">FloatingActionButton</string>
+
+
+</resources>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:gravity="center_vertical">
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp" />
+
+    <CheckBox
+        android:id="@+id/explorer_item_checkBox"
+        android:layout_width="32dp"
+        android:layout_height="48dp" />
+
+    <ImageView
+        android:id="@+id/explorer_item_imageView"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="8dp"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_log"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/explorer_item_textBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:textSize="18sp"
+        tools:text="asdasd.txt" />
+
+</LinearLayout>

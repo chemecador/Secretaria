@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/user">
+        <Preference
+            android:key="pref_key_change_password"
+            android:title="@string/change_password"
+            android:icon="@drawable/ic_password"/>
+
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

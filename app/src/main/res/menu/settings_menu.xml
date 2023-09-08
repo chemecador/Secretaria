@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/add_friend"
+        android:icon="@drawable/ic_people"
+        android:title="@string/friends"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:icon="@drawable/ic_three_points"
+        android:title=""
+        app:showAsAction="ifRoom">
+
+        <menu>
+            <item
+                android:id="@+id/menu"
+                android:icon="@drawable/ic_settings"
+                android:title="@string/settings"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/about_us"
+                android:icon="@drawable/ic_info"
+                android:title="@string/about_us"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/logout"
+                android:icon="@drawable/ic_log_out"
+                android:title="@string/logout"
+                app:showAsAction="never" />
+        </menu>
+    </item>
+</menu>
