@@ -23,6 +23,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chemecador.secretaria.R
+import com.chemecador.secretaria.activities.LoginActivity
 import com.chemecador.secretaria.adapters.TaskAdapter
 import com.chemecador.secretaria.api.Client.client
 import com.chemecador.secretaria.api.Service
@@ -33,7 +34,6 @@ import com.chemecador.secretaria.items.Task
 import com.chemecador.secretaria.logger.Logger
 import com.chemecador.secretaria.requests.TaskRequest
 import com.chemecador.secretaria.responses.IdResponse
-import com.chemecador.secretaria.ui.login.LoginActivity
 import com.chemecador.secretaria.utils.PreferencesHandler
 import com.chemecador.secretaria.utils.Utils
 import com.google.android.material.appbar.MaterialToolbar
@@ -228,7 +228,7 @@ class CalendarFragment : Fragment() {
         Snackbar.make(binding!!.root, getString(R.string.create_task_success), Snackbar.LENGTH_LONG)
             .setAnchorView(R.id.fab)
             .show()
-        Logger.i(TAG, "Tarea creada correctamente: $mTask")
+        Logger.i(className, "Tarea creada correctamente: $mTask")
     }
 
     private fun syncTask(mTask: Task) {
@@ -245,7 +245,7 @@ class CalendarFragment : Fragment() {
             ctx!!
         ).getString("token", "")
         if (userId == -1) {
-            CustomToast(ctx, Utils.ERROR, Toast.LENGTH_LONG).show(getString(R.string.login_again))
+            CustomToast(ctx!!, Utils.ERROR, Toast.LENGTH_LONG).show(getString(R.string.login_again))
             (ctx as Activity?)!!.finish()
             startActivity(Intent(ctx, LoginActivity::class.java))
             return
@@ -268,13 +268,13 @@ class CalendarFragment : Fragment() {
                 } else if (response.code() == 401) {
                     // Manejar el error de respuesta
                     Utils.showToast(
-                        ctx,
+                        ctx!!,
                         Utils.ERROR,
                         response.code().toString() + " : " + getString(R.string.unauthorized)
                     )
                 } else {
                     Utils.showToast(
-                        ctx,
+                        ctx!!,
                         Utils.ERROR,
                         response.code().toString() + " : " + getString(R.string.server_error)
                     )
@@ -284,7 +284,7 @@ class CalendarFragment : Fragment() {
             override fun onFailure(call: Call<IdResponse?>, t: Throwable) {
 
                 // Manejar el error de conexión o la excepción
-                Utils.showToast(ctx, Utils.ERROR, getString(R.string.server_error))
+                Utils.showToast(ctx!!, Utils.ERROR, getString(R.string.server_error))
             }
         })
     }
@@ -295,6 +295,6 @@ class CalendarFragment : Fragment() {
     }
 
     companion object {
-        private val TAG = CalendarFragment::class.java.simpleName
+        private val className = CalendarFragment::class.java.simpleName
     }
 }

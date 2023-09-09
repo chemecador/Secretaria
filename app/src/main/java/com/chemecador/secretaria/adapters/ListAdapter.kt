@@ -65,7 +65,9 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
         holder.itemView.setOnClickListener {
             val notesFragment = NotesFragment()
             val args = Bundle()
-            args.putInt("listId", mList.id)
+            if (mList.id != null) {
+                args.putInt("listId", mList.id!!)
+            }
             notesFragment.arguments = args
 
             // Realizar la transacción del fragmento
@@ -140,7 +142,7 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
             apiService?.updateList(
                 PreferencesHandler.getToken(ctx),
                 PreferencesHandler.getId(ctx),
-                mList.id,
+                mList.id!!,
                 mList
             )?.enqueue(object : Callback<ResponseBody?> {
                 override fun onResponse(
@@ -180,7 +182,7 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
             Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.updated_zero))
         } else {
             Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.update_success))
-            Logger.i(TAG, "Lista actualizada correctamente: $mList")
+            Logger.i(className, "Lista actualizada correctamente: $mList")
         }
         notifyDataSetChanged()
         if (dialog!!.isShowing) dialog!!.dismiss()
@@ -196,7 +198,7 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
 
             // Utilizar el servicio para realizar llamadas a la API
             val call: Call<ResponseBody?>? = apiService?.deleteList(
-                PreferencesHandler.getToken(ctx), PreferencesHandler.getId(ctx), mList.id
+                PreferencesHandler.getToken(ctx), PreferencesHandler.getId(ctx), mList.id!!
             )
 
             // Ejecutar la llamada de forma asíncrona
@@ -233,13 +235,13 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
     }
 
     private fun deleteListFromDB(mList: NotesList) {
-        val deletedLists: Int = DB.getInstance(ctx)!!.delete(DB.LISTS_TABLE, mList.id)
+        val deletedLists: Int = DB.getInstance(ctx)!!.delete(DB.LISTS_TABLE, mList.id!!)
         if (deletedLists == 0) {
             Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.delete_zero))
         } else {
             // La nota se eliminó correctamente
             Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.delete_success))
-            Logger.e(TAG, "Lista eliminada correctamente: $mList")
+            Logger.e(className, "Lista eliminada correctamente: $mList")
         }
         lists!!.remove(mList)
         notifyDataSetChanged()
@@ -269,6 +271,6 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
     }
 
     companion object {
-        val TAG: String = ListAdapter::class.java.simpleName
+        val className: String = ListAdapter::class.java.simpleName
     }
 }

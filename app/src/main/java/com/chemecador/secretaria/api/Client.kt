@@ -24,7 +24,7 @@ object Client {
                 // Create the logging interceptor
                 val loggingInterceptor = HttpLoggingInterceptor { message: String? ->
                     // Print the log message
-                    Logger.i("Retrofit", message)
+                    Logger.i("Retrofit", message!!)
                 }
                 loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY) // Set log level to show request body
 

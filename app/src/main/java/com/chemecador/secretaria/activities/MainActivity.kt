@@ -13,7 +13,6 @@ import com.chemecador.secretaria.databinding.ActivityMainBinding
 import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.fragments.CalendarFragment
 import com.chemecador.secretaria.fragments.ListsFragment
-import com.chemecador.secretaria.ui.login.LoginActivity
 import com.chemecador.secretaria.utils.PreferencesHandler
 import com.google.android.material.navigation.NavigationBarView
 

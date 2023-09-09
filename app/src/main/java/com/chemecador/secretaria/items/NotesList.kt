@@ -1,7 +1,8 @@
 package com.chemecador.secretaria.items
 
 class NotesList(
-    var id: Int, var name: String?,
+    var id: Int? = null,
+    var name: String?,
     /**
      * Privacidad de la nota: 0 (pública), 1 (privada)
      */

@@ -154,7 +154,7 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
             Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.updated_zero))
         } else {
             Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.update_success))
-            Logger.i(TAG, "Nota actualizada correctamente: $mNote")
+            Logger.i(className, "Nota actualizada correctamente: $mNote")
         }
         notifyDataSetChanged()
         if (dialog!!.isShowing) dialog!!.dismiss()
@@ -216,7 +216,7 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
         } else {
             // La nota se eliminó correctamente
             Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.delete_success))
-            Logger.e(TAG, "Nota eliminada correctamente $mNote")
+            Logger.e(className, "Nota eliminada correctamente $mNote")
         }
         noteList!!.remove(mNote)
         notifyDataSetChanged()
@@ -260,6 +260,6 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
     }
 
     companion object {
-        val TAG: String = NoteAdapter::class.java.simpleName
+        val className: String = NoteAdapter::class.java.simpleName
     }
 }

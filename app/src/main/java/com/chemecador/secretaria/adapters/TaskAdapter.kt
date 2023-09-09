@@ -57,7 +57,7 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
         tilTitle.editText!!.setText(mTask.title)
         val etContent = dialogView.findViewById<EditText>(R.id.et_content)
         etContent.setText(mTask.content)
-        val sTime = mTask.startTime!!.format(Utils.getFullFormatter())
+        val sTime = mTask.startTime!!.format(Utils.fullFormatter)
         val tvTime = dialogView.findViewById<TextView>(R.id.tv_start_time)
         tvTime.text = Utils.beautifyDate(sTime)
         tvTime.setOnClickListener {
@@ -103,7 +103,7 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
 
                 // Actualizar la vista en el diálogo de detalle
                 val tvTime = dialog!!.findViewById<TextView>(R.id.tv_start_time)
-                tvTime.text = Utils.beautifyDate(newDateTime?.format(Utils.getFullFormatter()))
+                tvTime.text = Utils.beautifyDate(newDateTime?.format(Utils.fullFormatter))
             },
             currentYear,
             currentMonth,
@@ -138,7 +138,7 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
 
                 // Actualizar la vista en el diálogo de detalle
                 val tvTime = dialog!!.findViewById<TextView>(R.id.tv_start_time)
-                tvTime.text = Utils.beautifyDate(newTime.format(Utils.getFullFormatter()))
+                tvTime.text = Utils.beautifyDate(newTime.format(Utils.fullFormatter))
             },
             currentHour,
             currentMinute,
@@ -205,7 +205,7 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
             Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.updated_zero))
         } else {
             Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.update_success))
-            Logger.i(TAG, "Tarea actualizada correctamente: $mTask")
+            Logger.i(className, "Tarea actualizada correctamente: $mTask")
         }
         notifyDataSetChanged()
         if (dialog!!.isShowing) dialog!!.dismiss()
@@ -268,7 +268,7 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
         } else {
             // La nota se eliminó correctamente
             Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.delete_success))
-            Logger.i(TAG, "Tarea eliminada correctamente: $mTask")
+            Logger.i(className, "Tarea eliminada correctamente: $mTask")
             taskList.remove(mTask)
             notifyDataSetChanged()
         }
@@ -292,6 +292,6 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
     }
 
     companion object {
-        private val TAG = TaskAdapter::class.java.simpleName
+        private val className = TaskAdapter::class.java.simpleName
     }
 }

@@ -137,12 +137,12 @@ class DB private constructor(context: Context, databaseName: String) :
                 }
             }
         } catch (e: SQLiteException) {
-            Logger.e(TAG, "Error al obtener las tareas", e)
+            Logger.e(className, "Error al obtener las tareas", e)
         }
         return taskList
     }
 
-    fun getNotesByList(listId: Int): List<Note> {
+    fun getNotesByList(listId: Int): MutableList<Note> {
         val notes: MutableList<Note> = ArrayList()
         try {
             val db: SQLiteDatabase = readableDatabase
@@ -180,12 +180,12 @@ class DB private constructor(context: Context, databaseName: String) :
             cursor.close()
             db.close()
         } catch (e: SQLiteException) {
-            Logger.e(TAG, "Error al obtener las notas", e)
+            Logger.e(className, "Error al obtener las notas", e)
         }
         return notes
     }
 
-    val lists: List<Any>
+    val lists: MutableList<NotesList>
         get() {
             val lists: MutableList<NotesList> = ArrayList()
             try {
@@ -215,7 +215,7 @@ class DB private constructor(context: Context, databaseName: String) :
                 cursor.close()
                 db.close()
             } catch (e: SQLiteException) {
-                Logger.e(TAG, "Error al obtener las listas", e)
+                Logger.e(className, "Error al obtener las listas", e)
             }
             return lists
         }
@@ -432,7 +432,7 @@ class DB private constructor(context: Context, databaseName: String) :
                 db.execSQL(sql, arrayOf(id, title, content, startTime))
             }
         } catch (e: SQLiteException) {
-            Logger.e(TAG, "Error al establecer las tareas", e)
+            Logger.e(className, "Error al establecer las tareas", e)
             dropTables()
             onCreate(db)
         }
@@ -455,7 +455,7 @@ class DB private constructor(context: Context, databaseName: String) :
                 }
                 success = true // Marcamos éxito si llegamos aquí sin excepciones
             } catch (e: SQLiteException) {
-                Logger.e(TAG, "Error al establecer las listas", e)
+                Logger.e(className, "Error al establecer las listas", e)
                 dropTables()
                 onCreate(db)
             }
@@ -479,7 +479,7 @@ class DB private constructor(context: Context, databaseName: String) :
                 db.execSQL(sql, arrayOf(id, listId, title, content, status))
             }
         } catch (e: SQLiteException) {
-            Logger.e(TAG, "Error al establecer las notas", e)
+            Logger.e(className, "Error al establecer las notas", e)
             dropTables()
             onCreate(db)
         }
@@ -584,7 +584,7 @@ class DB private constructor(context: Context, databaseName: String) :
     }
 
     companion object {
-        val TAG: String = DB::class.java.simpleName
+        val className: String = DB::class.java.simpleName
         const val DATABASE_VERSION = 3
         private const val DATABASE_NAME_ONLINE = "secretaria_online.sqlite"
         private const val DATABASE_NAME_OFFLINE = "secretaria_offline.sqlite"

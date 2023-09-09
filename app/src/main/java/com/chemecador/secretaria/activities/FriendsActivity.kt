@@ -13,7 +13,6 @@ import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.fragments.AddFriendFragment
 import com.chemecador.secretaria.fragments.FriendListFragment
 import com.chemecador.secretaria.fragments.FriendRequestFragment
-import com.chemecador.secretaria.ui.login.LoginActivity
 import com.chemecador.secretaria.utils.PreferencesHandler
 import com.google.android.material.bottomnavigation.BottomNavigationView
 

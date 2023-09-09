@@ -19,6 +19,7 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
+import androidx.core.content.FileProvider.getUriForFile
 import androidx.fragment.app.Fragment
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.gui.CustomToast
@@ -73,14 +74,14 @@ class ExplorerFragment : Fragment(), OnBackPressed {
                 if (file!!.file!!.absolutePath.contains("/logs/") && file.file!!.name.endsWith(".txt") ||
                     file.file!!.absolutePath.contains("/csv/")
                 ) {
-                    if (Logger.getSingleton().file == file.file) {
+                    if (Logger.singleton?.file == file.file) {
                         couldDeleteAll = false
                     } else {
                         if (!file.file!!.delete()) couldDeleteAll = false
                     }
                 } else {
                     Logger.w(
-                        TAG,
+                        ExplorerFragment.className,
                         "Se intentó borrar el fichero " + file.file + " pero no se reconoció como fichero que el usuario deberia poder borrar"
                     )
                     couldDeleteAll = false
@@ -98,7 +99,7 @@ class ExplorerFragment : Fragment(), OnBackPressed {
             val files = ArrayList<Uri>()
             for (file in adapter?.selectedFiles!!) {
                 files.add(
-                    SecretariaFileProvider.getUriForFile(
+                    getUriForFile(
                         requireContext(),
                         SecretariaFileProvider.authority,
                         file!!.file!!
@@ -408,6 +409,6 @@ class ExplorerFragment : Fragment(), OnBackPressed {
     }
 
     companion object {
-        private val TAG = ExplorerFragment::class.java.simpleName
+        private val className = ExplorerFragment::class.java.simpleName
     }
 }

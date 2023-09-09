@@ -16,7 +16,7 @@ import com.chemecador.secretaria.api.Service
 import com.chemecador.secretaria.databinding.FragmentChangePassBinding
 import com.chemecador.secretaria.gui.CustomToast
 import com.chemecador.secretaria.requests.PasswordRequest
-import com.chemecador.secretaria.ui.login.LoginActivity
+import com.chemecador.secretaria.activities.LoginActivity
 import com.chemecador.secretaria.utils.Utils
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout

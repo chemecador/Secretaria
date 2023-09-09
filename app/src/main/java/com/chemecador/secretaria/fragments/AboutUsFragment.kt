@@ -7,6 +7,7 @@ import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.chemecador.secretaria.BuildConfig
 import androidx.fragment.app.Fragment
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.databinding.FragmentAboutUsBinding
@@ -22,8 +23,7 @@ class AboutUsFragment : Fragment() {
         binding = FragmentAboutUsBinding.inflate(inflater, container, false)
         val version: String = try {
 
-            //val versionName = BuildConfig.VERSION_NAME
-            val versionName = "AAA"
+            val versionName = BuildConfig.VERSION_NAME
             "Version : $versionName"
         } catch (e: Exception) {
             "Version 1.0.0"
