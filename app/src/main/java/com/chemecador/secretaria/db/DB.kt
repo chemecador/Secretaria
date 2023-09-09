@@ -99,7 +99,7 @@ class DB private constructor(context: Context, databaseName: String) :
     }
 
     /* SELECTS */
-    fun getTasksByDay(day: LocalDateTime): List<Task> {
+    fun getTasksByDay(day: LocalDateTime): MutableList<Task> {
         val taskList: MutableList<Task> = ArrayList()
         val projection = arrayOf(
             "id",

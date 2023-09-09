@@ -101,13 +101,13 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
     private fun updateNoteOnline(mNote: Note) {
         if (PreferencesHandler.isOnline(ctx)) {
             // Obtener la instancia de Retrofit
-            val retrofit: Retrofit = Client.getClient()
+            val retrofit: Retrofit? = Client.client
 
             // Crear una instancia del servicio de la API
-            val apiService: Service = retrofit.create(Service::class.java)
+            val apiService: Service? = retrofit?.create(Service::class.java)
             val nr = NoteRequest(mNote)
             // Utilizar el servicio para realizar llamadas a la API
-            val call: Call<ResponseBody?>? = apiService.updateNote(
+            val call: Call<ResponseBody?>? = apiService?.updateNote(
                 PreferencesHandler.getToken(ctx),
                 PreferencesHandler.getId(ctx),
                 mNote.listId,
@@ -163,13 +163,13 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
     private fun deleteNote(mNote: Note) {
         if (PreferencesHandler.isOnline(ctx)) {
             // Obtener la instancia de Retrofit
-            val retrofit: Retrofit = Client.getClient()
+            val retrofit: Retrofit? = Client.client
 
             // Crear una instancia del servicio de la API
-            val apiService: Service = retrofit.create(Service::class.java)
+            val apiService: Service? = retrofit?.create(Service::class.java)
 
             // Utilizar el servicio para realizar llamadas a la API
-            val call: Call<ResponseBody?>? = apiService.deleteNote(
+            val call: Call<ResponseBody?>? = apiService?.deleteNote(
                 PreferencesHandler.getToken(ctx),
                 PreferencesHandler.getId(ctx),
                 mNote.listId,

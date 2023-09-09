@@ -8,10 +8,10 @@ import java.time.LocalDateTime
  * Clase Tarea.
  */
 class Task(
-    var id: Int,
-    var title: String?,
-    var content: String?,
-    @SerializedName("start_time") var startTime: LocalDateTime?
+    var id: Int = 0,
+    var title: String? = null,
+    var content: String? = null,
+    @SerializedName("start_time") var startTime: LocalDateTime? = null
 ) {
 
     override fun toString(): String {
