@@ -168,10 +168,10 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
             )
 
             // Ejecutar la llamada de forma asíncrona
-            call!!.enqueue(object : Callback<ResponseBody?> {
+            call!!.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
-                    call: Call<ResponseBody?>,
-                    response: Response<ResponseBody?>
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
                 ) {
                     if (response.isSuccessful) {
                         val responseBody: String? = response.body()?.string()
@@ -189,7 +189,7 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
                     dialog!!.dismiss()
                 }
 
-                override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // Error en la llamada al servidor
                     Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.connection_error))
                 }
@@ -229,10 +229,10 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
             )
 
             // Ejecutar la llamada de forma asíncrona
-            call!!.enqueue(object : Callback<ResponseBody?> {
+            call!!.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
-                    call: Call<ResponseBody?>,
-                    response: Response<ResponseBody?>
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
                 ) {
                     if (response.isSuccessful) {
                         val responseBody: String? = response.body()?.string()
@@ -250,7 +250,7 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
                     dialog!!.dismiss()
                 }
 
-                override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // Error en la llamada al servidor
                     Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.connection_error))
                 }
@@ -262,7 +262,7 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
 
     private fun deleteTaskFromDB(mTask: Task) {
         val deletedTasks = DB.getInstance(ctx)!!
-            .delete(DB.TASKS_TABLE, mTask.id)
+            .delete(DB.TASKS, mTask.id)
         if (deletedTasks == 0) {
             Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.delete_zero))
         } else {

@@ -1,6 +1,7 @@
 package com.chemecador.secretaria.requests
 
 import com.chemecador.secretaria.items.Task
+import com.google.gson.annotations.SerializedName
 import java.time.format.DateTimeFormatter
 
 /**
@@ -11,7 +12,8 @@ import java.time.format.DateTimeFormatter
 class TaskRequest(task: Task) {
     private val title: String?
     private val content: String?
-    private val start_time: String
+    @field:SerializedName("start_time")
+    private val startTime: String
     private val id: Int
 
     init {
@@ -21,6 +23,6 @@ class TaskRequest(task: Task) {
 
         // Formatear la fecha y hora en el formato deseado
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        start_time = task.startTime!!.format(formatter)
+        startTime = task.startTime!!.format(formatter)
     }
 }

@@ -34,7 +34,7 @@ class AddFriendFragment : Fragment() {
                     getString(R.string.invitation_sent_to) + " \"" + friendName + "\"",
                     Snackbar.LENGTH_LONG
                 )
-                .setAnchorView(R.id.fab)
+                .setAnchorView(R.id.bnv_friends)
                 .show()
         }
         return binding!!.root

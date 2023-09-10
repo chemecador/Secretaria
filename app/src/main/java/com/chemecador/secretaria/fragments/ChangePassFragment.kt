@@ -11,12 +11,12 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.chemecador.secretaria.R
+import com.chemecador.secretaria.activities.LoginActivity
 import com.chemecador.secretaria.api.Client.client
 import com.chemecador.secretaria.api.Service
 import com.chemecador.secretaria.databinding.FragmentChangePassBinding
 import com.chemecador.secretaria.gui.CustomToast
 import com.chemecador.secretaria.requests.PasswordRequest
-import com.chemecador.secretaria.activities.LoginActivity
 import com.chemecador.secretaria.utils.Utils
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
@@ -89,7 +89,7 @@ class ChangePassFragment : Fragment() {
         val userId =
             PreferenceManager.getDefaultSharedPreferences(requireContext()).getInt("id", -1)
         val token =
-            PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("token", "")
+            PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("token", "")!!
         if (userId == -1) {
             CustomToast(
                 requireContext(),
@@ -106,8 +106,8 @@ class ChangePassFragment : Fragment() {
         val call = apiService.changePassword(token, userId, pr)
 
         // Ejecutar la llamada de forma asíncrona
-        call!!.enqueue(object : Callback<ResponseBody?> {
-            override fun onResponse(call: Call<ResponseBody?>, response: Response<ResponseBody?>) {
+        call!!.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
                     val responseBody: String? =
                         response.body()?.string()
@@ -134,7 +134,7 @@ class ChangePassFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
 
                 // Manejar el error de conexión o la excepción
                 Utils.showToast(requireContext(), Utils.ERROR, getString(R.string.server_error))

@@ -44,19 +44,12 @@ class FriendRequestFragment : Fragment() {
     private fun getFriendRequests(): ArrayList<Friend> {
 
         var requestsList: ArrayList<Friend> = ArrayList()
-        // Obtener la instancia de Retrofit
         val retrofit: Retrofit? = Client.client
-
-        // Crear una instancia del servicio de la API
         val apiService: Service? = retrofit?.create(
             Service::class.java
         )
-
-        // Utilizar el servicio para realizar llamadas a la API
         val call: Call<ArrayList<Friend>>? =
             apiService?.getFriendRequests(PreferencesHandler.getToken(requireContext()), PreferencesHandler.getId(requireContext()))
-
-        // Ejecutar la llamada de forma asíncrona
         call?.enqueue(object : Callback<ArrayList<Friend>> {
             override fun onResponse(
                 call: Call<ArrayList<Friend>?>,

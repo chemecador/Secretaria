@@ -12,6 +12,7 @@ import com.chemecador.secretaria.items.NotesList
 import com.chemecador.secretaria.items.Task
 import com.chemecador.secretaria.logger.Logger
 import com.chemecador.secretaria.utils.PreferencesHandler
+import java.lang.ref.WeakReference
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -47,7 +48,7 @@ class DB private constructor(context: Context, databaseName: String) :
     override fun onCreate(db: SQLiteDatabase) {
 
         // Crear la tabla de Tareas
-        var sql = ("CREATE TABLE tasks("
+        var sql = ("CREATE TABLE IF NOT EXISTS tasks("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "title TEXT NOT NULL,"
                 + "content TEXT DEFAULT '',"
@@ -55,7 +56,7 @@ class DB private constructor(context: Context, databaseName: String) :
                 + ")")
         db.execSQL(sql)
         // Crear la tabla de Notas
-        sql = ("CREATE TABLE notes("
+        sql = ("CREATE TABLE IF NOT EXISTS notes("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "list_id INTEGER NOT NULL DEFAULT 0,"
                 + "title TEXT NOT NULL,"
@@ -65,7 +66,7 @@ class DB private constructor(context: Context, databaseName: String) :
         db.execSQL(sql)
 
         // Crear la tabla de listas
-        sql = ("CREATE TABLE lists("
+        sql = ("CREATE TABLE IF NOT EXISTS lists("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "name TEXT UNIQUE NOT NULL,"
                 + "privacy INTEGER DEFAULT 1,"
@@ -74,7 +75,7 @@ class DB private constructor(context: Context, databaseName: String) :
         db.execSQL(sql)
 
         // Crear la tabla de amigos
-        sql = ("CREATE TABLE friends("
+        sql = ("CREATE TABLE IF NOT EXISTS friends("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "username TEXT UNIQUE NOT NULL,"
                 + "since DATE NOT NULL DEFAULT (strftime('%Y-%m-%d', 'now'))"
@@ -91,10 +92,10 @@ class DB private constructor(context: Context, databaseName: String) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TASKS_TABLE")
-        db.execSQL("DROP TABLE IF EXISTS $LISTS_TABLE")
-        db.execSQL("DROP TABLE IF EXISTS $NOTES_TABLE")
-        db.execSQL("DROP TABLE IF EXISTS $FRIENDS_TABLE")
+        db.execSQL("DROP TABLE IF EXISTS $TASKS")
+        db.execSQL("DROP TABLE IF EXISTS $LISTS")
+        db.execSQL("DROP TABLE IF EXISTS $NOTES")
+        db.execSQL("DROP TABLE IF EXISTS $FRIENDS")
         onCreate(db)
     }
 
@@ -115,7 +116,7 @@ class DB private constructor(context: Context, databaseName: String) :
         try {
             readableDatabase.use { db ->
                 db.query(
-                    TASKS_TABLE,
+                    TASKS,
                     projection,
                     selection,
                     selectionArgs,
@@ -156,7 +157,7 @@ class DB private constructor(context: Context, databaseName: String) :
             val selection = "list_id = ?"
             val selectionArgs = arrayOf(listId.toString())
             val cursor: Cursor = db.query(
-                NOTES_TABLE,
+                NOTES,
                 projection,
                 selection,
                 selectionArgs,
@@ -197,7 +198,7 @@ class DB private constructor(context: Context, databaseName: String) :
                     "type"
                 )
                 val cursor: Cursor = db.query(
-                    LISTS_TABLE,
+                    LISTS,
                     projection,
                     null,
                     null,
@@ -229,7 +230,7 @@ class DB private constructor(context: Context, databaseName: String) :
                 "since"
             )
             val cursor: Cursor = db.query(
-                LISTS_TABLE,
+                LISTS,
                 projection,
                 null,
                 null,
@@ -263,7 +264,7 @@ class DB private constructor(context: Context, databaseName: String) :
         val selection = "id = ?"
         val selectionArgs = arrayOf(listId.toString())
         val cursor: Cursor = db.query(
-            LISTS_TABLE,
+            LISTS,
             projection,
             selection,
             selectionArgs,
@@ -294,7 +295,7 @@ class DB private constructor(context: Context, databaseName: String) :
         val selection = "id = ?"
         val selectionArgs = arrayOf(listId.toString())
         val cursor: Cursor = db.query(
-            LISTS_TABLE,
+            LISTS,
             projection,
             selection,
             selectionArgs,
@@ -328,7 +329,7 @@ class DB private constructor(context: Context, databaseName: String) :
         if (mTask.startTime != null) {
             values.put("start_time", mTask.startTime.toString())
         }
-        db.insert(TASKS_TABLE, null, values)
+        db.insert(TASKS, null, values)
         db.close()
     }
 
@@ -340,9 +341,7 @@ class DB private constructor(context: Context, databaseName: String) :
         if (mNote.id != 0) {
             values.put("id", mNote.id)
         }
-        if (mNote.title != null) {
-            values.put("title", mNote.title)
-        }
+        values.put("title", mNote.title)
         if (mNote.listId > 0) {
             values.put("list_id", mNote.listId)
         }
@@ -350,7 +349,7 @@ class DB private constructor(context: Context, databaseName: String) :
             values.put("content", mNote.content)
         }
         values.put("status", mNote.status)
-        db.insert(NOTES_TABLE, null, values)
+        db.insert(NOTES, null, values)
         db.close()
     }
 
@@ -362,12 +361,10 @@ class DB private constructor(context: Context, databaseName: String) :
         if (mNotesList.id != 0) {
             values.put("id", mNotesList.id)
         }
-        if (mNotesList.name?.isEmpty() == true) {
-            values.put("name", mNotesList.name)
-        }
+        values.put("name", mNotesList.name)
         values.put("privacy", mNotesList.privacy)
         values.put("type", mNotesList.type)
-        val ret: Int = db.insert(LISTS_TABLE, null, values).toInt()
+        val ret: Int = db.insert(LISTS, null, values).toInt()
         db.close()
         return ret
     }
@@ -386,7 +383,7 @@ class DB private constructor(context: Context, databaseName: String) :
         if (friend.since != null) {
             values.put("since", java.lang.String.valueOf(friend.since))
         }
-        db.insert(FRIENDS_TABLE, null, values)
+        db.insert(FRIENDS, null, values)
         db.close()
     }
 
@@ -422,7 +419,7 @@ class DB private constructor(context: Context, databaseName: String) :
     fun setTasks(tasks: ArrayList<Task>) {
         val db: SQLiteDatabase = writableDatabase
         try {
-            db.delete(TASKS_TABLE, null, null)
+            db.delete(TASKS, null, null)
             for (serverTask in tasks) {
                 val id: String = serverTask.id.toString()
                 val title: String? = serverTask.title
@@ -433,7 +430,7 @@ class DB private constructor(context: Context, databaseName: String) :
             }
         } catch (e: SQLiteException) {
             Logger.e(className, "Error al establecer las tareas", e)
-            dropTables()
+            dropTable(TASKS)
             onCreate(db)
         }
     }
@@ -445,7 +442,7 @@ class DB private constructor(context: Context, databaseName: String) :
         var retry = 0
         while (retry < maxRetries && !success) {
             try {
-                db.delete(LISTS_TABLE, null, null)
+                db.delete(LISTS, null, null)
                 for (serverList in lists) {
                     val id: String? = serverList?.id?.toString()
                     val name: String? = serverList?.name
@@ -456,7 +453,7 @@ class DB private constructor(context: Context, databaseName: String) :
                 success = true // Marcamos éxito si llegamos aquí sin excepciones
             } catch (e: SQLiteException) {
                 Logger.e(className, "Error al establecer las listas", e)
-                dropTables()
+                dropTable(LISTS)
                 onCreate(db)
             }
             retry++
@@ -467,20 +464,20 @@ class DB private constructor(context: Context, databaseName: String) :
     fun setNotes(notes: ArrayList<Note>) {
         val db: SQLiteDatabase = writableDatabase
         try {
-            db.delete(NOTES_TABLE, null, null)
+            db.delete(NOTES, null, null)
             for (serverNote in notes) {
-                val id: String? = serverNote?.id?.toString()
-                val title: String? = serverNote?.title
-                val content: String? = serverNote?.content
-                val listId: Int? = serverNote?.listId
-                val status: Int? = serverNote?.status
+                val id: String = serverNote.id.toString()
+                val title: String = serverNote.title
+                val content: String? = serverNote.content
+                val listId: Int = serverNote.listId
+                val status: Int = serverNote.status
                 val sql =
                     "INSERT INTO notes (id, list_id, title, content, status) VALUES (?,?,?,?,?)"
                 db.execSQL(sql, arrayOf(id, listId, title, content, status))
             }
         } catch (e: SQLiteException) {
             Logger.e(className, "Error al establecer las notas", e)
-            dropTables()
+            dropTable(NOTES)
             onCreate(db)
         }
     }
@@ -488,7 +485,7 @@ class DB private constructor(context: Context, databaseName: String) :
     fun setFriends(friends: ArrayList<Friend?>) {
         val db: SQLiteDatabase = writableDatabase
         try {
-            db.delete(FRIENDS_TABLE, null, null)
+            db.delete(FRIENDS, null, null)
             for (serverFriend in friends) {
                 val id: Int? = serverFriend?.id
                 val username: String? = serverFriend?.username
@@ -510,7 +507,7 @@ class DB private constructor(context: Context, databaseName: String) :
         values.put("type", mList.type)
         val whereClause = "id = ?"
         val whereArgs = arrayOf<String>(java.lang.String.valueOf(mList.id))
-        val updatedLists: Int = db.update(LISTS_TABLE, values, whereClause, whereArgs)
+        val updatedLists: Int = db.update(LISTS, values, whereClause, whereArgs)
         db.close()
         return updatedLists
     }
@@ -523,7 +520,7 @@ class DB private constructor(context: Context, databaseName: String) :
         values.put("status", mNote.status)
         val whereClause = "id = ?"
         val whereArgs = arrayOf<String>(java.lang.String.valueOf(mNote.id))
-        val updatedNotes: Int = db.update(NOTES_TABLE, values, whereClause, whereArgs)
+        val updatedNotes: Int = db.update(NOTES, values, whereClause, whereArgs)
         db.close()
         return updatedNotes
     }
@@ -536,7 +533,7 @@ class DB private constructor(context: Context, databaseName: String) :
         values.put("start_time", mTask.startTime.toString())
         val whereClause = "id = ?"
         val whereArgs = arrayOf<String>(java.lang.String.valueOf(mTask.id))
-        val updatedRows: Int = db.update(TASKS_TABLE, values, whereClause, whereArgs)
+        val updatedRows: Int = db.update(TASKS, values, whereClause, whereArgs)
         db.close()
         return updatedRows
     }
@@ -554,15 +551,25 @@ class DB private constructor(context: Context, databaseName: String) :
         return db.delete(table, selection, selectionArgs)
     }
 
+    private fun dropTable(tableName: String) {
+
+        // Obtén una instancia de la base de datos en modo escritura
+        try {
+            val db: SQLiteDatabase = writableDatabase
+            db.execSQL("DROP TABLE IF EXISTS $tableName")
+        } catch (e: Exception) {
+            Logger.e("DB", "Error al eliminar la tabla $tableName", e)
+        }
+    }
     private fun dropTables() {
 
         // Obtén una instancia de la base de datos en modo escritura
         try {
             val db: SQLiteDatabase = writableDatabase
-            db.execSQL("DROP TABLE IF EXISTS $TASKS_TABLE")
-            db.execSQL("DROP TABLE IF EXISTS $NOTES_TABLE")
-            db.execSQL("DROP TABLE IF EXISTS $LISTS_TABLE")
-            db.execSQL("DROP TABLE IF EXISTS $FRIENDS_TABLE")
+            db.execSQL("DROP TABLE IF EXISTS $TASKS")
+            db.execSQL("DROP TABLE IF EXISTS $NOTES")
+            db.execSQL("DROP TABLE IF EXISTS $LISTS")
+            db.execSQL("DROP TABLE IF EXISTS $FRIENDS")
         } catch (e: Exception) {
             Logger.e("DB", "Error al eliminar las tablas", e)
         }
@@ -573,10 +580,10 @@ class DB private constructor(context: Context, databaseName: String) :
         // Obtén una instancia de la base de datos en modo escritura
         try {
             val db: SQLiteDatabase = writableDatabase
-            db.execSQL("DROP TABLE IF EXISTS $TASKS_TABLE")
-            db.execSQL("DROP TABLE IF EXISTS $NOTES_TABLE")
-            db.execSQL("DROP TABLE IF EXISTS $LISTS_TABLE")
-            db.execSQL("DROP TABLE IF EXISTS $FRIENDS_TABLE")
+            db.execSQL("DROP TABLE IF EXISTS $TASKS")
+            db.execSQL("DROP TABLE IF EXISTS $NOTES")
+            db.execSQL("DROP TABLE IF EXISTS $LISTS")
+            db.execSQL("DROP TABLE IF EXISTS $FRIENDS")
         } catch (e: Exception) {
             Logger.e("DB", "Error al eliminar las tablas", e)
         }
@@ -585,27 +592,25 @@ class DB private constructor(context: Context, databaseName: String) :
 
     companion object {
         val className: String = DB::class.java.simpleName
-        const val DATABASE_VERSION = 3
-        private const val DATABASE_NAME_ONLINE = "secretaria_online.sqlite"
-        private const val DATABASE_NAME_OFFLINE = "secretaria_offline.sqlite"
-        const val TASKS_TABLE = "tasks"
-        const val LISTS_TABLE = "lists"
-        const val NOTES_TABLE = "notes"
-        const val FRIENDS_TABLE = "friends"
-        private var instance: DB? = null
+        const val DATABASE_VERSION = 4
+        private const val DATABASE_ONLINE = "secretaria_online.sqlite"
+        private const val DATABASE_OFFLINE = "secretaria_offline.sqlite"
+        const val TASKS = "tasks"
+        const val LISTS = "lists"
+        const val NOTES = "notes"
+        const val FRIENDS = "friends"
+        private lateinit var contextRef: WeakReference<Context>
         private var online: Boolean = false
 
         @Synchronized
-        fun getInstance(context: Context): DB? {
-            val onlineNow: Boolean = PreferencesHandler.isOnline(context)
-            if (instance == null || onlineNow != online) {
-                instance =
-                    if (onlineNow) DB(context.applicationContext, DATABASE_NAME_ONLINE) else DB(
-                        context.applicationContext,
-                        DATABASE_NAME_OFFLINE
-                    )
-            }
-            return instance
+        fun getInstance(context: Context): DB {
+
+            contextRef = WeakReference(context.applicationContext)
+            online = PreferencesHandler.isOnline(contextRef.get()!!)
+            val onlineNow: Boolean = PreferencesHandler.isOnline(context.applicationContext)
+            return if (onlineNow) DB(context.applicationContext, DATABASE_ONLINE)
+            else DB(context.applicationContext, DATABASE_OFFLINE)
         }
+
     }
 }

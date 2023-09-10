@@ -41,7 +41,7 @@ import retrofit2.Response
 
 class NotesFragment : Fragment() {
     private var notes: MutableList<Note>? = null
-    private var ctx: Context? = null
+    private lateinit var ctx: Context
     private var adapter: NoteAdapter? = null
     private var listId = 0
     private var binding: FragmentNotesBinding? = null
@@ -126,9 +126,7 @@ class NotesFragment : Fragment() {
         val userId = PreferenceManager.getDefaultSharedPreferences(
             ctx!!
         ).getInt("id", -1)
-        val token = PreferenceManager.getDefaultSharedPreferences(
-            ctx!!
-        ).getString("token", "")
+        val token = PreferencesHandler.getToken(ctx)
         if (userId == -1) {
             CustomToast(ctx!!, Utils.ERROR, Toast.LENGTH_LONG).show(getString(R.string.login_again))
             (ctx as Activity?)!!.finish()

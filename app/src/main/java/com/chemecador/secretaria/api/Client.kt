@@ -16,7 +16,9 @@ import java.time.format.DateTimeFormatter
 
 object Client {
     private var retrofit: Retrofit? = null
-    private const val BASE_URL = "https://todo-api.paesa.workers.dev"
+    private const val DEVELOPMENT_URL = "https://todo-api-staging.paesa.workers.dev"
+    private const val PRODUCTION_URL = "https://todo-api.paesa.es"
+    private const val BASE_URL = DEVELOPMENT_URL
     @JvmStatic
     val client: Retrofit?
         get() {

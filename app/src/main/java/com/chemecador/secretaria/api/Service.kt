@@ -34,124 +34,124 @@ interface Service {
     @GET("/users/{userId}/lists")
     @Headers("Content-Type: application/json")
     fun getLists(
-        @Header("Authorization") token: String?,
+        @Header("Authorization") token: String,
         @Path("userId") userId: Int
     ): Call<ArrayList<NotesList>>
 
     @GET("/users/{userId}/notes")
     @Headers("Content-Type: application/json")
     fun getNotes(
-        @Header("Authorization") token: String?,
+        @Header("Authorization") token: String,
         @Path("userId") userId: Int
     ): Call<ArrayList<Note>>
 
     @GET("/users/{userId}/tasks")
     @Headers("Content-Type: application/json")
     fun getTasks(
-        @Header("Authorization") token: String?,
+        @Header("Authorization") token: String,
         @Path("userId") userId: Int
     ): Call<ArrayList<Task>>
 
     @GET("/users/{userId}/friendRequests")
     fun getFriendRequests(
-        @Header("Authorization") token: String?,
+        @Header("Authorization") token: String,
         @Path("userId") userId: Int
     ): Call<ArrayList<Friend>>
 
 
     @GET("/users/{userId}/friends")
     fun getFriends(
-        @Header("Authorization") token: String?,
+        @Header("Authorization") token: String,
         @Path("userId") userId: Int
-    ): Call<ArrayList<Friend?>>
+    ): Call<ArrayList<Friend>>
 
     /* CREATE */
     @POST("/users/{id}/lists")
     @Headers("Content-Type: application/json")
     fun createList(
-        @Header("Authorization") token: String?,
+        @Header("Authorization") token: String,
         @Path("id") userId: Int,
         @Body list: NotesList?
-    ): Call<IdResponse?>
+    ): Call<IdResponse>
 
     @POST("/users/{id}/lists/{listId}/notes")
     @Headers("Content-Type: application/json")
     fun createNote(
-        @Header("Authorization") token: String?,
+        @Header("Authorization") token: String,
         @Path("id") userId: Int,
         @Path("listId") listId: Int,
         @Body nr: NoteRequest?
-    ): Call<IdResponse?>
+    ): Call<IdResponse>
 
     @POST("/users/{id}/tasks")
     @Headers("Content-Type: application/json")
     fun createTask(
-        @Header("Authorization") token: String?,
+        @Header("Authorization") token: String,
         @Path("id") userId: Int,
         @Body tr: TaskRequest?
-    ): Call<IdResponse?>
+    ): Call<IdResponse>
 
     /* UPDATE */
     @PUT("/users/{userId}/lists/{listId}")
     @Headers("Content-Type: application/json")
     fun updateList(
-        @Header("Authorization") token: String?,
+        @Header("Authorization") token: String,
         @Path("userId") userId: Int,
         @Path("listId") listId: Int,
         @Body list: NotesList?
-    ): Call<ResponseBody?>
+    ): Call<ResponseBody>
 
     @PUT("/users/{userId}/lists/{listId}/notes/{noteId}")
     @Headers("Content-Type: application/json")
     fun updateNote(
-        @Header("Authorization") token: String?,
+        @Header("Authorization") token: String,
         @Path("userId") userId: Int,
         @Path("listId") listId: Int,
         @Path("noteId") noteId: Int,
         @Body nr: NoteRequest?
-    ): Call<ResponseBody?>
+    ): Call<ResponseBody>
 
     @PUT("/users/{userId}/tasks/{taskId}")
     @Headers("Content-Type: application/json")
     fun updateTask(
-        @Header("Authorization") token: String?,
+        @Header("Authorization") token: String,
         @Path("userId") userId: Int,
         @Path("taskId") taskId: Int,
         @Body tr: TaskRequest?
-    ): Call<ResponseBody?>
+    ): Call<ResponseBody>
 
     /* DELETE */
     @DELETE("/users/{id}/lists/{listId}/notes/{noteId}")
     @Headers("Content-Type: application/json")
     fun deleteNote(
-        @Header("Authorization") token: String?,
+        @Header("Authorization") token: String,
         @Path("id") userId: Int,
         @Path("listId") listId: Int,
         @Path("noteId") noteId: Int
-    ): Call<ResponseBody?>
+    ): Call<ResponseBody>
 
     @DELETE("/users/{id}/lists/{listId}")
     @Headers("Content-Type: application/json")
     fun deleteList(
-        @Header("Authorization") token: String?,
+        @Header("Authorization") token: String,
         @Path("id") userId: Int,
         @Path("listId") listId: Int
-    ): Call<ResponseBody?>
+    ): Call<ResponseBody>
 
     @DELETE("/users/{id}/tasks/{taskId}")
     @Headers("Content-Type: application/json")
     fun deleteTask(
-        @Header("Authorization") token: String?,
+        @Header("Authorization") token: String,
         @Path("id") userId: Int,
         @Path("taskId") taskId: Int
-    ): Call<ResponseBody?>
+    ): Call<ResponseBody>
 
     /* PASSWORD */
     @POST("/users/{id}/account/changePassword")
     @Headers("Content-Type: application/json")
     fun changePassword(
-        @Header("Authorization") token: String?,
+        @Header("Authorization") token: String,
         @Path("id") userId: Int,
         @Body pr: PasswordRequest?
-    ): Call<ResponseBody?>
+    ): Call<ResponseBody>
 }

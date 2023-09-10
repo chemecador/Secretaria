@@ -51,7 +51,7 @@ class CalendarFragment : Fragment() {
     private var btnDay: Button? = null
     private lateinit var taskList: MutableList<Task>
     private var taskAdapter: TaskAdapter? = null
-    private var ctx: Context? = null
+    private lateinit var ctx: Context
     private var selectedDay: LocalDateTime? = null
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,8 +68,8 @@ class CalendarFragment : Fragment() {
         btnDay = toolbar.findViewById(R.id.btn_day)
         btnDay?.visibility = View.VISIBLE
         btnDay?.setOnClickListener { changeDay() }
-        taskList = DB.getInstance(ctx!!)!!.getTasksByDay(LocalDateTime.now())
-        taskAdapter = TaskAdapter(ctx!!, taskList)
+        taskList = DB.getInstance(ctx)!!.getTasksByDay(LocalDateTime.now())
+        taskAdapter = TaskAdapter(ctx, taskList)
         val rv = binding!!.root.findViewById<RecyclerView>(R.id.recycler_view)
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(ctx)
@@ -122,7 +122,7 @@ class CalendarFragment : Fragment() {
     private fun onDayChanged(year: Int, monthOfYear: Int, dayOfMonth: Int) {
         setDay(year, monthOfYear + 1, dayOfMonth)
         taskList.clear()
-        taskList.addAll(DB.getInstance(ctx!!)!!.getTasksByDay(selectedDay!!))
+        taskList.addAll(DB.getInstance(ctx)!!.getTasksByDay(selectedDay!!))
         taskAdapter!!.notifyDataSetChanged()
     }
 
@@ -130,7 +130,7 @@ class CalendarFragment : Fragment() {
         val mTask = Task()
         mTask.startTime = selectedDay
         val builder = AlertDialog.Builder(
-            ctx!!
+            ctx
         )
         val inflater = LayoutInflater.from(ctx)
         val dialogView = inflater.inflate(R.layout.dialog_new_task, null)
@@ -224,7 +224,7 @@ class CalendarFragment : Fragment() {
 
 
         // Almacenar la cadena en la base de datos SQLite
-        DB.getInstance(ctx!!)!!.insertTask(mTask)
+        DB.getInstance(ctx)!!.insertTask(mTask)
         Snackbar.make(binding!!.root, getString(R.string.create_task_success), Snackbar.LENGTH_LONG)
             .setAnchorView(R.id.fab)
             .show()
@@ -240,12 +240,10 @@ class CalendarFragment : Fragment() {
         val apiService = retrofit!!.create(
             Service::class.java
         )
-        val userId = PreferenceManager.getDefaultSharedPreferences(ctx!!).getInt("id", -1)
-        val token = PreferenceManager.getDefaultSharedPreferences(
-            ctx!!
-        ).getString("token", "")
+        val userId = PreferenceManager.getDefaultSharedPreferences(ctx).getInt("id", -1)
+        val token = PreferencesHandler.getToken(ctx)!!
         if (userId == -1) {
-            CustomToast(ctx!!, Utils.ERROR, Toast.LENGTH_LONG).show(getString(R.string.login_again))
+            CustomToast(ctx, Utils.ERROR, Toast.LENGTH_LONG).show(getString(R.string.login_again))
             (ctx as Activity?)!!.finish()
             startActivity(Intent(ctx, LoginActivity::class.java))
             return
@@ -268,13 +266,13 @@ class CalendarFragment : Fragment() {
                 } else if (response.code() == 401) {
                     // Manejar el error de respuesta
                     Utils.showToast(
-                        ctx!!,
+                        ctx,
                         Utils.ERROR,
                         response.code().toString() + " : " + getString(R.string.unauthorized)
                     )
                 } else {
                     Utils.showToast(
-                        ctx!!,
+                        ctx,
                         Utils.ERROR,
                         response.code().toString() + " : " + getString(R.string.server_error)
                     )
@@ -284,7 +282,7 @@ class CalendarFragment : Fragment() {
             override fun onFailure(call: Call<IdResponse?>, t: Throwable) {
 
                 // Manejar el error de conexión o la excepción
-                Utils.showToast(ctx!!, Utils.ERROR, getString(R.string.server_error))
+                Utils.showToast(ctx, Utils.ERROR, getString(R.string.server_error))
             }
         })
     }

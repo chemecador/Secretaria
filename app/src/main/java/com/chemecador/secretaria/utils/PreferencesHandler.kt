@@ -29,42 +29,42 @@ object PreferencesHandler {
         editor.apply()
     }
 
-    fun getToken(context: Context?): String? {
-        return PreferenceManager.getDefaultSharedPreferences(context!!).getString(PREF_TOKEN, "")
+    fun getToken(context: Context): String {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_TOKEN, "")!!
     }
 
-    fun getId(context: Context?): Int {
-        return PreferenceManager.getDefaultSharedPreferences(context!!).getInt(PREF_ID, 0)
+    fun getId(context: Context): Int {
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt(PREF_ID, 0)
     }
 
-    fun isOnline(context: Context?): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context!!)
+    fun isOnline(context: Context): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(PREF_ONLINE, false)
     }
 
-    fun isTokenValid(context: Context?): Boolean {
+    fun isTokenValid(context: Context): Boolean {
         val prefs = PreferenceManager.getDefaultSharedPreferences(
-            context!!
+            context
         )
         return (prefs.contains(PREF_TOKEN)
                 && prefs.getString(PREF_TOKEN, "")!!.isNotEmpty()
                 && prefs.getBoolean(PREF_LAST_LOGIN_OK, false))
     }
 
-    fun getString(context: Context?, stringName: String?): String? {
-        return PreferenceManager.getDefaultSharedPreferences(context!!).getString(stringName, "")
+    fun getString(context: Context, stringName: String?): String? {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(stringName, "")
     }
 
-    fun getInt(context: Context?, intName: String?): Int {
-        return PreferenceManager.getDefaultSharedPreferences(context!!).getInt(intName, -1)
+    fun getInt(context: Context, intName: String?): Int {
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt(intName, -1)
     }
 
-    fun getBoolean(context: Context?, booleanName: String?): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context!!)
+    fun getBoolean(context: Context, booleanName: String?): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(booleanName, false)
     }
 
-    fun getFloat(context: Context?, floatName: String?): Float {
-        return PreferenceManager.getDefaultSharedPreferences(context!!).getFloat(floatName, -1f)
+    fun getFloat(context: Context, floatName: String?): Float {
+        return PreferenceManager.getDefaultSharedPreferences(context).getFloat(floatName, -1f)
     }
 }

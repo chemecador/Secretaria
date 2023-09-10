@@ -6,7 +6,7 @@ class Note {
     @SerializedName("list_id")
     var listId = 0
     var id = 0
-    var title: String? = null
+    var title: String = ""
     var content: String? = null
 
     /**

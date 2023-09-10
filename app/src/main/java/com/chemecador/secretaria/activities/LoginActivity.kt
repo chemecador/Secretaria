@@ -363,7 +363,7 @@ class LoginActivity : AppCompatActivity() {
                     // Procesar la respuesta exitosa
                     val result = response.body()
                     if (result != null) {
-                        DB.getInstance(this@LoginActivity)!!.setNotes(result)
+                        DB.getInstance(this@LoginActivity).setNotes(result)
                     }
                     syncTasks()
                 } else if (response.code() == 401) {

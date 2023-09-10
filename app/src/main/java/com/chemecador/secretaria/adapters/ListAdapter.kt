@@ -144,10 +144,10 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
                 PreferencesHandler.getId(ctx),
                 mList.id!!,
                 mList
-            )?.enqueue(object : Callback<ResponseBody?> {
+            )?.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
-                    call: Call<ResponseBody?>,
-                    response: Response<ResponseBody?>
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
                 ) {
                     if (response.isSuccessful) {
                         val responseBody: String? =
@@ -166,7 +166,7 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
                     dialog!!.dismiss()
                 }
 
-                override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // Error en la llamada al servidor
                     Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.connection_error))
                 }
@@ -197,15 +197,15 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
             val apiService: Service? = retrofit?.create(Service::class.java)
 
             // Utilizar el servicio para realizar llamadas a la API
-            val call: Call<ResponseBody?>? = apiService?.deleteList(
+            val call: Call<ResponseBody>? = apiService?.deleteList(
                 PreferencesHandler.getToken(ctx), PreferencesHandler.getId(ctx), mList.id!!
             )
 
             // Ejecutar la llamada de forma asíncrona
-            call?.enqueue(object : Callback<ResponseBody?> {
+            call?.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
-                    call: Call<ResponseBody?>,
-                    response: Response<ResponseBody?>
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
                 ) {
                     if (response.isSuccessful) {
                         val responseBody: String ? = response.body()?.toString()
@@ -224,7 +224,7 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
                     dialog!!.dismiss()
                 }
 
-                override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // Error en la llamada al servidor
                     Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.connection_error))
                 }
@@ -235,7 +235,7 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
     }
 
     private fun deleteListFromDB(mList: NotesList) {
-        val deletedLists: Int = DB.getInstance(ctx)!!.delete(DB.LISTS_TABLE, mList.id!!)
+        val deletedLists: Int = DB.getInstance(ctx)!!.delete(DB.LISTS, mList.id!!)
         if (deletedLists == 0) {
             Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.delete_zero))
         } else {

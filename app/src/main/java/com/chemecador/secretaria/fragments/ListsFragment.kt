@@ -17,6 +17,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chemecador.secretaria.R
+import com.chemecador.secretaria.activities.LoginActivity
 import com.chemecador.secretaria.adapters.ListAdapter
 import com.chemecador.secretaria.api.Client.client
 import com.chemecador.secretaria.api.Service
@@ -26,7 +27,6 @@ import com.chemecador.secretaria.gui.CustomToast
 import com.chemecador.secretaria.items.NotesList
 import com.chemecador.secretaria.logger.Logger
 import com.chemecador.secretaria.responses.IdResponse
-import com.chemecador.secretaria.activities.LoginActivity
 import com.chemecador.secretaria.utils.PreferencesHandler
 import com.chemecador.secretaria.utils.Utils
 import com.google.android.material.appbar.MaterialToolbar
@@ -40,7 +40,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class ListsFragment : Fragment() {
-    private var binding: FragmentListsBinding? = null
+    private lateinit var binding: FragmentListsBinding
     private lateinit var ctx: Context
     private var rvLists: RecyclerView? = null
     private var adapter: ListAdapter? = null
@@ -55,12 +55,12 @@ class ListsFragment : Fragment() {
         val btnDay = toolbar.findViewById<Button>(R.id.btn_day)
         btnDay.visibility = View.GONE
         init()
-        return binding!!.root
+        return binding.root
     }
 
     private fun init() {
         lists = DB.getInstance(ctx)!!.lists
-        rvLists = binding!!.root.findViewById(R.id.rv)
+        rvLists = binding.root.findViewById(R.id.rv)
         rvLists?.layoutManager = LinearLayoutManager(ctx)
         adapter = ListAdapter(ctx, lists)
         adapter!!.setOnLongClickListener(adapter)
@@ -69,7 +69,7 @@ class ListsFragment : Fragment() {
         // Obtener una referencia al ActionBar
         val actionBar = (requireActivity() as AppCompatActivity).supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(false)
-        binding!!.fab.setOnClickListener { createList() }
+        binding.fab.setOnClickListener { createList() }
     }
 
     private fun createList() {
@@ -152,7 +152,7 @@ class ListsFragment : Fragment() {
         if (!PreferencesHandler.isOnline(ctx)) mList.id = listId
         lists!!.add(mList)
         adapter!!.notifyItemInserted(lists!!.size - 1)
-        Snackbar.make(binding!!.root, getString(R.string.create_list_success), Snackbar.LENGTH_LONG)
+        Snackbar.make(binding.root, getString(R.string.create_list_success), Snackbar.LENGTH_LONG)
             .setAnchorView(R.id.fab)
             .show()
         Logger.i(className, "Lista insertada correctamente: $mList")
@@ -170,9 +170,7 @@ class ListsFragment : Fragment() {
         val userId = PreferenceManager.getDefaultSharedPreferences(
             ctx
         ).getInt("id", -1)
-        val token = PreferenceManager.getDefaultSharedPreferences(
-            ctx
-        ).getString("token", "")
+        val token = PreferencesHandler.getToken(ctx)
         if (userId == -1) {
             CustomToast(ctx, Utils.ERROR, Toast.LENGTH_LONG).show(getString(R.string.login_again))
             (ctx as Activity?)!!.finish()
@@ -183,7 +181,7 @@ class ListsFragment : Fragment() {
         val call = apiService.createList(token, userId, mList)
 
         // Ejecutar la llamada de forma asíncrona
-        call!!.enqueue(object : Callback<IdResponse?> {
+        call.enqueue(object : Callback<IdResponse?> {
             override fun onResponse(call: Call<IdResponse?>, response: Response<IdResponse?>) {
                 if (response.isSuccessful) {
 
@@ -222,10 +220,6 @@ class ListsFragment : Fragment() {
         ctx = context
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null
-    }
 
     companion object {
         private val className = ListsFragment::class.java.simpleName

@@ -107,7 +107,7 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
             val apiService: Service? = retrofit?.create(Service::class.java)
             val nr = NoteRequest(mNote)
             // Utilizar el servicio para realizar llamadas a la API
-            val call: Call<ResponseBody?>? = apiService?.updateNote(
+            val call: Call<ResponseBody>? = apiService?.updateNote(
                 PreferencesHandler.getToken(ctx),
                 PreferencesHandler.getId(ctx),
                 mNote.listId,
@@ -116,10 +116,10 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
             )
 
             // Ejecutar la llamada de forma asíncrona
-            call?.enqueue(object : Callback<ResponseBody?> {
+            call?.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
-                    call: Call<ResponseBody?>,
-                    response: Response<ResponseBody?>
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
                 ) {
                     if (response.isSuccessful) {
                         val responseBody: String? =
@@ -138,7 +138,7 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
                     dialog!!.dismiss()
                 }
 
-                override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // Error en la llamada al servidor
                     Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.connection_error))
                 }
@@ -169,7 +169,7 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
             val apiService: Service? = retrofit?.create(Service::class.java)
 
             // Utilizar el servicio para realizar llamadas a la API
-            val call: Call<ResponseBody?>? = apiService?.deleteNote(
+            val call: Call<ResponseBody>? = apiService?.deleteNote(
                 PreferencesHandler.getToken(ctx),
                 PreferencesHandler.getId(ctx),
                 mNote.listId,
@@ -177,10 +177,10 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
             )
 
             // Ejecutar la llamada de forma asíncrona
-            call?.enqueue(object : Callback<ResponseBody?> {
+            call?.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
-                    call: Call<ResponseBody?>,
-                    response: Response<ResponseBody?>
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
                 ) {
                     if (response.isSuccessful) {
                         val responseBody: String? =
@@ -199,7 +199,7 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
                     dialog!!.dismiss()
                 }
 
-                override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // Error en la llamada al servidor
                     Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.connection_error))
                 }
@@ -210,7 +210,7 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
     }
 
     private fun deleteNoteFromDB(mNote: Note) {
-        val deletedNotes: Int = DB.getInstance(ctx)!!.delete(DB.NOTES_TABLE, mNote.id)
+        val deletedNotes: Int = DB.getInstance(ctx)!!.delete(DB.NOTES, mNote.id)
         if (deletedNotes == 0) {
             Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.delete_zero))
         } else {
