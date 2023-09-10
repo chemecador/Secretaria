@@ -24,44 +24,50 @@ class FriendsActivity : AppCompatActivity() {
 
         // Configurar el estado inicial del switcher
         binding = ActivityFriendsBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        setContentView(binding?.root)
 
 
         // Obtener una referencia al ActionBar
-        setSupportActionBar(binding!!.toolbar)
+        setSupportActionBar(binding?.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Configurar el clic del botón de retroceso
-        binding!!.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding?.toolbar?.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
         setTitle(R.string.friends)
         // Configurar el BottomNavigationView
         val bnv: BottomNavigationView = findViewById(R.id.bnv_friends)
-        bnv.setOnItemSelectedListener { item: MenuItem ->
-            val mOption = item.itemId
-            var fragment: Fragment? = null
-            if (mOption == R.id.menu_friends) {
-                // Mostrar la lista de amigos en el RecyclerView
-                fragment = FriendListFragment()
-            }
-            if (mOption == R.id.menu_friend_requests) {
-                // Mostrar la lista de solicitudes de amistad en el RecyclerView
-                fragment = FriendRequestFragment()
-            }
-            if (mOption == R.id.menu_add_friend) {
-                // Mostrar la pantalla para agregar un amigo
-                fragment = AddFriendFragment()
-            }
-            if (fragment != null) {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, fragment)
-                    .commit()
-                return@setOnItemSelectedListener true
-            }
-            false
-        }
+
 
         // Mostrar la lista de amigos como pestaña inicial
         bnv.selectedItemId = R.id.menu_friends
+
+
+        bnv.setOnItemSelectedListener { item: MenuItem ->
+            setupFragment(item)
+            item.isChecked = true // Para resaltar el ítem seleccionado
+            true
+        }
+
+    }
+
+    private fun setupFragment(item: MenuItem) {
+        var fragment: Fragment? = null
+        when (item.itemId) {
+            R.id.menu_friends -> {
+                fragment = FriendListFragment()
+            }
+            R.id.menu_friend_requests -> {
+                fragment = FriendRequestFragment()
+            }
+            R.id.menu_add_friend -> {
+                fragment = AddFriendFragment()
+            }
+        }
+        if (fragment != null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -78,20 +84,24 @@ class FriendsActivity : AppCompatActivity() {
                 startActivity(Intent(this, SettingsActivity::class.java))
                 return true
             }
+
             R.id.add_friend -> {
                 startActivity(Intent(this, FriendsActivity::class.java))
                 return true
             }
+
             R.id.about_us -> {
                 startActivity(Intent(this, AboutUsActivity::class.java))
                 return true
             }
+
             R.id.logout -> {
                 if (PreferencesHandler.isOnline(this)) DB.getInstance(this)?.deleteAll()
                 this.finish()
                 startActivity(Intent(this, LoginActivity::class.java))
                 return true
             }
+
             else -> return super.onOptionsItemSelected(item)
         }
     }

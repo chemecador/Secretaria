@@ -49,6 +49,8 @@ class LoginActivity : AppCompatActivity() {
         val loginButton = binding!!.btnLogin
         val guestButton = binding!!.btnGuest
         val registerbutton = binding!!.btnRegister
+
+        enableButtons()
         guestButton.setOnClickListener { loginOffline() }
 
         /*val afterTextChangedListener: TextWatcher = object : TextWatcher {
@@ -107,6 +109,8 @@ class LoginActivity : AppCompatActivity() {
         disableButtons()
         binding!!.loading.visibility = View.VISIBLE // Mostrar el AlertDialog
 
+        username = binding?.etUsername?.text.toString()
+        password = binding?.etPassword?.text.toString()
         // Obtener la instancia de Retrofit
         val retrofit = client
 
@@ -114,13 +118,13 @@ class LoginActivity : AppCompatActivity() {
         val apiService = retrofit!!.create(
             Service::class.java
         )
-        val request = LoginRequest(username!!, password!!)
+        val request = LoginRequest(username, password)
 
         // Utilizar el servicio para realizar llamadas a la API
         val call = apiService.login(request)
 
         // Ejecutar la llamada de forma asíncrona
-        call!!.enqueue(object : Callback<LoginResponse?> {
+        call.enqueue(object : Callback<LoginResponse?> {
             override fun onResponse(
                 call: Call<LoginResponse?>,
                 response: Response<LoginResponse?>
@@ -267,27 +271,27 @@ class LoginActivity : AppCompatActivity() {
     private fun syncLists() {
 
         // Obtener la instancia de Retrofit
-        val retrofit: Retrofit? = client
+        val retrofit: Retrofit = client!!
 
         // Crear una instancia del servicio de la API
-        val apiService: Service? = retrofit?.create(
+        val apiService: Service = retrofit.create(
             Service::class.java
         )
 
         // Utilizar el servicio para realizar llamadas a la API
-        val call: Call<ArrayList<NotesList?>?>? =
-            apiService?.getLists(PreferencesHandler.getToken(this), PreferencesHandler.getId(this))
+        val call: Call<ArrayList<NotesList>> =
+            apiService.getLists(PreferencesHandler.getToken(this), PreferencesHandler.getId(this))
 
         // Ejecutar la llamada de forma asíncrona
-        call!!.enqueue(object : Callback<ArrayList<NotesList?>?> {
+        call.enqueue(object : Callback<ArrayList<NotesList>> {
             override fun onResponse(
-                call: Call<ArrayList<NotesList?>?>,
-                response: Response<ArrayList<NotesList?>?>
+                call: Call<ArrayList<NotesList>>,
+                response: Response<ArrayList<NotesList>>
             ) {
                 if (response.isSuccessful) {
 
                     // Procesar la respuesta exitosa
-                    val result: ArrayList<NotesList?> = response.body()!!
+                    val result: ArrayList<NotesList> = response.body()!!
                     if (DB.getInstance(this@LoginActivity)!!
                             .setLists(result)
                     ) {
@@ -320,7 +324,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<ArrayList<NotesList?>?>, t: Throwable) {
+            override fun onFailure(call: Call<ArrayList<NotesList>>, t: Throwable) {
                 binding!!.loading.visibility = View.GONE
                 enableButtons()
                 // Manejar el error de conexión o la excepción
@@ -349,10 +353,10 @@ class LoginActivity : AppCompatActivity() {
         )
 
         // Ejecutar la llamada de forma asíncrona
-        call!!.enqueue(object : Callback<ArrayList<Note?>?> {
+        call!!.enqueue(object : Callback<ArrayList<Note>> {
             override fun onResponse(
-                call: Call<ArrayList<Note?>?>,
-                response: Response<ArrayList<Note?>?>
+                call: Call<ArrayList<Note>>,
+                response: Response<ArrayList<Note>>
             ) {
                 if (response.isSuccessful) {
 
@@ -382,7 +386,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<ArrayList<Note?>?>, t: Throwable) {
+            override fun onFailure(call: Call<ArrayList<Note>>, t: Throwable) {
                 binding!!.loading.visibility = View.GONE
                 enableButtons()
                 syncTasks()
@@ -412,10 +416,10 @@ class LoginActivity : AppCompatActivity() {
         )
 
         // Ejecutar la llamada de forma asíncrona
-        call!!.enqueue(object : Callback<ArrayList<Task?>?> {
+        call!!.enqueue(object : Callback<ArrayList<Task>> {
             override fun onResponse(
-                call: Call<ArrayList<Task?>?>,
-                response: Response<ArrayList<Task?>?>
+                call: Call<ArrayList<Task>>,
+                response: Response<ArrayList<Task>>
             ) {
                 if (response.isSuccessful) {
 
@@ -444,7 +448,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<ArrayList<Task?>?>, t: Throwable) {
+            override fun onFailure(call: Call<ArrayList<Task>>, t: Throwable) {
                 onSyncFinished()
                 // Manejar el error de conexión o la excepción
                 Utils.showToast(

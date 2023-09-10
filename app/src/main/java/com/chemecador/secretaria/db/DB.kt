@@ -419,15 +419,15 @@ class DB private constructor(context: Context, databaseName: String) :
     }
 
     /* SETTERS */
-    fun setTasks(tasks: ArrayList<Task?>) {
+    fun setTasks(tasks: ArrayList<Task>) {
         val db: SQLiteDatabase = writableDatabase
         try {
             db.delete(TASKS_TABLE, null, null)
             for (serverTask in tasks) {
-                val id: String? = serverTask?.id?.toString()
-                val title: String? = serverTask?.title
-                val content: String? = serverTask?.content
-                val startTime: LocalDateTime? = serverTask?.startTime
+                val id: String = serverTask.id.toString()
+                val title: String? = serverTask.title
+                val content: String? = serverTask.content
+                val startTime: LocalDateTime? = serverTask.startTime
                 val sql = "INSERT INTO tasks (id, title, content, start_time) VALUES (?,?,?,?)"
                 db.execSQL(sql, arrayOf(id, title, content, startTime))
             }
@@ -438,7 +438,7 @@ class DB private constructor(context: Context, databaseName: String) :
         }
     }
 
-    fun setLists(lists: ArrayList<NotesList?>): Boolean {
+    fun setLists(lists: ArrayList<NotesList>): Boolean {
         val db: SQLiteDatabase = writableDatabase
         var success = false
         val maxRetries = 2 // Número máximo de intentos
@@ -464,7 +464,7 @@ class DB private constructor(context: Context, databaseName: String) :
         return success
     }
 
-    fun setNotes(notes: ArrayList<Note?>) {
+    fun setNotes(notes: ArrayList<Note>) {
         val db: SQLiteDatabase = writableDatabase
         try {
             db.delete(NOTES_TABLE, null, null)

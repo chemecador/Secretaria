@@ -1,5 +1,6 @@
 package com.chemecador.secretaria.api
 
+import com.chemecador.secretaria.items.Friend
 import com.chemecador.secretaria.items.Note
 import com.chemecador.secretaria.items.NotesList
 import com.chemecador.secretaria.items.Task
@@ -23,11 +24,11 @@ import retrofit2.http.Path
 interface Service {
     @POST("/login")
     @Headers("Content-Type: application/json")
-    fun login(@Body request: LoginRequest?): Call<LoginResponse?>?
+    fun login(@Body request: LoginRequest?): Call<LoginResponse?>
 
     @POST("/register")
     @Headers("Content-Type: application/json")
-    fun register(@Body request: LoginRequest?): Call<LoginResponse?>?
+    fun register(@Body request: LoginRequest?): Call<LoginResponse?>
 
     /* GETTERS */
     @GET("/users/{userId}/lists")
@@ -35,21 +36,34 @@ interface Service {
     fun getLists(
         @Header("Authorization") token: String?,
         @Path("userId") userId: Int
-    ): Call<ArrayList<NotesList?>?>?
+    ): Call<ArrayList<NotesList>>
 
     @GET("/users/{userId}/notes")
     @Headers("Content-Type: application/json")
     fun getNotes(
         @Header("Authorization") token: String?,
         @Path("userId") userId: Int
-    ): Call<ArrayList<Note?>?>?
+    ): Call<ArrayList<Note>>
 
     @GET("/users/{userId}/tasks")
     @Headers("Content-Type: application/json")
     fun getTasks(
         @Header("Authorization") token: String?,
         @Path("userId") userId: Int
-    ): Call<ArrayList<Task?>?>?
+    ): Call<ArrayList<Task>>
+
+    @GET("/users/{userId}/friendRequests")
+    fun getFriendRequests(
+        @Header("Authorization") token: String?,
+        @Path("userId") userId: Int
+    ): Call<ArrayList<Friend>>
+
+
+    @GET("/users/{userId}/friends")
+    fun getFriends(
+        @Header("Authorization") token: String?,
+        @Path("userId") userId: Int
+    ): Call<ArrayList<Friend?>>
 
     /* CREATE */
     @POST("/users/{id}/lists")
@@ -58,7 +72,7 @@ interface Service {
         @Header("Authorization") token: String?,
         @Path("id") userId: Int,
         @Body list: NotesList?
-    ): Call<IdResponse?>?
+    ): Call<IdResponse?>
 
     @POST("/users/{id}/lists/{listId}/notes")
     @Headers("Content-Type: application/json")
@@ -67,7 +81,7 @@ interface Service {
         @Path("id") userId: Int,
         @Path("listId") listId: Int,
         @Body nr: NoteRequest?
-    ): Call<IdResponse?>?
+    ): Call<IdResponse?>
 
     @POST("/users/{id}/tasks")
     @Headers("Content-Type: application/json")
@@ -75,7 +89,7 @@ interface Service {
         @Header("Authorization") token: String?,
         @Path("id") userId: Int,
         @Body tr: TaskRequest?
-    ): Call<IdResponse?>?
+    ): Call<IdResponse?>
 
     /* UPDATE */
     @PUT("/users/{userId}/lists/{listId}")
@@ -85,7 +99,7 @@ interface Service {
         @Path("userId") userId: Int,
         @Path("listId") listId: Int,
         @Body list: NotesList?
-    ): Call<ResponseBody?>?
+    ): Call<ResponseBody?>
 
     @PUT("/users/{userId}/lists/{listId}/notes/{noteId}")
     @Headers("Content-Type: application/json")
@@ -95,7 +109,7 @@ interface Service {
         @Path("listId") listId: Int,
         @Path("noteId") noteId: Int,
         @Body nr: NoteRequest?
-    ): Call<ResponseBody?>?
+    ): Call<ResponseBody?>
 
     @PUT("/users/{userId}/tasks/{taskId}")
     @Headers("Content-Type: application/json")
@@ -104,7 +118,7 @@ interface Service {
         @Path("userId") userId: Int,
         @Path("taskId") taskId: Int,
         @Body tr: TaskRequest?
-    ): Call<ResponseBody?>?
+    ): Call<ResponseBody?>
 
     /* DELETE */
     @DELETE("/users/{id}/lists/{listId}/notes/{noteId}")
@@ -114,7 +128,7 @@ interface Service {
         @Path("id") userId: Int,
         @Path("listId") listId: Int,
         @Path("noteId") noteId: Int
-    ): Call<ResponseBody?>?
+    ): Call<ResponseBody?>
 
     @DELETE("/users/{id}/lists/{listId}")
     @Headers("Content-Type: application/json")
@@ -122,7 +136,7 @@ interface Service {
         @Header("Authorization") token: String?,
         @Path("id") userId: Int,
         @Path("listId") listId: Int
-    ): Call<ResponseBody?>?
+    ): Call<ResponseBody?>
 
     @DELETE("/users/{id}/tasks/{taskId}")
     @Headers("Content-Type: application/json")
@@ -130,7 +144,7 @@ interface Service {
         @Header("Authorization") token: String?,
         @Path("id") userId: Int,
         @Path("taskId") taskId: Int
-    ): Call<ResponseBody?>?
+    ): Call<ResponseBody?>
 
     /* PASSWORD */
     @POST("/users/{id}/account/changePassword")
@@ -139,5 +153,5 @@ interface Service {
         @Header("Authorization") token: String?,
         @Path("id") userId: Int,
         @Body pr: PasswordRequest?
-    ): Call<ResponseBody?>?
+    ): Call<ResponseBody?>
 }

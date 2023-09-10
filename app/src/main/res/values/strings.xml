@@ -88,6 +88,7 @@
     <string name="question_friend_name">¿Cómo se llama tu amigo?</string>
     <string name="insert_friend_name">Escribe el nombre de tu amigo</string>
     <string name="friend_not_found">No hemos encontrado a tu amigo :(</string>
+    <string name="invitations_sent">Invitaciones enviadas</string>
     <string name="invitation_sent_to">Invitación enviada a</string>
     <string name="no_friends">Todavía no has agregado a ningún amigo</string>
     <string name="no_requests">No tienes peticiones de amistad pendientes</string>

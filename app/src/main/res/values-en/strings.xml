@@ -34,6 +34,7 @@
     <string name="question_friend_name">What is your friend\'s name?</string>
     <string name="insert_friend_name">Type your friend\'s name</string>
     <string name="friend_not_found">We couldn\'t find your friend :(</string>
+    <string name="invitations_sent">Invitations sent</string>
     <string name="invitation_sent_to">Invitation sent to</string>
     <string name="no_friends">You didn\'t add any friends yet</string>
     <string name="no_requests">No friend requests found</string>
