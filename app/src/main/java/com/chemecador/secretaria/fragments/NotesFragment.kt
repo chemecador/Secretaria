@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +22,9 @@ import com.chemecador.secretaria.api.Client.client
 import com.chemecador.secretaria.api.Service
 import com.chemecador.secretaria.databinding.FragmentNotesBinding
 import com.chemecador.secretaria.db.DB
+import com.chemecador.secretaria.fragments.detail.NoteDetailFragment
 import com.chemecador.secretaria.gui.CustomToast
+import com.chemecador.secretaria.interfaces.OnItemClickListener
 import com.chemecador.secretaria.items.Note
 import com.chemecador.secretaria.items.NotesList
 import com.chemecador.secretaria.logger.Logger
@@ -39,7 +42,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class NotesFragment : Fragment() {
+class NotesFragment : Fragment(), OnItemClickListener {
     private var notes: MutableList<Note>? = null
     private lateinit var ctx: Context
     private var adapter: NoteAdapter? = null
@@ -61,10 +64,11 @@ class NotesFragment : Fragment() {
     }
 
     private fun init() {
-        notes = DB.getInstance(ctx!!)!!.getNotesByList(listId)
-        isPublic = DB.getInstance(ctx!!)!!.getPrivacy(listId) == NotesList.PUBLIC
+        notes = DB.getInstance(ctx).getNotesByList(listId)
+        isPublic = DB.getInstance(ctx).getPrivacy(listId) == NotesList.PUBLIC
         val rvLists = binding!!.root.findViewById<RecyclerView>(R.id.rv)
-        adapter = NoteAdapter(ctx!!, notes, isPublic)
+        adapter = NoteAdapter(ctx, notes, isPublic)
+        adapter!!.onItemClickListener = this
         rvLists.layoutManager = LinearLayoutManager(ctx)
         rvLists.adapter = adapter
 
@@ -77,7 +81,7 @@ class NotesFragment : Fragment() {
     }
 
     private fun createNote() {
-        val builder = MaterialAlertDialogBuilder(ctx!!)
+        val builder = MaterialAlertDialogBuilder(ctx)
         val inflater = LayoutInflater.from(ctx)
         val dialogView = inflater.inflate(R.layout.dialog_new_note, null)
         val cbContent = dialogView.findViewById<MaterialCheckBox>(R.id.cb_content)
@@ -102,7 +106,7 @@ class NotesFragment : Fragment() {
             note.listId = listId
             note.content = if (tilContent.visibility == View.VISIBLE) tilContent.editText!!
                 .text.toString() else ""
-            note.status = DB.getInstance(ctx!!)!!.getType(listId)
+            note.status = DB.getInstance(ctx).getType(listId)
             if (PreferencesHandler.isOnline(ctx)) {
                 syncNote(note)
             } else {
@@ -124,11 +128,11 @@ class NotesFragment : Fragment() {
             Service::class.java
         )
         val userId = PreferenceManager.getDefaultSharedPreferences(
-            ctx!!
+            ctx
         ).getInt("id", -1)
         val token = PreferencesHandler.getToken(ctx)
         if (userId == -1) {
-            CustomToast(ctx!!, Utils.ERROR, Toast.LENGTH_LONG).show(getString(R.string.login_again))
+            CustomToast(ctx, Utils.ERROR, Toast.LENGTH_LONG).show(getString(R.string.login_again))
             (ctx as Activity?)!!.finish()
             startActivity(Intent(ctx, LoginActivity::class.java))
             return
@@ -138,7 +142,7 @@ class NotesFragment : Fragment() {
         val call = apiService.createNote(token, userId, mNote.listId, nr)
 
         // Ejecutar la llamada de forma asíncrona
-        call!!.enqueue(object : Callback<IdResponse?> {
+        call.enqueue(object : Callback<IdResponse?> {
 
             override fun onResponse(call: Call<IdResponse?>, response: Response<IdResponse?>) {
                 if (response.isSuccessful) {
@@ -151,13 +155,13 @@ class NotesFragment : Fragment() {
                 } else if (response.code() == 401) {
                     // Manejar el error de respuesta
                     Utils.showToast(
-                        ctx!!,
+                        ctx,
                         Utils.ERROR,
                         response.code().toString() + " : " + getString(R.string.unauthorized)
                     )
                 } else {
                     Utils.showToast(
-                        ctx!!,
+                        ctx,
                         Utils.ERROR,
                         response.code().toString() + " : " + getString(R.string.server_error)
                     )
@@ -167,7 +171,7 @@ class NotesFragment : Fragment() {
             override fun onFailure(call: Call<IdResponse?>, t: Throwable) {
 // Manejar el error de conexión o la excepción
                 Utils.showToast(
-                    ctx!!, Utils.ERROR, """${getString(R.string.server_error)} :
+                    ctx, Utils.ERROR, """${getString(R.string.server_error)} :
 ${t.message}"""
                 )
             }
@@ -175,7 +179,7 @@ ${t.message}"""
     }
 
     private fun insertNote(mNote: Note) {
-        DB.getInstance(ctx!!)!!.insertNote(mNote)
+        DB.getInstance(ctx).insertNote(mNote)
         notes?.add(mNote)
         // Notificar al adaptador del cambio en la lista de tareas
         adapter!!.notifyItemInserted(notes!!.size - 1)
@@ -183,6 +187,28 @@ ${t.message}"""
             .setAnchorView(R.id.fab)
             .show()
         Logger.i(className, "Nota insertada correctamente: $mNote")
+    }
+
+
+    override fun onItemClick(position: Int) {
+
+
+        val noteDetailFragment = NoteDetailFragment()
+
+        val note = notes?.get(position)
+        val bundle = Bundle()
+        if (note != null) {
+            bundle.putString("title", note.title)
+            bundle.putString("content", note.content)
+            bundle.putInt("status", note.status)
+            noteDetailFragment.arguments = bundle
+        }
+
+        // Obtener los datos del elemento en la posición 'position'
+        val transaction = (ctx as FragmentActivity).supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.container, noteDetailFragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 
     override fun onAttach(context: Context) {

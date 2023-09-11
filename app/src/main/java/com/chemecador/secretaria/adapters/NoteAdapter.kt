@@ -5,9 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.CompoundButton
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -15,19 +13,18 @@ import com.chemecador.secretaria.R
 import com.chemecador.secretaria.api.Client
 import com.chemecador.secretaria.api.Service
 import com.chemecador.secretaria.db.DB
+import com.chemecador.secretaria.interfaces.OnItemClickListener
 import com.chemecador.secretaria.items.Note
 import com.chemecador.secretaria.logger.Logger
 import com.chemecador.secretaria.requests.NoteRequest
 import com.chemecador.secretaria.utils.PreferencesHandler
 import com.chemecador.secretaria.utils.Utils
 import com.google.android.material.checkbox.MaterialCheckBox
-import com.google.android.material.textfield.TextInputLayout
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import java.util.Objects
 
 class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
     RecyclerView.Adapter<NoteAdapter.ViewHolder?>() {
@@ -36,6 +33,8 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
     private val ctx: Context
     private var dialog: AlertDialog? = null
     private val isPublic: Boolean
+    var onItemClickListener: OnItemClickListener? = null
+
 
     init {
         mInflater = LayoutInflater.from(ctx)
@@ -58,45 +57,18 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
         val mNote: Note = noteList!![position]
         holder.bindData(mNote)
         // Asignar un listener de clic al elemento de la lista
-        holder.itemView.setOnClickListener { showNote(mNote) }
+        holder.itemView.setOnClickListener {
+            val position = holder.adapterPosition
+            onItemClickListener?.onItemClick(position)
+        }
         holder.cb.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             DB.getInstance(
                 ctx
-            )!!.updateNoteStatus(mNote.id, isChecked)
+            ).updateNoteStatus(mNote.id, isChecked)
         }
         holder.ivPublic.visibility = if (isPublic) View.VISIBLE else View.INVISIBLE
     }
 
-    private fun showNote(mNote: Note) {
-        val builder = AlertDialog.Builder(ctx)
-        val inflater: LayoutInflater = LayoutInflater.from(ctx)
-        val dialogView: View = inflater.inflate(R.layout.detail_note, null)
-        builder.setView(dialogView)
-        val tilTitle: TextInputLayout = dialogView.findViewById(R.id.til_title)
-        val etContent: EditText = dialogView.findViewById(R.id.et_content)
-        Objects.requireNonNull<EditText>(tilTitle.editText).setText(mNote.title)
-        if (mNote.content?.isEmpty() == true) {
-            etContent.visibility = View.GONE
-        } else {
-            etContent.setText(mNote.content)
-            etContent.visibility = View.GONE
-        }
-        val btnUpdate = dialogView.findViewById<Button>(R.id.btn_update)
-        btnUpdate.setOnClickListener {
-            val newTitle: String = tilTitle.editText?.text.toString()
-            val newContent: String = etContent.text.toString()
-            if (newTitle.isEmpty()) {
-                tilTitle.error = ctx.getString(R.string.error_empty_field)
-                return@setOnClickListener
-            }
-            mNote.title = newTitle
-            mNote.content = newContent
-            updateNoteOnline(mNote)
-        }
-        val btnDelete = dialogView.findViewById<Button>(R.id.btn_delete)
-        btnDelete.setOnClickListener { deleteNote(mNote) }
-        dialog = builder.show()
-    }
 
     private fun updateNoteOnline(mNote: Note) {
         if (PreferencesHandler.isOnline(ctx)) {
