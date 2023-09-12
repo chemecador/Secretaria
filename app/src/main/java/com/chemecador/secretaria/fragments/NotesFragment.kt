@@ -169,10 +169,9 @@ class NotesFragment : Fragment(), OnItemClickListener {
             }
 
             override fun onFailure(call: Call<IdResponse?>, t: Throwable) {
-// Manejar el error de conexión o la excepción
+                // Manejar el error de conexión o la excepción
                 Utils.showToast(
-                    ctx, Utils.ERROR, """${getString(R.string.server_error)} :
-${t.message}"""
+                    ctx, Utils.ERROR, """${getString(R.string.server_error)} :${t.message}"""
                 )
             }
         })
@@ -198,9 +197,11 @@ ${t.message}"""
         val note = notes?.get(position)
         val bundle = Bundle()
         if (note != null) {
-            bundle.putString("title", note.title)
-            bundle.putString("content", note.content)
-            bundle.putInt("status", note.status)
+            bundle.putString(NoteDetailFragment.TITLE, note.title)
+            bundle.putString(NoteDetailFragment.CONTENT, note.content)
+            bundle.putInt(NoteDetailFragment.STATUS, note.status)
+            bundle.putInt(NoteDetailFragment.ID, note.id)
+            bundle.putInt(NoteDetailFragment.LIST_ID, note.listId)
             noteDetailFragment.arguments = bundle
         }
 

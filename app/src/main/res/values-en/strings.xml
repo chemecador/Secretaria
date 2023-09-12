@@ -93,8 +93,12 @@
     <string name="updated_zero">No items where updated</string>
     <string name="delete_zero">No items where deleted</string>
     <string name="error_empty_field">Field must not be empty</string>
+    <string name="error_list_not_empty">Lists that contain notes can\'t be deleted. You must delete each note first.</string>
 
 
+
+    <string name="finished">Finished</string>
+    <string name="not_finished">Not finished</string>
 
     <!-- Others -->
     <string name="today">Today</string>

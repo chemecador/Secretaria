@@ -170,7 +170,7 @@ class DB private constructor(context: Context, databaseName: String) :
                 val title = cursor.getString(cursor.getColumnIndexOrThrow("title"))
                 val content = cursor.getString(cursor.getColumnIndexOrThrow("content"))
                 val status = cursor.getInt(cursor.getColumnIndexOrThrow("status"))
-                val note = Note()
+                val note = Note(listId, id, title, content, status)
                 note.id = id
                 note.listId = listId
                 note.title = title

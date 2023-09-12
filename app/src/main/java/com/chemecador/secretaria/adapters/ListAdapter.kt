@@ -208,16 +208,19 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
                     response: Response<ResponseBody>
                 ) {
                     if (response.isSuccessful) {
-                        val responseBody: String ? = response.body()?.toString()
+                        val responseBody: String ? = response.body()?.string()
 
                         if (responseBody == "OK") {
                             deleteListFromDB(mList)
                         } else {
                             Utils.showToast(
                                 ctx, Utils.SUCCESS,
-                                ctx.getString(R.string.delete_error) + ": " + responseBody
+                                ctx.getString(R.string.delete_error)
                             )
                         }
+                    } else if (response.code() == 500 && response.errorBody()?.string()?.contains("FOREIGN KEY") == true) {
+                        Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.error_list_not_empty))
+
                     } else {
                         Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.delete_error))
                     }

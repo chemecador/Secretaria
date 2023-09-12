@@ -251,21 +251,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun syncDB() {
         syncLists()
-        startProgressTimer() // Iniciar el temporizador
-    }
-
-    private fun startProgressTimer() {
-        progressTimer = object : CountDownTimer(10000, 1000) {
-            // 10 segundos de tiempo de espera
-            override fun onTick(millisUntilFinished: Long) {
-                // No se requiere ninguna acción en cada tick del temporizador
-            }
-
-            override fun onFinish() {
-                binding!!.loading.visibility = View.GONE
-                enableButtons()
-            }
-        }.start()
     }
 
     private fun syncLists() {
@@ -292,7 +277,7 @@ class LoginActivity : AppCompatActivity() {
 
                     // Procesar la respuesta exitosa
                     val result: ArrayList<NotesList> = response.body()!!
-                    if (DB.getInstance(this@LoginActivity)!!
+                    if (DB.getInstance(this@LoginActivity)
                             .setLists(result)
                     ) {
                         syncNotes()
@@ -425,7 +410,7 @@ class LoginActivity : AppCompatActivity() {
 
                     // Procesar la respuesta exitosa
                     val result = response.body()!!
-                    DB.getInstance(this@LoginActivity)!!
+                    DB.getInstance(this@LoginActivity)
                         .setTasks(result)
                     onSyncFinished()
                 } else if (response.code() == 401) {

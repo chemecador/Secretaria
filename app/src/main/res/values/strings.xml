@@ -80,6 +80,11 @@
     <string name="updated_zero">No se ha actualizado ningún elemento</string>
     <string name="delete_zero">No se ha eliminado ningún elemento</string>
     <string name="error_empty_field">El campo no puede estar vacío</string>
+    <string name="error_list_not_empty">No se puede eliminar una lista que contiene notas. Debes eliminar cada nota primero.</string>
+
+
+    <string name="finished">Completado</string>
+    <string name="not_finished">Sin completar</string>
 
     <!-- Amigos -->
 
