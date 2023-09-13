@@ -13,6 +13,13 @@ class NotesList(
     var type: Int
 ) {
 
+    // Constructor vacío
+    constructor() : this(null, "", 0, 0)
+
+    // Constructor sin el parámetro id
+    constructor(name: String, privacy: Int, type: Int) : this(null, name, privacy, type)
+
+
     override fun toString(): String {
         return "NotesList {" +
                 "id = " + id +

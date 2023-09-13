@@ -15,7 +15,7 @@ import com.chemecador.secretaria.utils.PreferencesHandler
 import java.lang.ref.WeakReference
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.ZoneOffset
 
 /**
  * Información importante acerca de la base de datos:
@@ -52,7 +52,7 @@ class DB private constructor(context: Context, databaseName: String) :
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "title TEXT NOT NULL,"
                 + "content TEXT DEFAULT '',"
-                + "start_time DATETIME DEFAULT (strftime('%Y-%m-%d %H:%M', 'now', 'localtime'))"
+                + "start_time INTEGER DEFAULT (strftime('%s', 'now'))"
                 + ")")
         db.execSQL(sql)
         // Crear la tabla de Notas
@@ -109,10 +109,16 @@ class DB private constructor(context: Context, databaseName: String) :
             "start_time"
         )
         val selection = "start_time >= ? AND start_time < ?"
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val sDay = day.format(formatter)
-        val sNextDay = day.plusDays(1).format(formatter)
-        val selectionArgs = arrayOf(sDay, sNextDay)
+
+        // Obtener el valor Unix para la medianoche (00:00)
+        val unixStart = day.withHour(0).withMinute(0).withSecond(0).withNano(0).toEpochSecond(ZoneOffset.UTC)
+
+        // Obtener el valor Unix para las 23:59
+        val unixEnd = day.withHour(23).withMinute(59).withSecond(59).withNano(999999999).toEpochSecond(ZoneOffset.UTC)
+
+        val nextDay = day.plusDays(1)
+
+        val selectionArgs = arrayOf(unixStart.toString(), unixEnd.toString())
         try {
             readableDatabase.use { db ->
                 db.query(
@@ -129,9 +135,7 @@ class DB private constructor(context: Context, databaseName: String) :
                         val title: String = cursor.getString(cursor.getColumnIndexOrThrow("title"))
                         val content: String =
                             cursor.getString(cursor.getColumnIndexOrThrow("content"))
-                        val startTimeStr: String =
-                            cursor.getString(cursor.getColumnIndexOrThrow("start_time"))
-                        val startTime = LocalDateTime.parse(startTimeStr)
+                        val startTime = cursor.getLong(cursor.getColumnIndexOrThrow("start_time"))
                         val task = Task(id, title, content, startTime)
                         taskList.add(task)
                     }
@@ -320,14 +324,13 @@ class DB private constructor(context: Context, databaseName: String) :
         if (mTask.id != 0) {
             values.put("id", mTask.id)
         }
-        if (mTask.title != null) {
-            values.put("title", mTask.title)
-        }
+        values.put("title", mTask.title)
+
         if (mTask.content != null) {
             values.put("content", mTask.content)
         }
         if (mTask.startTime != null) {
-            values.put("start_time", mTask.startTime.toString())
+            values.put("start_time", mTask.startTime)
         }
         db.insert(TASKS, null, values)
         db.close()
@@ -422,9 +425,9 @@ class DB private constructor(context: Context, databaseName: String) :
             db.delete(TASKS, null, null)
             for (serverTask in tasks) {
                 val id: String = serverTask.id.toString()
-                val title: String? = serverTask.title
+                val title: String = serverTask.title
                 val content: String? = serverTask.content
-                val startTime: LocalDateTime? = serverTask.startTime
+                val startTime: Long? = serverTask.startTime
                 val sql = "INSERT INTO tasks (id, title, content, start_time) VALUES (?,?,?,?)"
                 db.execSQL(sql, arrayOf(id, title, content, startTime))
             }
@@ -444,9 +447,9 @@ class DB private constructor(context: Context, databaseName: String) :
             try {
                 db.delete(LISTS, null, null)
                 for (serverList in lists) {
-                    val id: String? = serverList?.id?.toString()
-                    val name: String? = serverList?.name
-                    val privacy: String? = serverList?.privacy?.toString()
+                    val id: String? = serverList.id?.toString()
+                    val name: String = serverList.name
+                    val privacy: String = serverList.privacy.toString()
                     val sql = "INSERT INTO lists (id, name, privacy) VALUES (?,?,?)"
                     db.execSQL(sql, arrayOf(id, name, privacy))
                 }
@@ -561,6 +564,7 @@ class DB private constructor(context: Context, databaseName: String) :
             Logger.e("DB", "Error al eliminar la tabla $tableName", e)
         }
     }
+
     private fun dropTables() {
 
         // Obtén una instancia de la base de datos en modo escritura

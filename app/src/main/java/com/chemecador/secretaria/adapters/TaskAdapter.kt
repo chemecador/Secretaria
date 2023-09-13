@@ -1,15 +1,11 @@
 package com.chemecador.secretaria.adapters
 
 import android.app.AlertDialog
-import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.DatePicker
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.TimePicker
 import androidx.recyclerview.widget.RecyclerView
@@ -17,23 +13,24 @@ import com.chemecador.secretaria.R
 import com.chemecador.secretaria.api.Client
 import com.chemecador.secretaria.api.Service
 import com.chemecador.secretaria.db.DB
+import com.chemecador.secretaria.interfaces.OnItemClickListener
 import com.chemecador.secretaria.items.Task
 import com.chemecador.secretaria.logger.Logger
-import com.chemecador.secretaria.requests.TaskRequest
 import com.chemecador.secretaria.utils.PreferencesHandler
 import com.chemecador.secretaria.utils.Utils
-import com.google.android.material.textfield.TextInputLayout
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.Calendar
 
 class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Task>) :
     RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
     private val mInflater: LayoutInflater = LayoutInflater.from(ctx)
     private var dialog: AlertDialog? = null
+    var onItemClickListener: OnItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = mInflater.inflate(R.layout.item_task, parent, false)
@@ -45,11 +42,16 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
         val mTask = taskList[position]
         holder.bindData(mTask)
         // Asignar un listener de clic al elemento de la lista
-        holder.itemView.setOnClickListener { showTask(mTask) }
+        //holder.itemView.setOnClickListener { showTask(mTask) }
+
+        holder.itemView.setOnClickListener {
+            val position = holder.adapterPosition
+            onItemClickListener?.onItemClick(position)
+        }
     }
 
     private fun showTask(mTask: Task) {
-        val builder = AlertDialog.Builder(ctx)
+        /*val builder = AlertDialog.Builder(ctx)
         val inflater = LayoutInflater.from(ctx)
         val dialogView = inflater.inflate(R.layout.detail_task, null)
         builder.setView(dialogView)
@@ -78,7 +80,8 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
         }
         val btnDelete = dialogView.findViewById<Button>(R.id.btn_delete)
         btnDelete.setOnClickListener { deleteTask(mTask) }
-        dialog = builder.show()
+        dialog = builder.show()*/
+
     }
 
     private fun showDatePicker(mTask: Task) {
@@ -89,7 +92,7 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
         val currentDay = calendar[Calendar.DAY_OF_MONTH]
 
         // Crear un DatePickerDialog
-        val datePickerDialog = DatePickerDialog(
+        /*val datePickerDialog = DatePickerDialog(
             ctx,
             { _: DatePicker?, year: Int, month: Int, dayOfMonth: Int ->
                 // Aquí se ejecutará cuando el usuario seleccione la nueva fecha
@@ -114,7 +117,7 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
         }
 
         // Mostrar el diálogo del selector de fecha
-        datePickerDialog.show()
+        datePickerDialog.show()*/
     }
 
     private fun showTimePicker(mTask: Task, year: Int, month: Int, day: Int) {
@@ -134,7 +137,7 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
                 val newTime = LocalDateTime.of(year, month, day, hourOfDay, minute)
 
                 // Actualizar el tiempo en la tarea actual
-                mTask.startTime = newTime
+                mTask.startTime = newTime.toEpochSecond(ZoneOffset.UTC)
 
                 // Actualizar la vista en el diálogo de detalle
                 val tvTime = dialog!!.findViewById<TextView>(R.id.tv_start_time)
@@ -158,13 +161,12 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
             val apiService = retrofit?.create(
                 Service::class.java
             )
-            val tr = TaskRequest(mTask)
 
             // Utilizar el servicio para realizar llamadas a la API
             val call = apiService?.updateTask(
                 PreferencesHandler.getToken(ctx), PreferencesHandler.getId(
                     ctx
-                ), mTask.id, tr
+                ), mTask.id, mTask
             )
 
             // Ejecutar la llamada de forma asíncrona
@@ -200,7 +202,7 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
     }
 
     private fun updateTaskFromDB(mTask: Task) {
-        val updatedTasks = DB.getInstance(ctx)!!.updateTask(mTask)
+        val updatedTasks = DB.getInstance(ctx).updateTask(mTask)
         if (updatedTasks == 0) {
             Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.updated_zero))
         } else {
@@ -229,7 +231,7 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
             )
 
             // Ejecutar la llamada de forma asíncrona
-            call!!.enqueue(object : Callback<ResponseBody> {
+            call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
@@ -261,7 +263,7 @@ class TaskAdapter(private val ctx: Context, private val taskList: MutableList<Ta
     }
 
     private fun deleteTaskFromDB(mTask: Task) {
-        val deletedTasks = DB.getInstance(ctx)!!
+        val deletedTasks = DB.getInstance(ctx)
             .delete(DB.TASKS, mTask.id)
         if (deletedTasks == 0) {
             Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.delete_zero))

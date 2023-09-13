@@ -66,6 +66,7 @@
     <string name="public_info">Si la lista es pública, podrán verla tus amigos.</string>
     <string name="check_list_info">Una check list es una lista de tareas que puedes marcar como completadas (por ejemplo, una lista de la compra)</string>
     <string name="context">Contexto</string>
+    <string name="content">Contenido</string>
 
 
     <string name="create_list_success">Lista añadida correctamente</string>

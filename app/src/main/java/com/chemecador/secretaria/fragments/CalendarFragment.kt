@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,10 +30,11 @@ import com.chemecador.secretaria.api.Client.client
 import com.chemecador.secretaria.api.Service
 import com.chemecador.secretaria.databinding.FragmentCalendarBinding
 import com.chemecador.secretaria.db.DB
+import com.chemecador.secretaria.fragments.detail.TaskDetailFragment
 import com.chemecador.secretaria.gui.CustomToast
+import com.chemecador.secretaria.interfaces.OnItemClickListener
 import com.chemecador.secretaria.items.Task
 import com.chemecador.secretaria.logger.Logger
-import com.chemecador.secretaria.requests.TaskRequest
 import com.chemecador.secretaria.responses.IdResponse
 import com.chemecador.secretaria.utils.PreferencesHandler
 import com.chemecador.secretaria.utils.Utils
@@ -43,16 +45,18 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.Calendar
 import java.util.Locale
 
-class CalendarFragment : Fragment() {
+class CalendarFragment : Fragment(), OnItemClickListener {
     private var binding: FragmentCalendarBinding? = null
     private var btnDay: Button? = null
     private lateinit var taskList: MutableList<Task>
     private var taskAdapter: TaskAdapter? = null
     private lateinit var ctx: Context
     private var selectedDay: LocalDateTime? = null
+    var onItemClickListener: OnItemClickListener? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -68,8 +72,9 @@ class CalendarFragment : Fragment() {
         btnDay = toolbar.findViewById(R.id.btn_day)
         btnDay?.visibility = View.VISIBLE
         btnDay?.setOnClickListener { changeDay() }
-        taskList = DB.getInstance(ctx)!!.getTasksByDay(LocalDateTime.now())
+        taskList = DB.getInstance(ctx).getTasksByDay(LocalDateTime.now())
         taskAdapter = TaskAdapter(ctx, taskList)
+        taskAdapter!!.onItemClickListener = this
         val rv = binding!!.root.findViewById<RecyclerView>(R.id.recycler_view)
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(ctx)
@@ -122,13 +127,13 @@ class CalendarFragment : Fragment() {
     private fun onDayChanged(year: Int, monthOfYear: Int, dayOfMonth: Int) {
         setDay(year, monthOfYear + 1, dayOfMonth)
         taskList.clear()
-        taskList.addAll(DB.getInstance(ctx)!!.getTasksByDay(selectedDay!!))
+        taskList.addAll(DB.getInstance(ctx).getTasksByDay(selectedDay!!))
         taskAdapter!!.notifyDataSetChanged()
     }
 
     private fun createTask() {
         val mTask = Task()
-        mTask.startTime = selectedDay
+        mTask.startTime = selectedDay?.toEpochSecond(ZoneOffset.UTC)
         val builder = AlertDialog.Builder(
             ctx
         )
@@ -172,7 +177,7 @@ class CalendarFragment : Fragment() {
                     )
 
                     // Asignar el valor formateado al objeto mTask
-                    mTask.startTime = selectedDateTime
+                    mTask.startTime = selectedDateTime?.toEpochSecond(ZoneOffset.UTC)
                     syncTask(mTask)
                 } else {
                     insertTask(mTask)
@@ -185,6 +190,27 @@ class CalendarFragment : Fragment() {
         negativeButton.setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
+
+    override fun onItemClick(position: Int) {
+
+
+        val taskDetailFragment = TaskDetailFragment()
+
+        val task = taskList[position]
+        val bundle = Bundle()
+        bundle.putString(TaskDetailFragment.TITLE, task.title)
+        bundle.putString(TaskDetailFragment.CONTENT, task.content)
+        bundle.putInt(TaskDetailFragment.ID, task.id)
+        task.startTime?.let { bundle.putLong(TaskDetailFragment.START_TIME, it) }
+        taskDetailFragment.arguments = bundle
+
+        // Obtener los datos del elemento en la posición 'position'
+        val transaction = (ctx as FragmentActivity).supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.container, taskDetailFragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
+    }
+
     private fun askTime(mTask: Task) {
         val calendar = Calendar.getInstance()
         val hourOfDay = calendar[Calendar.HOUR_OF_DAY]
@@ -201,7 +227,7 @@ class CalendarFragment : Fragment() {
 
 
                 // Asignar el valor formateado al objeto mTask
-                mTask.startTime = selectedDateTime
+                mTask.startTime = selectedDateTime.toEpochSecond(ZoneOffset.UTC)
                 if (PreferencesHandler.isOnline(ctx)) {
                     syncTask(mTask)
                 } else {
@@ -224,7 +250,7 @@ class CalendarFragment : Fragment() {
 
 
         // Almacenar la cadena en la base de datos SQLite
-        DB.getInstance(ctx)!!.insertTask(mTask)
+        DB.getInstance(ctx).insertTask(mTask)
         Snackbar.make(binding!!.root, getString(R.string.create_task_success), Snackbar.LENGTH_LONG)
             .setAnchorView(R.id.fab)
             .show()
@@ -241,20 +267,19 @@ class CalendarFragment : Fragment() {
             Service::class.java
         )
         val userId = PreferenceManager.getDefaultSharedPreferences(ctx).getInt("id", -1)
-        val token = PreferencesHandler.getToken(ctx)!!
+        val token = PreferencesHandler.getToken(ctx)
         if (userId == -1) {
             CustomToast(ctx, Utils.ERROR, Toast.LENGTH_LONG).show(getString(R.string.login_again))
             (ctx as Activity?)!!.finish()
             startActivity(Intent(ctx, LoginActivity::class.java))
             return
         }
-        val tr = TaskRequest(mTask)
 
         // Utilizar el servicio para realizar llamadas a la API
-        val call = apiService.createTask(token, userId, tr)
+        val call = apiService.createTask(token, userId, mTask)
 
         // Ejecutar la llamada de forma asíncrona
-        call!!.enqueue(object : Callback<IdResponse?> {
+        call.enqueue(object : Callback<IdResponse?> {
             override fun onResponse(call: Call<IdResponse?>, response: Response<IdResponse?>) {
                 if (response.isSuccessful) {
 

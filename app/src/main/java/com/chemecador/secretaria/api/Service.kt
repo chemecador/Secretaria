@@ -7,7 +7,6 @@ import com.chemecador.secretaria.items.Task
 import com.chemecador.secretaria.requests.LoginRequest
 import com.chemecador.secretaria.requests.NoteRequest
 import com.chemecador.secretaria.requests.PasswordRequest
-import com.chemecador.secretaria.requests.TaskRequest
 import com.chemecador.secretaria.responses.IdResponse
 import com.chemecador.secretaria.responses.login.LoginResponse
 import okhttp3.ResponseBody
@@ -88,7 +87,7 @@ interface Service {
     fun createTask(
         @Header("Authorization") token: String,
         @Path("id") userId: Int,
-        @Body tr: TaskRequest?
+        @Body tr: Task?
     ): Call<IdResponse>
 
     /* UPDATE */
@@ -117,7 +116,7 @@ interface Service {
         @Header("Authorization") token: String,
         @Path("userId") userId: Int,
         @Path("taskId") taskId: Int,
-        @Body tr: TaskRequest?
+        @Body tr: Task?
     ): Call<ResponseBody>
 
     /* DELETE */

@@ -62,7 +62,8 @@
     <string name="name_your_note">Name your note</string>
     <string name="name_your_task">Name your task</string>
     <string name="add_content">Add content</string>
-    <string name="add_extra_content">Añade un contenido extra</string>
+    <string name="add_extra_content">Add some extra content</string>
+    <string name="content">Content</string>
     <string name="context">Context</string>
     <string name="all_day_long">All day long</string>
     <string name="insert_note">Insert note</string>

@@ -59,7 +59,7 @@ class ListsFragment : Fragment() {
     }
 
     private fun init() {
-        lists = DB.getInstance(ctx)!!.lists
+        lists = DB.getInstance(ctx).lists
         rvLists = binding.root.findViewById(R.id.rv)
         rvLists?.layoutManager = LinearLayoutManager(ctx)
         adapter = ListAdapter(ctx, lists)
@@ -106,7 +106,7 @@ class ListsFragment : Fragment() {
                 val db = DB.getInstance(
                     ctx
                 )
-                if (!db!!.existsList(listName)) {
+                if (!db.existsList(listName)) {
                     // si es offline, es privada por defecto. Si es online, hay que mirar el switch.
                     var isPublic =
                         if (PreferencesHandler.isOnline(ctx)) NotesList.PUBLIC else NotesList.PRIVATE
@@ -148,7 +148,7 @@ class ListsFragment : Fragment() {
     }
 
     private fun insertList(mList: NotesList) {
-        val listId = DB.getInstance(ctx)!!.insertList(mList)
+        val listId = DB.getInstance(ctx).insertList(mList)
         if (!PreferencesHandler.isOnline(ctx)) mList.id = listId
         lists!!.add(mList)
         adapter!!.notifyItemInserted(lists!!.size - 1)

@@ -44,8 +44,7 @@ object Utils {
     fun beautifyDate(date: String?): String {
         val fullFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         val dateTime = LocalDateTime.parse(date, fullFormat)
-        val newFormat: DateTimeFormatter
-        newFormat = if (dateTime.hour == 0 && dateTime.minute == 0 && dateTime.second == 0) {
+        val newFormat: DateTimeFormatter = if (dateTime.hour == 0 && dateTime.minute == 0 && dateTime.second == 0) {
             DateTimeFormatter.ofPattern("dd/MM/yyyy")
         } else {
             DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
