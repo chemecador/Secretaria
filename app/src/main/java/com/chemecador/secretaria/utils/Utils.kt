@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.widget.Toast
 import com.chemecador.secretaria.gui.CustomToast
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 object Utils {
@@ -51,5 +53,39 @@ object Utils {
         }
         val newDate = LocalDateTime.parse(date, fullFormat)
         return newDate.format(newFormat)
+    }
+    fun beautifySpanishDate(date: String?): String {
+        val fullFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
+        val dateTime = LocalDateTime.parse(date, fullFormat)
+        val newFormat: DateTimeFormatter = if (dateTime.hour == 0 && dateTime.minute == 0 && dateTime.second == 0) {
+            DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        } else {
+            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
+        }
+        val newDate = LocalDateTime.parse(date, fullFormat)
+        return newDate.format(newFormat)
+    }
+    fun beautifyUnixDate(unixTimestamp: Long): String {
+
+        // Convertir el tiempo Unix a un objeto Instant
+        val instant = Instant.ofEpochSecond(unixTimestamp)
+
+        // Convertir el Instant a una fecha y hora en una zona horaria específica (por ejemplo, UTC)
+        val dateTime = LocalDateTime.ofInstant(instant, ZoneId.of("UTC"))
+
+        // Define los formatos de fecha y hora
+        val fullFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
+
+        // Determina cuál formato utilizar en función de la hora, minutos y segundos
+        val selectedFormat = if (dateTime.hour == 0 && dateTime.minute == 0 && dateTime.second == 0) {
+            dateFormat
+        } else {
+            dateTimeFormat
+        }
+
+        // Formatea la fecha y hora según el formato seleccionado
+        return dateTime.format(selectedFormat)
     }
 }

@@ -1,13 +1,17 @@
 package com.chemecador.secretaria.fragments.detail
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.TimePicker
 import androidx.fragment.app.Fragment
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.api.Client
@@ -24,12 +28,14 @@ import retrofit2.Response
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 class TaskDetailFragment : Fragment() {
 
     private val className = this@TaskDetailFragment.javaClass.simpleName
-    private lateinit var mTask : Task
+    private lateinit var mTask: Task
     private lateinit var etTitle: EditText
     private lateinit var etContent: EditText
     private lateinit var tvStartTime: TextView
@@ -69,13 +75,15 @@ class TaskDetailFragment : Fragment() {
             val dateTime = LocalDateTime.ofInstant(instant, ZoneId.of("UTC"))
 
             // Formatear la fecha y hora en un formato legible por el usuario
-            val formattedDateTime = dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
+            val formattedDateTime =
+                dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
 
-            //tvStartTime.text = Editable.Factory.getInstance().newEditable(Utils.beautifyDate(formattedDateTime))
-            tvStartTime.text = Editable.Factory.getInstance().newEditable(formattedDateTime)
-
+            tvStartTime.text = Editable.Factory.getInstance()
+                .newEditable(Utils.beautifySpanishDate(formattedDateTime))
 
         }
+
+        tvStartTime.setOnClickListener { showDatePicker(mTask) }
 
         btnUpdate.setOnClickListener {
             mTask.title = etTitle.text.toString()
@@ -88,8 +96,59 @@ class TaskDetailFragment : Fragment() {
         return view
     }
 
+    private fun showDatePicker(mTask: Task) {
+        // Obtener la fecha actual
+        val calendar = Calendar.getInstance()
+        val currentYear = calendar[Calendar.YEAR]
+        val currentMonth = calendar[Calendar.MONTH]
+        val currentDay = calendar[Calendar.DAY_OF_MONTH]
 
+        // Crear un DatePickerDialog
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _: DatePicker?, year: Int, month: Int, dayOfMonth: Int ->
+                // Cuando el usuario selecciona una fecha, mostrar el selector de tiempo
+                showTimePicker(mTask, year, month, dayOfMonth)
+            },
+            currentYear,
+            currentMonth,
+            currentDay
+        )
 
+        // Mostrar el diálogo del selector de fecha
+        datePickerDialog.show()
+    }
+
+    private fun showTimePicker(mTask: Task, year: Int, month: Int, day: Int) {
+        // Obtener la hora y minuto actuales
+        val calendar = Calendar.getInstance()
+        val currentHour = calendar[Calendar.HOUR_OF_DAY]
+        val currentMinute = calendar[Calendar.MINUTE]
+
+        // Crear un TimePickerDialog
+        val timePickerDialog = TimePickerDialog(
+            requireContext(),
+            { _: TimePicker?, hourOfDay: Int, minute: Int ->
+                // Cuando el usuario selecciona una hora, crear un LocalDateTime y convertirlo a Unix
+                val selectedDateTime = LocalDateTime.of(year, month, day, hourOfDay, minute)
+                val unixTimestamp = selectedDateTime.toEpochSecond(ZoneOffset.UTC)
+
+                // Asignar el valor Unix a mTask.startTime
+                mTask.startTime = unixTimestamp
+
+                tvStartTime.text = Editable.Factory.getInstance()
+                    .newEditable(Utils.beautifyUnixDate(unixTimestamp))
+
+                // Ahora, 'mTask.startTime' contiene el valor Unix de la fecha y hora seleccionada por el usuario.
+            },
+            currentHour,
+            currentMinute,
+            false
+        )
+
+        // Mostrar el diálogo del selector de tiempo
+        timePickerDialog.show()
+    }
 
     private fun updateTaskOnline(mTask: Task) {
         if (PreferencesHandler.isOnline(requireContext())) {
@@ -125,13 +184,21 @@ class TaskDetailFragment : Fragment() {
                             )
                         }
                     } else {
-                        Utils.showToast(requireContext(), Utils.ERROR, requireContext().getString(R.string.update_error))
+                        Utils.showToast(
+                            requireContext(),
+                            Utils.ERROR,
+                            requireContext().getString(R.string.update_error)
+                        )
                     }
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // Error en la llamada al servidor
-                    Utils.showToast(requireContext(), Utils.SUCCESS, requireContext().getString(R.string.connection_error))
+                    Utils.showToast(
+                        requireContext(),
+                        Utils.SUCCESS,
+                        requireContext().getString(R.string.connection_error)
+                    )
                 }
             })
         } else {
@@ -142,9 +209,17 @@ class TaskDetailFragment : Fragment() {
     private fun updateTaskFromDB(mTask: Task) {
         val updatedTasks = DB.getInstance(requireContext()).updateTask(mTask)
         if (updatedTasks == 0) {
-            Utils.showToast(requireContext(), Utils.ERROR, requireContext().getString(R.string.updated_zero))
+            Utils.showToast(
+                requireContext(),
+                Utils.ERROR,
+                requireContext().getString(R.string.updated_zero)
+            )
         } else {
-            Utils.showToast(requireContext(), Utils.SUCCESS, requireContext().getString(R.string.update_success))
+            Utils.showToast(
+                requireContext(),
+                Utils.SUCCESS,
+                requireContext().getString(R.string.update_success)
+            )
             Logger.i(className, "Tarea actualizada correctamente: $mTask")
         }
     }
@@ -183,13 +258,21 @@ class TaskDetailFragment : Fragment() {
                             )
                         }
                     } else {
-                        Utils.showToast(requireContext(), Utils.ERROR, requireContext().getString(R.string.delete_error))
+                        Utils.showToast(
+                            requireContext(),
+                            Utils.ERROR,
+                            requireContext().getString(R.string.delete_error)
+                        )
                     }
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // Error en la llamada al servidor
-                    Utils.showToast(requireContext(), Utils.SUCCESS, requireContext().getString(R.string.connection_error))
+                    Utils.showToast(
+                        requireContext(),
+                        Utils.SUCCESS,
+                        requireContext().getString(R.string.connection_error)
+                    )
                 }
             })
         } else {
@@ -201,14 +284,23 @@ class TaskDetailFragment : Fragment() {
         val deletedTasks = DB.getInstance(requireContext())
             .delete(DB.TASKS, mTask.id)
         if (deletedTasks == 0) {
-            Utils.showToast(requireContext(), Utils.ERROR, requireContext().getString(R.string.delete_zero))
+            Utils.showToast(
+                requireContext(),
+                Utils.ERROR,
+                requireContext().getString(R.string.delete_zero)
+            )
         } else {
             // La nota se eliminó correctamente
-            Utils.showToast(requireContext(), Utils.SUCCESS, requireContext().getString(R.string.delete_success))
+            Utils.showToast(
+                requireContext(),
+                Utils.SUCCESS,
+                requireContext().getString(R.string.delete_success)
+            )
             Logger.i(className, "Tarea eliminada correctamente: $mTask")
         }
         onBackPressed()
     }
+
     // Agrega este método para manejar el botón Atrás (Back)
     private fun onBackPressed() {
 
