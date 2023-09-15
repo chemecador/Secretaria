@@ -69,7 +69,7 @@
     <string name="insert_note">Insert note</string>
     <string name="note_name">Note name</string>
     <string name="list_already_exists">That list already exists</string>
-    <string name="insert_task">Insert task</string>
+    <string name="insert_task_for">Insert task for %s</string>
     <string name="task_title">Task title</string>
     <string name="task_content">Task content</string>
     <string name="public_question_mark">Public?</string>

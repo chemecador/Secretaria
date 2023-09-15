@@ -108,7 +108,7 @@ class TaskDetailFragment : Fragment() {
             requireContext(),
             { _: DatePicker?, year: Int, month: Int, dayOfMonth: Int ->
                 // Cuando el usuario selecciona una fecha, mostrar el selector de tiempo
-                showTimePicker(mTask, year, month, dayOfMonth)
+                showTimePicker(mTask, year, month + 1, dayOfMonth)
             },
             currentYear,
             currentMonth,
@@ -137,7 +137,7 @@ class TaskDetailFragment : Fragment() {
                 mTask.startTime = unixTimestamp
 
                 tvStartTime.text = Editable.Factory.getInstance()
-                    .newEditable(Utils.beautifyUnixDate(unixTimestamp))
+                    .newEditable(Utils.beautifyDate(unixTimestamp))
 
                 // Ahora, 'mTask.startTime' contiene el valor Unix de la fecha y hora seleccionada por el usuario.
             },

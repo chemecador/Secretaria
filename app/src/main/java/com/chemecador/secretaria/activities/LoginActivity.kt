@@ -2,7 +2,6 @@ package com.chemecador.secretaria.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -32,7 +31,6 @@ class LoginActivity : AppCompatActivity() {
     var binding: ActivityLoginBinding? = null
     private var username: String? = null
     private var password: String? = null
-    private var progressTimer: CountDownTimer? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -446,7 +444,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun onSyncFinished() {
-        progressTimer?.cancel() // Cancelar el temporizador
         binding!!.loading.visibility = View.GONE
         enableButtons() // Ocultar el AlertDialog
         finish()
@@ -469,5 +466,10 @@ class LoginActivity : AppCompatActivity() {
         binding!!.btnLogin.isEnabled = true
         binding!!.btnRegister.isEnabled = true
         binding!!.btnGuest.isEnabled = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        enableButtons()
     }
 }

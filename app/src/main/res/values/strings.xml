@@ -35,7 +35,7 @@
 
     <!-- Tareas, notas y listas -->
 
-    <string name="insert_task">Insertar tarea</string>
+    <string name="insert_task_for">Insertar tarea para el %s</string>
     <string name="task_title">Título de la tarea</string>
     <string name="task_content">Contenido de la tarea</string>
     <string name="public_question_mark">¿Pública?</string>

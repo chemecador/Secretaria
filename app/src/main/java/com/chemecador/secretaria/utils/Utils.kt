@@ -34,24 +34,23 @@ object Utils {
         }
     }
 
-    val dayFormatter: DateTimeFormatter
+    val simpleFormatter: DateTimeFormatter
         get() = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val fullFormatter: DateTimeFormatter
         get() = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-    val fullBeautyFormatter: DateTimeFormatter
+    val fullSpanishFormatter: DateTimeFormatter
         get() = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
-    val dayBeautyFormatter: DateTimeFormatter
+    val simpleSpanishFormatter: DateTimeFormatter
         get() = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
     fun beautifyDate(date: String?): String {
-        val fullFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        val dateTime = LocalDateTime.parse(date, fullFormat)
+        val dateTime = LocalDateTime.parse(date, fullFormatter)
         val newFormat: DateTimeFormatter = if (dateTime.hour == 0 && dateTime.minute == 0 && dateTime.second == 0) {
             DateTimeFormatter.ofPattern("dd/MM/yyyy")
         } else {
             DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
         }
-        val newDate = LocalDateTime.parse(date, fullFormat)
+        val newDate = LocalDateTime.parse(date, fullFormatter)
         return newDate.format(newFormat)
     }
     fun beautifySpanishDate(date: String?): String {
@@ -65,7 +64,7 @@ object Utils {
         val newDate = LocalDateTime.parse(date, fullFormat)
         return newDate.format(newFormat)
     }
-    fun beautifyUnixDate(unixTimestamp: Long): String {
+    fun beautifyDate(unixTimestamp: Long): String {
 
         // Convertir el tiempo Unix a un objeto Instant
         val instant = Instant.ofEpochSecond(unixTimestamp)
@@ -87,5 +86,23 @@ object Utils {
 
         // Formatea la fecha y hora según el formato seleccionado
         return dateTime.format(selectedFormat)
+    }
+
+    fun beautifyDate(localDateTime: LocalDateTime): String {
+
+        // Define los formatos de fecha y hora
+        val fullFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
+
+        // Determina cuál formato utilizar en función de la hora, minutos y segundos
+        val selectedFormat = if (localDateTime.hour == 0 && localDateTime.minute == 0 && localDateTime.second == 0) {
+            dateFormat
+        } else {
+            dateTimeFormat
+        }
+
+        // Formatea la fecha y hora según el formato seleccionado
+        return localDateTime.format(selectedFormat)
     }
 }

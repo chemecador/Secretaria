@@ -14,6 +14,7 @@ import android.widget.Button
 import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.RadioButton
+import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -55,8 +56,9 @@ class CalendarFragment : Fragment(), OnItemClickListener {
     private lateinit var taskList: MutableList<Task>
     private var taskAdapter: TaskAdapter? = null
     private lateinit var ctx: Context
-    private var selectedDay: LocalDateTime? = null
-    var onItemClickListener: OnItemClickListener? = null
+    private lateinit var selectedDay: LocalDateTime
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -127,13 +129,13 @@ class CalendarFragment : Fragment(), OnItemClickListener {
     private fun onDayChanged(year: Int, monthOfYear: Int, dayOfMonth: Int) {
         setDay(year, monthOfYear + 1, dayOfMonth)
         taskList.clear()
-        taskList.addAll(DB.getInstance(ctx).getTasksByDay(selectedDay!!))
+        taskList.addAll(DB.getInstance(ctx).getTasksByDay(selectedDay))
         taskAdapter!!.notifyDataSetChanged()
     }
 
     private fun createTask() {
         val mTask = Task()
-        mTask.startTime = selectedDay?.toEpochSecond(ZoneOffset.UTC)
+        mTask.startTime = selectedDay.toEpochSecond(ZoneOffset.UTC)
         val builder = AlertDialog.Builder(
             ctx
         )
@@ -144,6 +146,7 @@ class CalendarFragment : Fragment(), OnItemClickListener {
         val allDayLong = dialogView.findViewById<RadioButton>(R.id.radio_all_day_long)
         val cbContent = dialogView.findViewById<MaterialCheckBox>(R.id.cb_content)
         val etContent = dialogView.findViewById<EditText>(R.id.et_content)
+        dialogView.findViewById<TextView>(R.id.tv_title).text = getString(R.string.insert_task_for, Utils.beautifyDate(selectedDay))
         val positiveButton = dialogView.findViewById<Button>(R.id.btn_ok)
         val negativeButton = dialogView.findViewById<Button>(R.id.btn_cancel)
         builder.setView(dialogView)
@@ -172,8 +175,8 @@ class CalendarFragment : Fragment(), OnItemClickListener {
 
                     // Crear un objeto LocalDateTime con la fecha actual y la hora seleccionada
                     val selectedDateTime = LocalDateTime.of(
-                        selectedDay!!.year,
-                        selectedDay!!.month, selectedDay!!.dayOfMonth, 0, 0, 0
+                        selectedDay.year,
+                        selectedDay.month, selectedDay.dayOfMonth, 0, 0, 0
                     )
 
                     // Asignar el valor formateado al objeto mTask
@@ -221,8 +224,8 @@ class CalendarFragment : Fragment(), OnItemClickListener {
 
                 // Crear un objeto LocalDateTime con la fecha actual y la hora seleccionada
                 val selectedDateTime = LocalDateTime.of(
-                    selectedDay!!.year,
-                    selectedDay!!.month, selectedDay!!.dayOfMonth, hourOfDay1, minute1
+                    selectedDay.year,
+                    selectedDay.month, selectedDay.dayOfMonth, hourOfDay1, minute1
                 )
 
 

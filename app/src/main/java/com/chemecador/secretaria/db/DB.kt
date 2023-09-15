@@ -13,7 +13,6 @@ import com.chemecador.secretaria.items.Task
 import com.chemecador.secretaria.logger.Logger
 import com.chemecador.secretaria.utils.PreferencesHandler
 import java.lang.ref.WeakReference
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
@@ -78,7 +77,7 @@ class DB private constructor(context: Context, databaseName: String) :
         sql = ("CREATE TABLE IF NOT EXISTS friends("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "username TEXT UNIQUE NOT NULL,"
-                + "since DATE NOT NULL DEFAULT (strftime('%Y-%m-%d', 'now'))"
+                + "since INTEGER DEFAULT (strftime('%s', 'now'))"
                 + ")")
         db.execSQL(sql)
         if (!PreferencesHandler.isOnline(context)) {
@@ -245,7 +244,7 @@ class DB private constructor(context: Context, databaseName: String) :
             while (cursor.moveToNext()) {
                 val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
                 val username = cursor.getString(cursor.getColumnIndexOrThrow("name"))
-                val since = LocalDate.parse(cursor.getString(cursor.getColumnIndexOrThrow("since")))
+                val since = cursor.getLong(cursor.getColumnIndexOrThrow("since"))
                 lists.add(Friend(id, username, since))
             }
             cursor.close()
@@ -380,11 +379,10 @@ class DB private constructor(context: Context, databaseName: String) :
         if (friend.id != 0) {
             values.put("id", friend.id)
         }
-        if (friend.username?.isEmpty() == true) {
-            values.put("username", friend.username)
-        }
+        values.put("username", friend.username)
+
         if (friend.since != null) {
-            values.put("since", java.lang.String.valueOf(friend.since))
+            values.put("since", friend.since)
         }
         db.insert(FRIENDS, null, values)
         db.close()
@@ -447,9 +445,9 @@ class DB private constructor(context: Context, databaseName: String) :
             try {
                 db.delete(LISTS, null, null)
                 for (serverList in lists) {
-                    val id: String? = serverList.id?.toString()
+                    val id: Int? = serverList.id
                     val name: String = serverList.name
-                    val privacy: String = serverList.privacy.toString()
+                    val privacy: Int = serverList.privacy
                     val sql = "INSERT INTO lists (id, name, privacy) VALUES (?,?,?)"
                     db.execSQL(sql, arrayOf(id, name, privacy))
                 }
@@ -492,7 +490,7 @@ class DB private constructor(context: Context, databaseName: String) :
             for (serverFriend in friends) {
                 val id: Int? = serverFriend?.id
                 val username: String? = serverFriend?.username
-                val since: LocalDate? = serverFriend?.since
+                val since: Long? = serverFriend?.since
                 val sql = "INSERT INTO friends(id, username, since) VALUES (?,?,?)"
                 db.execSQL(sql, arrayOf(id, username, since))
             }
@@ -533,7 +531,7 @@ class DB private constructor(context: Context, databaseName: String) :
         val values = ContentValues()
         values.put("title", mTask.title)
         values.put("content", mTask.content)
-        values.put("start_time", mTask.startTime.toString())
+        values.put("start_time", mTask.startTime)
         val whereClause = "id = ?"
         val whereArgs = arrayOf<String>(java.lang.String.valueOf(mTask.id))
         val updatedRows: Int = db.update(TASKS, values, whereClause, whereArgs)
