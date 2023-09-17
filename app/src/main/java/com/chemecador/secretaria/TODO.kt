@@ -7,6 +7,8 @@ class TODO {
      *      desaparecen las listas al iniciar sesión
      *
      * todo:
+     *      unificar las peticiones al servidor en una clase
+     *      swipe to refresh
      *      borrar notas tras borrar la lista
      *      icono/color en listas/notas/tareas
      *      mejorar los logs

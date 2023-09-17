@@ -27,8 +27,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.activities.LoginActivity
 import com.chemecador.secretaria.adapters.TaskAdapter
-import com.chemecador.secretaria.api.Client.client
-import com.chemecador.secretaria.api.Service
+import com.chemecador.secretaria.network.retrofit.Client.client
+import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.databinding.FragmentCalendarBinding
 import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.fragments.detail.TaskDetailFragment

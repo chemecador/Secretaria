@@ -12,8 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.activities.LoginActivity
-import com.chemecador.secretaria.api.Client.client
-import com.chemecador.secretaria.api.Service
+import com.chemecador.secretaria.network.retrofit.Client.client
+import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.databinding.FragmentChangePassBinding
 import com.chemecador.secretaria.gui.CustomToast
 import com.chemecador.secretaria.requests.PasswordRequest

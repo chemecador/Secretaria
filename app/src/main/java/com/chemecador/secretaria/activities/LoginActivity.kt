@@ -8,8 +8,6 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import com.chemecador.secretaria.R
-import com.chemecador.secretaria.api.Client.client
-import com.chemecador.secretaria.api.Service
 import com.chemecador.secretaria.databinding.ActivityLoginBinding
 import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.items.Note
@@ -17,6 +15,8 @@ import com.chemecador.secretaria.items.NotesList
 import com.chemecador.secretaria.items.Task
 import com.chemecador.secretaria.logger.Logger
 import com.chemecador.secretaria.logger.Logger.Companion.e
+import com.chemecador.secretaria.network.retrofit.Client.client
+import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.requests.LoginRequest
 import com.chemecador.secretaria.responses.login.LoginResponse
 import com.chemecador.secretaria.utils.PreferencesHandler

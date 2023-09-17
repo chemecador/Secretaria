@@ -1,4 +1,4 @@
-package com.chemecador.secretaria.api
+package com.chemecador.secretaria.network.retrofit
 
 import java.io.IOException
 

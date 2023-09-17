@@ -16,11 +16,12 @@ import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.activities.LoginActivity
 import com.chemecador.secretaria.adapters.ListAdapter
-import com.chemecador.secretaria.api.Client.client
-import com.chemecador.secretaria.api.Service
+import com.chemecador.secretaria.network.retrofit.Client.client
+import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.databinding.FragmentListsBinding
 import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.gui.CustomToast
@@ -70,6 +71,14 @@ class ListsFragment : Fragment() {
         val actionBar = (requireActivity() as AppCompatActivity).supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(false)
         binding.fab.setOnClickListener { createList() }
+
+        val swipeRefreshLayout = binding.root.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
+            // Aquí puedes realizar la lógica de actualización de la interfaz
+            // Por ejemplo, cargar nuevamente los datos de la lista
+           // refreshData()
+        }
+
     }
 
     private fun createList() {

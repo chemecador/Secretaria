@@ -15,8 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chemecador.secretaria.R
-import com.chemecador.secretaria.api.Client
-import com.chemecador.secretaria.api.Service
+import com.chemecador.secretaria.network.retrofit.Client
+import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.fragments.NotesFragment
 import com.chemecador.secretaria.interfaces.OnLongClickListener

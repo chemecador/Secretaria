@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.chemecador.secretaria.adapters.FriendListAdapter
-import com.chemecador.secretaria.api.Client
-import com.chemecador.secretaria.api.Service
+import com.chemecador.secretaria.network.retrofit.Client
+import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.databinding.FragmentFriendListBinding
 import com.chemecador.secretaria.items.Friend
 import com.chemecador.secretaria.utils.PreferencesHandler
