@@ -15,13 +15,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chemecador.secretaria.R
-import com.chemecador.secretaria.network.retrofit.Client
-import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.fragments.NotesFragment
 import com.chemecador.secretaria.interfaces.OnLongClickListener
 import com.chemecador.secretaria.items.NotesList
 import com.chemecador.secretaria.logger.Logger
+import com.chemecador.secretaria.network.retrofit.Client
+import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.utils.PreferencesHandler
 import com.chemecador.secretaria.utils.Utils
 import com.google.android.material.checkbox.MaterialCheckBox
@@ -177,7 +177,7 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
     }
 
     private fun updateListFromDB(mList: NotesList) {
-        val updatedLists: Int = DB.getInstance(ctx)!!.updateList(mList)
+        val updatedLists: Int = DB.getInstance(ctx).updateList(mList)
         if (updatedLists == 0) {
             Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.updated_zero))
         } else {
@@ -238,7 +238,7 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
     }
 
     private fun deleteListFromDB(mList: NotesList) {
-        val deletedLists: Int = DB.getInstance(ctx)!!.delete(DB.LISTS, mList.id!!)
+        val deletedLists: Int = DB.getInstance(ctx).delete(DB.LISTS, mList.id!!)
         if (deletedLists == 0) {
             Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.delete_zero))
         } else {

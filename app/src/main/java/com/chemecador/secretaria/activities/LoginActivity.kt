@@ -11,12 +11,12 @@ import com.chemecador.secretaria.R
 import com.chemecador.secretaria.databinding.ActivityLoginBinding
 import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.items.Note
-import com.chemecador.secretaria.items.NotesList
 import com.chemecador.secretaria.items.Task
 import com.chemecador.secretaria.logger.Logger
 import com.chemecador.secretaria.logger.Logger.Companion.e
 import com.chemecador.secretaria.network.retrofit.Client.client
 import com.chemecador.secretaria.network.retrofit.Service
+import com.chemecador.secretaria.network.sync.SyncList
 import com.chemecador.secretaria.requests.LoginRequest
 import com.chemecador.secretaria.responses.login.LoginResponse
 import com.chemecador.secretaria.utils.PreferencesHandler
@@ -248,10 +248,20 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun syncDB() {
-        syncLists()
+        SyncList.getLists(this) { success ->
+            // Este es el callback que se ejecutará cuando termine la sincronización
+            if (success) {
+                // La sincronización fue exitosa, puedes hacer algo aquí si es necesario
+                syncNotes()
+            } else {
+                // Hubo un error durante la sincronización, puedes manejarlo aquí
+                binding!!.loading.visibility = View.GONE
+                enableButtons()
+            }
+        }
     }
 
-    private fun syncLists() {
+    /*private fun syncLists() {
 
         // Obtener la instancia de Retrofit
         val retrofit: Retrofit = client!!
@@ -318,7 +328,7 @@ class LoginActivity : AppCompatActivity() {
                 )
             }
         })
-    }
+    }*/
 
     private fun syncNotes() {
 
