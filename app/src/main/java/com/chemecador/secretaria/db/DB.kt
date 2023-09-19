@@ -417,7 +417,9 @@ class DB private constructor(context: Context, databaseName: String) :
     }
 
     /* SETTERS */
-    fun setTasks(tasks: ArrayList<Task>) {
+    fun setTasks(tasks: ArrayList<Task>) : Boolean{
+
+        var success = false
         val db: SQLiteDatabase = writableDatabase
         try {
             db.delete(TASKS, null, null)
@@ -429,11 +431,13 @@ class DB private constructor(context: Context, databaseName: String) :
                 val sql = "INSERT INTO tasks (id, title, content, start_time) VALUES (?,?,?,?)"
                 db.execSQL(sql, arrayOf(id, title, content, startTime))
             }
+            success = true
         } catch (e: SQLiteException) {
             Logger.e(className, "Error al establecer las tareas", e)
             dropTable(TASKS)
             onCreate(db)
         }
+        return success
     }
 
     fun setLists(lists: ArrayList<NotesList>): Boolean {
@@ -462,8 +466,9 @@ class DB private constructor(context: Context, databaseName: String) :
         return success
     }
 
-    fun setNotes(notes: ArrayList<Note>) {
+    fun setNotes(notes: ArrayList<Note>) : Boolean {
         val db: SQLiteDatabase = writableDatabase
+        var success = false
         try {
             db.delete(NOTES, null, null)
             for (serverNote in notes) {
@@ -475,12 +480,14 @@ class DB private constructor(context: Context, databaseName: String) :
                 val sql =
                     "INSERT INTO notes (id, list_id, title, content, status) VALUES (?,?,?,?,?)"
                 db.execSQL(sql, arrayOf(id, listId, title, content, status))
+                success = true
             }
         } catch (e: SQLiteException) {
             Logger.e(className, "Error al establecer las notas", e)
             dropTable(NOTES)
             onCreate(db)
         }
+        return success
     }
 
     fun setFriends(friends: ArrayList<Friend?>) {

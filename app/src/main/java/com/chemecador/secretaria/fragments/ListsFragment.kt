@@ -20,13 +20,14 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.activities.LoginActivity
 import com.chemecador.secretaria.adapters.ListAdapter
-import com.chemecador.secretaria.network.retrofit.Client.client
-import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.databinding.FragmentListsBinding
 import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.gui.CustomToast
 import com.chemecador.secretaria.items.NotesList
 import com.chemecador.secretaria.logger.Logger
+import com.chemecador.secretaria.network.retrofit.Client.client
+import com.chemecador.secretaria.network.retrofit.Service
+import com.chemecador.secretaria.network.sync.SyncLists
 import com.chemecador.secretaria.responses.IdResponse
 import com.chemecador.secretaria.utils.PreferencesHandler
 import com.chemecador.secretaria.utils.Utils
@@ -76,7 +77,14 @@ class ListsFragment : Fragment() {
         swipeRefreshLayout.setOnRefreshListener {
             // Aquí puedes realizar la lógica de actualización de la interfaz
             // Por ejemplo, cargar nuevamente los datos de la lista
-           // refreshData()
+            SyncLists.getLists(ctx) { success ->
+                swipeRefreshLayout.isRefreshing = false
+                if (success) {
+                    Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
+                } else {
+                    Utils.showToast(ctx, CustomToast.TOAST_ERROR, R.string.update_error)
+                }
+            }
         }
 
     }

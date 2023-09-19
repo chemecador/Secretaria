@@ -43,9 +43,7 @@ object PreferencesHandler {
     }
 
     fun isTokenValid(context: Context): Boolean {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(
-            context
-        )
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         return (prefs.contains(PREF_TOKEN)
                 && prefs.getString(PREF_TOKEN, "")!!.isNotEmpty()
                 && prefs.getBoolean(PREF_LAST_LOGIN_OK, false))
