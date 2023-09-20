@@ -75,8 +75,6 @@ class ListsFragment : Fragment() {
 
         val swipeRefreshLayout = binding.root.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
-            // Aquí puedes realizar la lógica de actualización de la interfaz
-            // Por ejemplo, cargar nuevamente los datos de la lista
             SyncLists.getLists(ctx) { success ->
                 swipeRefreshLayout.isRefreshing = false
                 if (success) {

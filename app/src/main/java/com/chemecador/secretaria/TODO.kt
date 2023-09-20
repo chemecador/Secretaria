@@ -4,19 +4,19 @@ class TODO {
     /**
      *
      * fixme:
-     *      desaparecen las listas al iniciar sesión
      *
      * todo:
-     *      unificar las peticiones al servidor en una clase
-     *      swipe to refresh
+     *      añadir un botón de atrás en el detail_task
      *      borrar notas tras borrar la lista
      *      icono/color en listas/notas/tareas
      *      mejorar los logs
      *
      * ideas:
-     *      en lugar del popup, hacer un nuevo fragment con detail_note
+     *
+     *      resaltar en el calendario los días que tienen tarea asignada
+     *      notificación/alarma cuando llegue el momento de la tarea
      *      en el adapter de la lista, mostrar el número de notas
-     *      meter anuncios
-     *      comprar código fuente
+     *      mostrar anuncios voluntarios
+     *      permitir donaciones
      */
 }

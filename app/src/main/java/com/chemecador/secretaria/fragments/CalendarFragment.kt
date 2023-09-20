@@ -24,11 +24,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.activities.LoginActivity
 import com.chemecador.secretaria.adapters.TaskAdapter
-import com.chemecador.secretaria.network.retrofit.Client.client
-import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.databinding.FragmentCalendarBinding
 import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.fragments.detail.TaskDetailFragment
@@ -36,6 +35,9 @@ import com.chemecador.secretaria.gui.CustomToast
 import com.chemecador.secretaria.interfaces.OnItemClickListener
 import com.chemecador.secretaria.items.Task
 import com.chemecador.secretaria.logger.Logger
+import com.chemecador.secretaria.network.retrofit.Client.client
+import com.chemecador.secretaria.network.retrofit.Service
+import com.chemecador.secretaria.network.sync.SyncTasks
 import com.chemecador.secretaria.responses.IdResponse
 import com.chemecador.secretaria.utils.PreferencesHandler
 import com.chemecador.secretaria.utils.Utils
@@ -51,7 +53,7 @@ import java.util.Calendar
 import java.util.Locale
 
 class CalendarFragment : Fragment(), OnItemClickListener {
-    private var binding: FragmentCalendarBinding? = null
+    private lateinit var binding: FragmentCalendarBinding
     private var btnDay: Button? = null
     private lateinit var taskList: MutableList<Task>
     private var taskAdapter: TaskAdapter? = null
@@ -66,7 +68,7 @@ class CalendarFragment : Fragment(), OnItemClickListener {
     ): View {
         binding = FragmentCalendarBinding.inflate(inflater, container, false)
         init()
-        return binding!!.root
+        return binding.root
     }
 
     private fun init() {
@@ -77,10 +79,23 @@ class CalendarFragment : Fragment(), OnItemClickListener {
         taskList = DB.getInstance(ctx).getTasksByDay(LocalDateTime.now())
         taskAdapter = TaskAdapter(ctx, taskList)
         taskAdapter!!.onItemClickListener = this
-        val rv = binding!!.root.findViewById<RecyclerView>(R.id.recycler_view)
+        val rv = binding.root.findViewById<RecyclerView>(R.id.rv)
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(ctx)
         rv.adapter = taskAdapter
+
+
+        val swipeRefreshLayout = binding.root.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
+            SyncTasks.getTasks(ctx) { success ->
+                swipeRefreshLayout.isRefreshing = false
+                if (success) {
+                    Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
+                } else {
+                    Utils.showToast(ctx, CustomToast.TOAST_ERROR, R.string.update_error)
+                }
+            }
+        }
 
         // Obtener una referencia al ActionBar
         val actionBar = (requireActivity() as AppCompatActivity).supportActionBar
@@ -90,12 +105,7 @@ class CalendarFragment : Fragment(), OnItemClickListener {
         val month = calendar[Calendar.MONTH]
         val day = calendar[Calendar.DAY_OF_MONTH]
         setDay(year, month + 1, day)
-        binding!!.fab.setOnClickListener { createTask() }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null
+        binding.fab.setOnClickListener { createTask() }
     }
 
     private fun changeDay() {
@@ -254,7 +264,7 @@ class CalendarFragment : Fragment(), OnItemClickListener {
 
         // Almacenar la cadena en la base de datos SQLite
         DB.getInstance(ctx).insertTask(mTask)
-        Snackbar.make(binding!!.root, getString(R.string.create_task_success), Snackbar.LENGTH_LONG)
+        Snackbar.make(binding.root, getString(R.string.create_task_success), Snackbar.LENGTH_LONG)
             .setAnchorView(R.id.fab)
             .show()
         Logger.i(className, "Tarea creada correctamente: $mTask")

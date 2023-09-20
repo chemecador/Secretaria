@@ -15,11 +15,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.activities.LoginActivity
 import com.chemecador.secretaria.adapters.NoteAdapter
-import com.chemecador.secretaria.network.retrofit.Client.client
-import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.databinding.FragmentNotesBinding
 import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.fragments.detail.NoteDetailFragment
@@ -28,6 +27,9 @@ import com.chemecador.secretaria.interfaces.OnItemClickListener
 import com.chemecador.secretaria.items.Note
 import com.chemecador.secretaria.items.NotesList
 import com.chemecador.secretaria.logger.Logger
+import com.chemecador.secretaria.network.retrofit.Client.client
+import com.chemecador.secretaria.network.retrofit.Service
+import com.chemecador.secretaria.network.sync.SyncNotes
 import com.chemecador.secretaria.requests.NoteRequest
 import com.chemecador.secretaria.responses.IdResponse
 import com.chemecador.secretaria.utils.PreferencesHandler
@@ -47,7 +49,7 @@ class NotesFragment : Fragment(), OnItemClickListener {
     private lateinit var ctx: Context
     private var adapter: NoteAdapter? = null
     private var listId = 0
-    private var binding: FragmentNotesBinding? = null
+    private lateinit var binding: FragmentNotesBinding
     private var isPublic = false
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,23 +62,35 @@ class NotesFragment : Fragment(), OnItemClickListener {
         val btnDay = toolbar.findViewById<Button>(R.id.btn_day)
         btnDay.visibility = View.GONE
         init()
-        return binding!!.root
+        return binding.root
     }
 
     private fun init() {
         notes = DB.getInstance(ctx).getNotesByList(listId)
         isPublic = DB.getInstance(ctx).getPrivacy(listId) == NotesList.PUBLIC
-        val rvLists = binding!!.root.findViewById<RecyclerView>(R.id.rv)
+        val rvLists = binding.root.findViewById<RecyclerView>(R.id.rv)
         adapter = NoteAdapter(ctx, notes, isPublic)
         adapter!!.onItemClickListener = this
         rvLists.layoutManager = LinearLayoutManager(ctx)
         rvLists.adapter = adapter
 
 
+        val swipeRefreshLayout = binding.root.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
+            SyncNotes.getNotes(ctx) { success ->
+                swipeRefreshLayout.isRefreshing = false
+                if (success) {
+                    Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
+                } else {
+                    Utils.showToast(ctx, CustomToast.TOAST_ERROR, R.string.update_error)
+                }
+            }
+        }
+
         // Obtener una referencia al ActionBar
         val actionBar = (requireActivity() as AppCompatActivity).supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
-        val fab = binding!!.root.findViewById<FloatingActionButton>(R.id.fab)
+        val fab = binding.root.findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener { createNote() }
     }
 
@@ -182,7 +196,7 @@ class NotesFragment : Fragment(), OnItemClickListener {
         notes?.add(mNote)
         // Notificar al adaptador del cambio en la lista de tareas
         adapter!!.notifyItemInserted(notes!!.size - 1)
-        Snackbar.make(binding!!.root, getString(R.string.create_note_success), Snackbar.LENGTH_LONG)
+        Snackbar.make(binding.root, getString(R.string.create_note_success), Snackbar.LENGTH_LONG)
             .setAnchorView(R.id.fab)
             .show()
         Logger.i(className, "Nota insertada correctamente: $mNote")

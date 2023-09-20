@@ -109,6 +109,11 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        DB.getInstance(this).close()
+    }
+
     companion object {
         const val CALENDAR = "calendar"
         const val LIST = "list"

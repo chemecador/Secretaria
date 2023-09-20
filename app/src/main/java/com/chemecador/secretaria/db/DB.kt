@@ -599,6 +599,8 @@ class DB private constructor(context: Context, databaseName: String) :
         PreferencesHandler.clear(context)
     }
 
+
+
     companion object {
         val className: String = DB::class.java.simpleName
         const val DATABASE_VERSION = 4
@@ -620,6 +622,5 @@ class DB private constructor(context: Context, databaseName: String) :
             return if (onlineNow) DB(context.applicationContext, DATABASE_ONLINE)
             else DB(context.applicationContext, DATABASE_OFFLINE)
         }
-
     }
 }
