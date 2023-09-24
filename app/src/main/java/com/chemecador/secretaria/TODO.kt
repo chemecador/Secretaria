@@ -6,7 +6,6 @@ class TODO {
      * fixme:
      *
      * todo:
-     *      añadir un botón de atrás en el detail_task
      *      borrar notas tras borrar la lista
      *      icono/color en listas/notas/tareas
      *      mejorar los logs

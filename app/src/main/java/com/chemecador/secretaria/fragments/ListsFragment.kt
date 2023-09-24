@@ -68,7 +68,6 @@ class ListsFragment : Fragment() {
         adapter!!.setOnLongClickListener(adapter)
         rvLists?.adapter = adapter
 
-        // Obtener una referencia al ActionBar
         val actionBar = (requireActivity() as AppCompatActivity).supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(false)
         binding.fab.setOnClickListener { createList() }

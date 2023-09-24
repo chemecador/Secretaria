@@ -12,13 +12,14 @@ import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.TimePicker
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.chemecador.secretaria.R
-import com.chemecador.secretaria.network.retrofit.Client
-import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.items.Task
 import com.chemecador.secretaria.logger.Logger
+import com.chemecador.secretaria.network.retrofit.Client
+import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.utils.PreferencesHandler
 import com.chemecador.secretaria.utils.Utils
 import okhttp3.ResponseBody
@@ -55,6 +56,9 @@ class TaskDetailFragment : Fragment() {
 
         btnUpdate = view.findViewById(R.id.btn_update)
         btnDelete = view.findViewById(R.id.btn_delete)
+
+        val actionBar = (requireActivity() as AppCompatActivity).supportActionBar
+        actionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Recibir datos del Bundle
         val args = arguments
