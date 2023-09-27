@@ -130,18 +130,23 @@ class NoteDetailFragment : Fragment() {
                             updateNoteFromDB(mNote)
                         } else {
                             Utils.showToast(
-                                requireContext(), Utils.SUCCESS,
-                                requireContext().getString(R.string.update_error) + ": " + responseBody
+                                requireContext(), requireContext().getString(R.string.update_error) + ": " + responseBody
                             )
                         }
                     } else {
-                        Utils.showToast(requireContext(), Utils.ERROR, requireContext().getString(R.string.update_error))
+                        Utils.showToast(
+                            requireContext(),
+                            requireContext().getString(R.string.update_error)
+                        )
                     }
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // Error en la llamada al servidor
-                    Utils.showToast(requireContext(), Utils.SUCCESS, requireContext().getString(R.string.connection_error))
+                    Utils.showToast(
+                        requireContext(),
+                        requireContext().getString(R.string.connection_error)
+                    )
                 }
             })
         } else {
@@ -152,9 +157,9 @@ class NoteDetailFragment : Fragment() {
     private fun updateNoteFromDB(mNote: Note) {
         val updatedNotes: Int = DB.getInstance(requireContext()).updateNote(mNote)
         if (updatedNotes == 0) {
-            Utils.showToast(requireContext(), Utils.ERROR, requireContext().getString(R.string.updated_zero))
+            Utils.showToast(requireContext(), requireContext().getString(R.string.updated_zero))
         } else {
-            Utils.showToast(requireContext(), Utils.SUCCESS, requireContext().getString(R.string.update_success))
+            Utils.showToast(requireContext(), requireContext().getString(R.string.update_success))
             Logger.i(NoteAdapter.className, "Nota actualizada correctamente: $mNote")
         }
     }
@@ -188,18 +193,23 @@ class NoteDetailFragment : Fragment() {
                             deleteNoteFromDB(mNote)
                         } else {
                             Utils.showToast(
-                                requireContext(), Utils.SUCCESS,
-                                requireContext().getString(R.string.delete_error) + ": " + responseBody
+                                requireContext(), requireContext().getString(R.string.delete_error) + ": " + responseBody
                             )
                         }
                     } else {
-                        Utils.showToast(requireContext(), Utils.ERROR, requireContext().getString(R.string.delete_error))
+                        Utils.showToast(
+                            requireContext(),
+                            requireContext().getString(R.string.delete_error)
+                        )
                     }
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // Error en la llamada al servidor
-                    Utils.showToast(requireContext(), Utils.SUCCESS, requireContext().getString(R.string.connection_error))
+                    Utils.showToast(
+                        requireContext(),
+                        requireContext().getString(R.string.connection_error)
+                    )
                 }
             })
         } else {
@@ -210,10 +220,10 @@ class NoteDetailFragment : Fragment() {
     private fun deleteNoteFromDB(mNote: Note) {
         val deletedNotes: Int = DB.getInstance(requireContext()).delete(DB.NOTES, mNote.id)
         if (deletedNotes == 0) {
-            Utils.showToast(requireContext(), Utils.ERROR, requireContext().getString(R.string.delete_zero))
+            Utils.showToast(requireContext(), requireContext().getString(R.string.delete_zero))
         } else {
             // La nota se eliminó correctamente
-            Utils.showToast(requireContext(), Utils.SUCCESS, requireContext().getString(R.string.delete_success))
+            Utils.showToast(requireContext(), requireContext().getString(R.string.delete_success))
             Logger.e(NoteAdapter.className, "Nota eliminada correctamente $mNote")
         }
         onBackPressed()

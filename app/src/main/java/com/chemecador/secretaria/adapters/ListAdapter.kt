@@ -1,5 +1,6 @@
 package com.chemecador.secretaria.adapters
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
@@ -156,19 +157,18 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
                             updateListFromDB(mList)
                         } else {
                             Utils.showToast(
-                                ctx, Utils.SUCCESS,
-                                ctx.getString(R.string.update_error) + ": " + responseBody
+                                ctx, ctx.getString(R.string.update_error) + ": " + responseBody
                             )
                         }
                     } else {
-                        Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.update_error))
+                        Utils.showToast(ctx, ctx.getString(R.string.update_error))
                     }
                     dialog!!.dismiss()
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // Error en la llamada al servidor
-                    Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.connection_error))
+                    Utils.showToast(ctx, ctx.getString(R.string.connection_error))
                 }
             })
         } else {
@@ -176,12 +176,13 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun updateListFromDB(mList: NotesList) {
         val updatedLists: Int = DB.getInstance(ctx).updateList(mList)
         if (updatedLists == 0) {
-            Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.updated_zero))
+            Utils.showToast(ctx, ctx.getString(R.string.updated_zero))
         } else {
-            Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.update_success))
+            Utils.showToast(ctx, ctx.getString(R.string.update_success))
             Logger.i(className, "Lista actualizada correctamente: $mList")
         }
         notifyDataSetChanged()
@@ -214,22 +215,21 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
                             deleteListFromDB(mList)
                         } else {
                             Utils.showToast(
-                                ctx, Utils.SUCCESS,
-                                ctx.getString(R.string.delete_error)
+                                ctx, ctx.getString(R.string.delete_error)
                             )
                         }
                     } else if (response.code() == 500 && response.errorBody()?.string()?.contains("FOREIGN KEY") == true) {
-                        Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.error_list_not_empty))
+                        Utils.showToast(ctx, ctx.getString(R.string.error_list_not_empty))
 
                     } else {
-                        Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.delete_error))
+                        Utils.showToast(ctx, ctx.getString(R.string.delete_error))
                     }
                     dialog!!.dismiss()
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // Error en la llamada al servidor
-                    Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.connection_error))
+                    Utils.showToast(ctx, ctx.getString(R.string.connection_error))
                 }
             })
         } else {
@@ -237,13 +237,14 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun deleteListFromDB(mList: NotesList) {
         val deletedLists: Int = DB.getInstance(ctx).delete(DB.LISTS, mList.id!!)
         if (deletedLists == 0) {
-            Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.delete_zero))
+            Utils.showToast(ctx, ctx.getString(R.string.delete_zero))
         } else {
             // La nota se eliminó correctamente
-            Utils.showToast(ctx, Utils.SUCCESS, ctx.getString(R.string.delete_success))
+            Utils.showToast(ctx, ctx.getString(R.string.delete_success))
             Logger.e(className, "Lista eliminada correctamente: $mList")
         }
         lists!!.remove(mList)

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "503693098428",
+    "project_id": "kotlin-secretaria",
+    "storage_bucket": "kotlin-secretaria.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:503693098428:android:c8bf8861556fcbc512ffb9",
+        "android_client_info": {
+          "package_name": "com.chemecador.secretaria"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJyXtD3h52O_nS_Fz5mtWKsLhtQtPRHg0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

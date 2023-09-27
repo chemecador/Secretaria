@@ -22,7 +22,6 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.fragment.app.Fragment
 import com.chemecador.secretaria.R
-import com.chemecador.secretaria.gui.CustomToast
 import com.chemecador.secretaria.interfaces.OnBackPressed
 import com.chemecador.secretaria.logger.Logger
 import com.chemecador.secretaria.provider.SecretariaFileProvider
@@ -51,22 +50,19 @@ class ExplorerFragment : Fragment(), OnBackPressed {
         rootDirectory = context.filesDir
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        listView = view.findViewById(R.id.explorer_listView)
+    override fun onViewCreated(v: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(v, savedInstanceState)
+        listView = v.findViewById(R.id.explorer_listView)
         adapter = FileAdapter(requireContext())
         listView?.adapter = adapter
         listView?.onItemClickListener =
-            OnItemClickListener { adapterView: AdapterView<*>, view: View, position: Int, id: Long ->
+            OnItemClickListener { _: AdapterView<*>, _: View, position: Int, _: Long ->
                 fileSelected(
-                    adapterView,
-                    view,
-                    position,
-                    id
+                    position
                 )
             }
-        buttonBorrar = view.findViewById(R.id.explorer_delete)
-        buttonEnviar = view.findViewById(R.id.explorer_send)
+        buttonBorrar = v.findViewById(R.id.explorer_delete)
+        buttonEnviar = v.findViewById(R.id.explorer_send)
         buttonBorrar?.setOnClickListener {
             var couldDeleteAll = true
             for (file in adapter?.selectedFiles!!) {
@@ -81,7 +77,7 @@ class ExplorerFragment : Fragment(), OnBackPressed {
                     }
                 } else {
                     Logger.w(
-                        ExplorerFragment.className,
+                        className,
                         "Se intentó borrar el fichero " + file.file + " pero no se reconoció como fichero que el usuario deberia poder borrar"
                     )
                     couldDeleteAll = false
@@ -149,7 +145,7 @@ class ExplorerFragment : Fragment(), OnBackPressed {
      * · Tienes que añadirlo en `exported_files.xml`<br></br>
      * · Tienes que hacer su directorio accesible añadiendo un item en `renderFiles()`
      */
-    private fun fileSelected(adapterView: AdapterView<*>, view: View, position: Int, id: Long) {
+    private fun fileSelected(position: Int) {
         //Al entrar en un directorio, cambiar a ese
         val adapter = listView!!.adapter as FileAdapter
         val alias = adapter.getItem(position)!!
@@ -186,16 +182,12 @@ class ExplorerFragment : Fragment(), OnBackPressed {
                     target.setDataAndType(uri, "text/csv")
                     target.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     target.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    val intent = Intent.createChooser(target, "Abrir documento csv con...")
+                    val intent = Intent.createChooser(target, getString(R.string.open_csv_with))
                     try {
                         requireContext().startActivity(intent)
                     } catch (e: ActivityNotFoundException) {
                         // Instruct the user to install a PDF reader here, or something
-                        CustomToast(
-                            requireContext(),
-                            CustomToast.TOAST_ERROR,
-                            Toast.LENGTH_LONG
-                        ).show("No se ha detectado ninguna aplicación para abrir documentos PDF.")
+                        Toast.makeText(requireContext(), R.string.no_pdf_app_found, Toast.LENGTH_LONG)
                     }
                 } else if (file?.name?.lowercase(Locale.getDefault())?.endsWith(".jpg") == true) {
                     openFileIntent(
@@ -209,16 +201,12 @@ class ExplorerFragment : Fragment(), OnBackPressed {
                     target.setDataAndType(uri, "application/pdf")
                     target.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     target.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    val intent = Intent.createChooser(target, "Abrir documento PDF con...")
+                    val intent = Intent.createChooser(target, getString(R.string.open_pdf_with))
                     try {
                         requireContext().startActivity(intent)
                     } catch (e: ActivityNotFoundException) {
                         // Instruct the user to install a PDF reader here, or something
-                        CustomToast(
-                            requireContext(),
-                            CustomToast.TOAST_ERROR,
-                            Toast.LENGTH_LONG
-                        ).show("No se ha detectado ninguna aplicación para abrir documentos PDF.")
+                        Toast.makeText(requireContext(), R.string.no_pdf_app_found, Toast.LENGTH_LONG).show()
                     }
                 } else {
                     //No se reconoce cómo abrir este archivo
@@ -274,16 +262,16 @@ class ExplorerFragment : Fragment(), OnBackPressed {
     ) {
         var selectedFileCount = 0
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            var convertView = convertView
+            var v = convertView
             val alias = getItem(position)
             val file = alias!!.file
-            if (convertView == null) {
-                convertView =
+            if (v == null) {
+                v =
                     LayoutInflater.from(context).inflate(R.layout.list_item_explorer, parent, false)
             }
-            val checkBox = convertView!!.findViewById<CheckBox>(R.id.explorer_item_checkBox)
-            val textView = convertView.findViewById<TextView>(R.id.explorer_item_textBox)
-            val imageView = convertView.findViewById<ImageView>(R.id.explorer_item_imageView)
+            val checkBox = v!!.findViewById<CheckBox>(R.id.explorer_item_checkBox)
+            val textView = v.findViewById<TextView>(R.id.explorer_item_textBox)
+            val imageView = v.findViewById<ImageView>(R.id.explorer_item_imageView)
             checkBox.visibility = if (file!!.isFile) View.VISIBLE else View.GONE
             if (alias.image != null) imageView.setImageResource(alias.image!!)
             imageView.visibility = if (alias.image != null) View.VISIBLE else View.GONE
@@ -302,14 +290,14 @@ class ExplorerFragment : Fragment(), OnBackPressed {
             checkBox.isChecked = getItem(position)!!.isSelected
             textView.text = alias.toString()
             val finalConvertView =
-                convertView //Necesario para poder usar onItemClick, no me preguntes
-            convertView.setOnClickListener {
+                v //Necesario para poder usar onItemClick, no me preguntes
+            v.setOnClickListener {
                 listView!!.setSelection(position)
                 //Ya que nuestros items son clickable, tenemos que reimplementar esto
                 listView!!.onItemClickListener!!
                     .onItemClick(listView, finalConvertView, position, 0)
             }
-            return convertView
+            return v
         }
 
         fun changeListing(aliasedFiles: Array<AliasedFile>) {

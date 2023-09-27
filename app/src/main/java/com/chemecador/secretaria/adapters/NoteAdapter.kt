@@ -1,6 +1,5 @@
 package com.chemecador.secretaria.adapters
 
-import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +20,6 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
     private val noteList: MutableList<Note>?
     private val mInflater: LayoutInflater
     private val ctx: Context
-    private var dialog: AlertDialog? = null
     private val isPublic: Boolean
     var onItemClickListener: OnItemClickListener? = null
 
@@ -48,8 +46,7 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
         holder.bindData(mNote)
         // Asignar un listener de clic al elemento de la lista
         holder.itemView.setOnClickListener {
-            val position = holder.adapterPosition
-            onItemClickListener?.onItemClick(position)
+            onItemClickListener?.onItemClick(holder.adapterPosition)
         }
         holder.cb.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             DB.getInstance(

@@ -96,7 +96,7 @@ class FriendsActivity : AppCompatActivity() {
             }
 
             R.id.logout -> {
-                if (PreferencesHandler.isOnline(this)) DB.getInstance(this)?.deleteAll()
+                if (PreferencesHandler.isOnline(this)) DB.getInstance(this).deleteAll()
                 this.finish()
                 startActivity(Intent(this, LoginActivity::class.java))
                 return true

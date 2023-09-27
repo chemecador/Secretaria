@@ -42,6 +42,11 @@ object PreferencesHandler {
             .getBoolean(PREF_ONLINE, false)
     }
 
+    fun lastLoginOk(context: Context): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+            .getBoolean(PREF_LAST_LOGIN_OK, false)
+    }
+
     fun isTokenValid(context: Context): Boolean {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         return (prefs.contains(PREF_TOKEN)
@@ -65,4 +70,21 @@ object PreferencesHandler {
     fun getFloat(context: Context, floatName: String?): Float {
         return PreferenceManager.getDefaultSharedPreferences(context).getFloat(floatName, -1f)
     }
+
+    fun putInt(context: Context, intName: String, intValue: Int) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putInt(intName, intValue).apply()
+    }
+
+    fun putBoolean(context: Context, booleanName: String, booleanValue: Boolean) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(booleanName, booleanValue).apply()
+    }
+
+    fun putString(context: Context, stringName: String, stringValue: String) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(stringName, stringValue).apply()
+    }
+
+    fun putFloat(context: Context, floatName: String, floatValue: Float) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putFloat(floatName, floatValue).apply()
+    }
+
 }

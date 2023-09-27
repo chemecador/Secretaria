@@ -115,7 +115,7 @@ class DB private constructor(context: Context, databaseName: String) :
         // Obtener el valor Unix para las 23:59
         val unixEnd = day.withHour(23).withMinute(59).withSecond(59).withNano(999999999).toEpochSecond(ZoneOffset.UTC)
 
-        val nextDay = day.plusDays(1)
+        day.plusDays(1)
 
         val selectionArgs = arrayOf(unixStart.toString(), unixEnd.toString())
         try {

@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import com.chemecador.secretaria.gui.CustomToast
-import com.chemecador.secretaria.utils.Utils
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -280,14 +278,14 @@ class Logger(context: Context) {
         /**
          * Loguea un mensaje de ERROR, mostrando un `CustomToast` con el mensaje proporcionado también
          */
-        fun eT(className: String, message: String, context: Context?) {
+        fun eT(className: String, message: String, context: Context) {
             eT(className, message, null, context)
         }
 
         /**
          * Loguea un mensaje de ERROR, mostrando un `CustomToast` con el mensaje proporcionado también
          */
-        fun eT(className: String, message: String, error: Throwable?, context: Context?) {
+        fun eT(className: String, message: String, error: Throwable?, context: Context) {
             Log.e(className, message, error)
             singleton!!.escribirLinea("[ERROR/$className] $message")
             if (error != null) {
@@ -295,8 +293,7 @@ class Logger(context: Context) {
                 error.printStackTrace(ps)
                 ps.flush()
             }
-            CustomToast(context!!, Utils.ERROR, Toast.LENGTH_LONG)
-                .show(message)
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
         }
 
         /**

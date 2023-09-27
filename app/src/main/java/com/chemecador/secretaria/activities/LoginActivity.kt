@@ -3,9 +3,6 @@ package com.chemecador.secretaria.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
-import android.widget.Toast
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.databinding.ActivityLoginBinding
@@ -35,79 +32,26 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         Logger.crearSingleton(this)
-        if (PreferencesHandler.isTokenValid(this)) {
+        if (PreferencesHandler.isTokenValid(this) && PreferencesHandler.lastLoginOk(this)) {
+            PreferencesHandler.putBoolean(this, PreferencesHandler.PREF_LAST_LOGIN_OK, false)
             syncDB()
             return
         } else {
             binding.loading.visibility = View.GONE
         }
-        val usernameEditText: EditText = binding.etUsername
-        val passwordEditText: EditText = binding.etPassword
-        val loginButton = binding.btnLogin
-        val guestButton = binding.btnGuest
-        val registerbutton = binding.btnRegister
 
         enableButtons()
-        guestButton.setOnClickListener { loginOffline() }
-
-        /*val afterTextChangedListener: TextWatcher = object : TextWatcher {
-            val tilPassword: TextInputLayout =
-                binding.root.findViewById<TextInputLayout>(R.id.til_password)
-
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                // ignore
-                if (loginViewModel.loginDataChanged(
-                        usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString()
-                    )
-                ) {
-                    tilPassword.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE)
-                    binding.tilUser.helperText = getString(R.string.only_use)
-                } else {
-                    tilPassword.setEndIconMode(TextInputLayout.END_ICON_NONE)
-                    binding.tilUser.helperText = getString(R.string.never_spam)
-                }
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                // ignore
-            }
-
-            override fun afterTextChanged(s: Editable) {
-                username = usernameEditText.getText().toString()
-                password = passwordEditText.getText().toString()
-                if (loginViewModel.loginDataChanged(
-                        usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString()
-                    )
-                ) {
-                    tilPassword.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE)
-                } else {
-                    tilPassword.setEndIconMode(TextInputLayout.END_ICON_NONE)
-                }
-            }
-        }
-        usernameEditText.addTextChangedListener(afterTextChangedListener)
-        passwordEditText.addTextChangedListener(afterTextChangedListener)
-        passwordEditText.setOnEditorActionListener(OnEditorActionListener { v: TextView?, actionId: Int, event: KeyEvent? ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                loginViewModel.login(
-                    usernameEditText.getText().toString(),
-                    passwordEditText.getText().toString()
-                )
-            }
-            false
-        })*/
-        loginButton.setOnClickListener { login() }
-        registerbutton.setOnClickListener { register() }
+        binding.btnGuest.setOnClickListener { loginOffline() }
+        binding.btnLogin.setOnClickListener { login() }
+        binding.btnRegister.setOnClickListener { register() }
     }
 
     private fun login() {
         disableButtons()
         binding.loading.visibility = View.VISIBLE // Mostrar el AlertDialog
 
-        username = binding?.etUsername?.text.toString()
-        password = binding?.etPassword?.text.toString()
+        username = binding.etUsername.text.toString()
+        password = binding.etPassword.text.toString()
         // Obtener la instancia de Retrofit
         val retrofit = client
 
@@ -141,19 +85,16 @@ class LoginActivity : AppCompatActivity() {
                     if (response.code() == 401) {
                         Utils.showToast(
                             this@LoginActivity,
-                            Utils.ERROR,
                             getString(R.string.login_incorrect)
                         )
                     } else if (response.code() == 403) {
                         Utils.showToast(
                             this@LoginActivity,
-                            Utils.ERROR,
                             getString(R.string.user_already_exists)
                         )
                     } else {
                         Utils.showToast(
                             this@LoginActivity,
-                            Utils.ERROR,
                             getString(R.string.server_error)
                         )
                     }
@@ -166,7 +107,6 @@ class LoginActivity : AppCompatActivity() {
                 e(className, "Error en el login ", t)
                 Utils.showToast(
                     this@LoginActivity,
-                    Utils.ERROR,
                     getString(R.string.connection_error)
                 )
             }
@@ -210,7 +150,6 @@ class LoginActivity : AppCompatActivity() {
                     )
                     Utils.showToast(
                         this@LoginActivity,
-                        Utils.ERROR,
                         getString(R.string.user_already_exists)
                     )
                 } else {
@@ -221,7 +160,6 @@ class LoginActivity : AppCompatActivity() {
                     )
                     Utils.showToast(
                         this@LoginActivity,
-                        Utils.ERROR,
                         getString(R.string.server_error)
                     )
                 }
@@ -233,7 +171,6 @@ class LoginActivity : AppCompatActivity() {
                 e(className, "Error en el login: ", t)
                 Utils.showToast(
                     this@LoginActivity,
-                    Utils.ERROR,
                     getString(R.string.connection_error)
                 )
             }
@@ -245,7 +182,6 @@ class LoginActivity : AppCompatActivity() {
         finish()
         startActivity(Intent(applicationContext, MainActivity::class.java))
     }
-
 
     private fun syncDB() {
         SyncLists.getLists(this) { listsSuccess ->
@@ -504,14 +440,9 @@ class LoginActivity : AppCompatActivity() {
         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
     }
 
-    private fun updateUiWithUser() {}
-    private fun showLoginFailed(@StringRes errorString: Int) {
-        Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
-    }
-
     private fun disableButtons() {
         binding.tilUser.helperText = ""
-        binding.btnLogin.isEnabled = false
+       // binding.btnLogin.isEnabled = false
         binding.btnRegister.isEnabled = false
         binding.btnGuest.isEnabled = false
     }

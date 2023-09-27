@@ -6,6 +6,7 @@ class TODO {
      * fixme:
      *
      * todo:
+     *      mensaje al entrar: recuerda que es una app en desarrollo blablabla...
      *      borrar notas tras borrar la lista
      *      icono/color en listas/notas/tareas
      *      mejorar los logs

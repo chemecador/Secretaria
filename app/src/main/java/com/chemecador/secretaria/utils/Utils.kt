@@ -3,7 +3,6 @@ package com.chemecador.secretaria.utils
 import android.app.Activity
 import android.content.Context
 import android.widget.Toast
-import com.chemecador.secretaria.gui.CustomToast
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -14,23 +13,15 @@ object Utils {
     const val INFO = 2
     const val WARNING = 3
     const val ERROR = 4
-    fun showToast(context: Context, type: Int, message: String?) {
+    fun showToast(context: Context, message: String?) {
         (context as Activity).runOnUiThread {
-            CustomToast(
-                context,
-                type,
-                Toast.LENGTH_LONG
-            ).show(message)
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
         }
     }
 
-    fun showToast(context: Context, type: Int, resource: Int) {
+    fun showToast(context: Context, resource: Int) {
         (context as Activity).runOnUiThread {
-            CustomToast(
-                context,
-                type,
-                Toast.LENGTH_LONG
-            ).show(context.getString(resource))
+            Toast.makeText(context, resource, Toast.LENGTH_LONG).show()
         }
     }
 
@@ -45,25 +36,29 @@ object Utils {
 
     fun beautifyDate(date: String?): String {
         val dateTime = LocalDateTime.parse(date, fullFormatter)
-        val newFormat: DateTimeFormatter = if (dateTime.hour == 0 && dateTime.minute == 0 && dateTime.second == 0) {
-            DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        } else {
-            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
-        }
+        val newFormat: DateTimeFormatter =
+            if (dateTime.hour == 0 && dateTime.minute == 0 && dateTime.second == 0) {
+                DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            } else {
+                DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
+            }
         val newDate = LocalDateTime.parse(date, fullFormatter)
         return newDate.format(newFormat)
     }
+
     fun beautifySpanishDate(date: String?): String {
         val fullFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
         val dateTime = LocalDateTime.parse(date, fullFormat)
-        val newFormat: DateTimeFormatter = if (dateTime.hour == 0 && dateTime.minute == 0 && dateTime.second == 0) {
-            DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        } else {
-            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
-        }
+        val newFormat: DateTimeFormatter =
+            if (dateTime.hour == 0 && dateTime.minute == 0 && dateTime.second == 0) {
+                DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            } else {
+                DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
+            }
         val newDate = LocalDateTime.parse(date, fullFormat)
         return newDate.format(newFormat)
     }
+
     fun beautifyDate(unixTimestamp: Long): String {
 
         // Convertir el tiempo Unix a un objeto Instant
@@ -78,11 +73,12 @@ object Utils {
         val dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
 
         // Determina cuál formato utilizar en función de la hora, minutos y segundos
-        val selectedFormat = if (dateTime.hour == 0 && dateTime.minute == 0 && dateTime.second == 0) {
-            dateFormat
-        } else {
-            dateTimeFormat
-        }
+        val selectedFormat =
+            if (dateTime.hour == 0 && dateTime.minute == 0 && dateTime.second == 0) {
+                dateFormat
+            } else {
+                dateTimeFormat
+            }
 
         // Formatea la fecha y hora según el formato seleccionado
         return dateTime.format(selectedFormat)
@@ -96,11 +92,12 @@ object Utils {
         val dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
 
         // Determina cuál formato utilizar en función de la hora, minutos y segundos
-        val selectedFormat = if (localDateTime.hour == 0 && localDateTime.minute == 0 && localDateTime.second == 0) {
-            dateFormat
-        } else {
-            dateTimeFormat
-        }
+        val selectedFormat =
+            if (localDateTime.hour == 0 && localDateTime.minute == 0 && localDateTime.second == 0) {
+                dateFormat
+            } else {
+                dateTimeFormat
+            }
 
         // Formatea la fecha y hora según el formato seleccionado
         return localDateTime.format(selectedFormat)

@@ -12,10 +12,9 @@ import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.activities.LoginActivity
+import com.chemecador.secretaria.databinding.FragmentChangePassBinding
 import com.chemecador.secretaria.network.retrofit.Client.client
 import com.chemecador.secretaria.network.retrofit.Service
-import com.chemecador.secretaria.databinding.FragmentChangePassBinding
-import com.chemecador.secretaria.gui.CustomToast
 import com.chemecador.secretaria.requests.PasswordRequest
 import com.chemecador.secretaria.utils.Utils
 import com.google.android.material.snackbar.Snackbar
@@ -91,11 +90,7 @@ class ChangePassFragment : Fragment() {
         val token =
             PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("token", "")!!
         if (userId == -1) {
-            CustomToast(
-                requireContext(),
-                Utils.ERROR,
-                Toast.LENGTH_LONG
-            ).show(getString(R.string.login_again))
+            Toast.makeText(requireContext(),getString(R.string.login_again),Toast.LENGTH_LONG).show()
             (requireContext() as Activity).finish()
             startActivity(Intent(requireContext(), LoginActivity::class.java))
             return
@@ -106,7 +101,7 @@ class ChangePassFragment : Fragment() {
         val call = apiService.changePassword(token, userId, pr)
 
         // Ejecutar la llamada de forma asíncrona
-        call!!.enqueue(object : Callback<ResponseBody> {
+        call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
                     val responseBody: String? =
@@ -122,13 +117,11 @@ class ChangePassFragment : Fragment() {
                     // Manejar el error de respuesta
                     Utils.showToast(
                         requireContext(),
-                        Utils.ERROR,
                         response.code().toString() + " : " + getString(R.string.incorrect_password)
                     )
                 } else {
                     Utils.showToast(
                         requireContext(),
-                        Utils.ERROR,
                         response.code().toString() + " : " + getString(R.string.server_error)
                     )
                 }
@@ -137,7 +130,7 @@ class ChangePassFragment : Fragment() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
 
                 // Manejar el error de conexión o la excepción
-                Utils.showToast(requireContext(), Utils.ERROR, getString(R.string.server_error))
+                Utils.showToast(requireContext(), getString(R.string.server_error))
             }
         })
     }

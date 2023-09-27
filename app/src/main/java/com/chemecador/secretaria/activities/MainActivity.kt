@@ -59,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         binding!!.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
         switchState()
         binding!!.bnv.selectedItemId = if (mode == CALENDAR) R.id.menu_calendar else R.id.menu_lists
+
     }
 
     private fun switchState() {
@@ -91,7 +92,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.logout -> {
                 if (PreferencesHandler.isOnline(this)) {
-                    DB.getInstance(this)!!.deleteAll()
+                    DB.getInstance(this).deleteAll()
                 }
                 finish()
                 startActivity(Intent(this, LoginActivity::class.java))

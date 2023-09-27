@@ -22,7 +22,6 @@ import com.chemecador.secretaria.adapters.NoteAdapter
 import com.chemecador.secretaria.databinding.FragmentNotesBinding
 import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.fragments.detail.NoteDetailFragment
-import com.chemecador.secretaria.gui.CustomToast
 import com.chemecador.secretaria.interfaces.OnItemClickListener
 import com.chemecador.secretaria.items.Note
 import com.chemecador.secretaria.items.NotesList
@@ -82,7 +81,7 @@ class NotesFragment : Fragment(), OnItemClickListener {
                 if (success) {
                     Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
                 } else {
-                    Utils.showToast(ctx, CustomToast.TOAST_ERROR, R.string.update_error)
+                    Utils.showToast(ctx, R.string.update_error)
                 }
             }
         }
@@ -146,7 +145,7 @@ class NotesFragment : Fragment(), OnItemClickListener {
         ).getInt("id", -1)
         val token = PreferencesHandler.getToken(ctx)
         if (userId == -1) {
-            CustomToast(ctx, Utils.ERROR, Toast.LENGTH_LONG).show(getString(R.string.login_again))
+            Toast.makeText(ctx, R.string.login_again, Toast.LENGTH_LONG).show()
             (ctx as Activity?)!!.finish()
             startActivity(Intent(ctx, LoginActivity::class.java))
             return
@@ -170,13 +169,11 @@ class NotesFragment : Fragment(), OnItemClickListener {
                     // Manejar el error de respuesta
                     Utils.showToast(
                         ctx,
-                        Utils.ERROR,
                         response.code().toString() + " : " + getString(R.string.unauthorized)
                     )
                 } else {
                     Utils.showToast(
                         ctx,
-                        Utils.ERROR,
                         response.code().toString() + " : " + getString(R.string.server_error)
                     )
                 }
@@ -185,7 +182,7 @@ class NotesFragment : Fragment(), OnItemClickListener {
             override fun onFailure(call: Call<IdResponse?>, t: Throwable) {
                 // Manejar el error de conexión o la excepción
                 Utils.showToast(
-                    ctx, Utils.ERROR, """${getString(R.string.server_error)} :${t.message}"""
+                    ctx, """${getString(R.string.server_error)} :${t.message}"""
                 )
             }
         })

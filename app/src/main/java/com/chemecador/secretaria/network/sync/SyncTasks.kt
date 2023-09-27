@@ -44,14 +44,13 @@ class SyncTasks {
                             // Llamamos al callback con true si la sincronización fue exitosa
                             callback(true)
                         } else {
-                            Utils.showToast(ctx, Utils.ERROR, R.string.something_went_wrong)
+                            Utils.showToast(ctx, R.string.something_went_wrong)
                             // Llamamos al callback con false en caso de error
                             callback(false)
                         }
                     } else if (response.code() == 401) {
                         Utils.showToast(
                             ctx,
-                            Utils.ERROR,
                             response.code()
                                 .toString() + " : " + ctx.getString(R.string.unauthorized)
                         )
@@ -60,7 +59,6 @@ class SyncTasks {
                     } else {
                         Utils.showToast(
                             ctx,
-                            Utils.ERROR,
                             response.code()
                                 .toString() + " : " + ctx.getString(R.string.server_error)
                         )
@@ -70,7 +68,7 @@ class SyncTasks {
                 }
 
                 override fun onFailure(call: Call<ArrayList<Task>>, t: Throwable) {
-                    Utils.showToast(ctx, Utils.ERROR, ctx.getString(R.string.connection_error))
+                    Utils.showToast(ctx, ctx.getString(R.string.connection_error))
                     // Llamamos al callback con false en caso de error
                     callback(false)
                 }

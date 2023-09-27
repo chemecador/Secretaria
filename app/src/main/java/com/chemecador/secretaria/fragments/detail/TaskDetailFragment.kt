@@ -183,14 +183,12 @@ class TaskDetailFragment : Fragment() {
                             updateTaskFromDB(mTask)
                         } else {
                             Utils.showToast(
-                                requireContext(), Utils.SUCCESS,
-                                requireContext().getString(R.string.update_error) + ": " + responseBody
+                                requireContext(), requireContext().getString(R.string.update_error) + ": " + responseBody
                             )
                         }
                     } else {
                         Utils.showToast(
                             requireContext(),
-                            Utils.ERROR,
                             requireContext().getString(R.string.update_error)
                         )
                     }
@@ -200,7 +198,6 @@ class TaskDetailFragment : Fragment() {
                     // Error en la llamada al servidor
                     Utils.showToast(
                         requireContext(),
-                        Utils.SUCCESS,
                         requireContext().getString(R.string.connection_error)
                     )
                 }
@@ -215,13 +212,11 @@ class TaskDetailFragment : Fragment() {
         if (updatedTasks == 0) {
             Utils.showToast(
                 requireContext(),
-                Utils.ERROR,
                 requireContext().getString(R.string.updated_zero)
             )
         } else {
             Utils.showToast(
                 requireContext(),
-                Utils.SUCCESS,
                 requireContext().getString(R.string.update_success)
             )
             Logger.i(className, "Tarea actualizada correctamente: $mTask")
@@ -257,14 +252,12 @@ class TaskDetailFragment : Fragment() {
                             deleteTaskFromDB(mTask)
                         } else {
                             Utils.showToast(
-                                requireContext(), Utils.SUCCESS,
-                                requireContext().getString(R.string.delete_error) + ": " + responseBody
+                                requireContext(), requireContext().getString(R.string.delete_error) + ": " + responseBody
                             )
                         }
                     } else {
                         Utils.showToast(
                             requireContext(),
-                            Utils.ERROR,
                             requireContext().getString(R.string.delete_error)
                         )
                     }
@@ -274,7 +267,6 @@ class TaskDetailFragment : Fragment() {
                     // Error en la llamada al servidor
                     Utils.showToast(
                         requireContext(),
-                        Utils.SUCCESS,
                         requireContext().getString(R.string.connection_error)
                     )
                 }
@@ -290,14 +282,12 @@ class TaskDetailFragment : Fragment() {
         if (deletedTasks == 0) {
             Utils.showToast(
                 requireContext(),
-                Utils.ERROR,
                 requireContext().getString(R.string.delete_zero)
             )
         } else {
             // La nota se eliminó correctamente
             Utils.showToast(
                 requireContext(),
-                Utils.SUCCESS,
                 requireContext().getString(R.string.delete_success)
             )
             Logger.i(className, "Tarea eliminada correctamente: $mTask")
