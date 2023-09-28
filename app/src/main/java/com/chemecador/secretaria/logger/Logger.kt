@@ -74,7 +74,6 @@ class Logger(context: Context) {
 
     /**
      * Crea un nuevo `Logger` con el contexto especificado
-     * @param context El contexto de la aplicación, necesario para elegir el directorio de ficheros.
      */
     init {
         this.context = context.applicationContext

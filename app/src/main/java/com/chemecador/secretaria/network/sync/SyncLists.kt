@@ -21,7 +21,7 @@ class SyncLists {
 
         fun getLists(ctx: Context, callback: (Boolean) -> Unit) {
             // Obtener la instancia de Retrofit
-            val retrofit: Retrofit = client!!
+            val retrofit: Retrofit = client
 
             // Crear una instancia del servicio de la API
             val apiService: Service = retrofit.create(Service::class.java)

@@ -160,19 +160,19 @@ class TaskDetailFragment : Fragment() {
             val retrofit = Client.client
 
             // Crear una instancia del servicio de la API
-            val apiService = retrofit?.create(
+            val apiService = retrofit.create(
                 Service::class.java
             )
 
             // Utilizar el servicio para realizar llamadas a la API
-            val call = apiService?.updateTask(
+            val call = apiService.updateTask(
                 PreferencesHandler.getToken(requireContext()), PreferencesHandler.getId(
                     requireContext()
                 ), mTask.id, mTask
             )
 
             // Ejecutar la llamada de forma asíncrona
-            call!!.enqueue(object : Callback<ResponseBody> {
+            call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
@@ -229,7 +229,7 @@ class TaskDetailFragment : Fragment() {
             val retrofit = Client.client
 
             // Crear una instancia del servicio de la API
-            val apiService = retrofit!!.create(
+            val apiService = retrofit.create(
                 Service::class.java
             )
 

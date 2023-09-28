@@ -20,7 +20,7 @@ object Client {
     private const val PRODUCTION_URL = "https://todo-api.paesa.es"
     private const val BASE_URL = DEVELOPMENT_URL
     @JvmStatic
-    val client: Retrofit?
+    val client: Retrofit
         get() {
             if (retrofit == null) {
                 // Create the logging interceptor
@@ -60,6 +60,6 @@ object Client {
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build()
             }
-            return retrofit
+            return retrofit!!
         }
 }

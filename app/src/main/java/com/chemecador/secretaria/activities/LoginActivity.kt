@@ -17,6 +17,8 @@ import com.chemecador.secretaria.requests.LoginRequest
 import com.chemecador.secretaria.responses.login.LoginResponse
 import com.chemecador.secretaria.utils.PreferencesHandler
 import com.chemecador.secretaria.utils.Utils
+import com.chemecador.secretaria.version.Version
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,14 +38,31 @@ class LoginActivity : AppCompatActivity() {
             PreferencesHandler.putBoolean(this, PreferencesHandler.PREF_LAST_LOGIN_OK, false)
             syncDB()
             return
-        } else {
-            binding.loading.visibility = View.GONE
         }
-
+        showWelcome()
         enableButtons()
         binding.btnGuest.setOnClickListener { loginOffline() }
         binding.btnLogin.setOnClickListener { login() }
         binding.btnRegister.setOnClickListener { register() }
+    }
+
+    private fun showWelcome() {
+
+        if (PreferencesHandler.getBoolean(this, PreferencesHandler.PREF_NEW_USER, true)) {
+            PreferencesHandler.putBoolean(this, PreferencesHandler.PREF_NEW_USER, false)
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.welcome_title)
+                .setMessage(R.string.welcome_msg)
+                .setCancelable(false)
+                .setNeutralButton(R.string.understood) { _, _ -> Version.showPatchNotes(context = this) }
+                .show()
+        } else if (PreferencesHandler.getBoolean(this, PreferencesHandler.PREF_NEW_VERSION, true)){
+            Version.showPatchNotes(context = this)
+        }
+        Version.showPatchNotes(context = this)
+
+
+        PreferencesHandler.putBoolean(this, PreferencesHandler.PREF_NEW_VERSION, false)
     }
 
     private fun login() {
@@ -56,7 +75,7 @@ class LoginActivity : AppCompatActivity() {
         val retrofit = client
 
         // Crear una instancia del servicio de la API
-        val apiService = retrofit!!.create(
+        val apiService = retrofit.create(
             Service::class.java
         )
         val request = LoginRequest(username, password)
@@ -119,19 +138,19 @@ class LoginActivity : AppCompatActivity() {
         val password = binding.etPassword.text.toString()
         disableButtons()
         binding.loading.visibility = View.VISIBLE
-        val retrofit: Retrofit? = client
+        val retrofit: Retrofit = client
 
         // Crear una instancia del servicio de la API
-        val apiService: Service? = retrofit?.create(
+        val apiService: Service = retrofit.create(
             Service::class.java
         )
         val request = LoginRequest(username, password)
 
         // Utilizar el servicio para realizar llamadas a la API
-        val call: Call<LoginResponse?>? = apiService?.register(request)
+        val call: Call<LoginResponse?> = apiService.register(request)
 
         // Ejecutar la llamada de forma asíncrona
-        call!!.enqueue(object : Callback<LoginResponse?> {
+        call.enqueue(object : Callback<LoginResponse?> {
             override fun onResponse(
                 call: Call<LoginResponse?>,
                 response: Response<LoginResponse?>
@@ -204,234 +223,6 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-
-
-
-
-
-    /*private fun syncDB() {
-        SyncLists.getLists(this) { success ->
-            // Este es el callback que se ejecutará cuando termine la sincronización
-            if (success) {
-                // La sincronización fue exitosa, puedes hacer algo aquí si es necesario
-                SyncNotes.getNotes(this) { success ->
-                    // Este es el callback que se ejecutará cuando termine la sincronización
-                    if (success) {
-                        SyncTasks.getTasks(this) { success ->
-                            // Este es el callback que se ejecutará cuando termine la sincronización
-                            if (success) {
-                                onSyncFinished()
-                            } else {
-                                // Hubo un error durante la sincronización, puedes manejarlo aquí
-                                binding.loading.visibility = View.GONE
-                                enableButtons()
-                            }
-                        }
-                    } else {
-                        // Hubo un error durante la sincronización, puedes manejarlo aquí
-                        binding.loading.visibility = View.GONE
-                        enableButtons()
-                    }
-                }
-            } else {
-                // Hubo un error durante la sincronización, puedes manejarlo aquí
-                binding.loading.visibility = View.GONE
-                enableButtons()
-            }
-        }
-    }*/
-
-    /*private fun syncLists() {
-
-        // Obtener la instancia de Retrofit
-        val retrofit: Retrofit = client!!
-
-        // Crear una instancia del servicio de la API
-        val apiService: Service = retrofit.create(
-            Service::class.java
-        )
-
-        // Utilizar el servicio para realizar llamadas a la API
-        val call: Call<ArrayList<NotesList>> =
-            apiService.getLists(PreferencesHandler.getToken(this), PreferencesHandler.getId(this))
-
-        // Ejecutar la llamada de forma asíncrona
-        call.enqueue(object : Callback<ArrayList<NotesList>> {
-            override fun onResponse(
-                call: Call<ArrayList<NotesList>>,
-                response: Response<ArrayList<NotesList>>
-            ) {
-                if (response.isSuccessful) {
-
-                    // Procesar la respuesta exitosa
-                    val result: ArrayList<NotesList> = response.body()!!
-                    if (DB.getInstance(this@LoginActivity)
-                            .setLists(result)
-                    ) {
-                        syncNotes()
-                    } else {
-                        Utils.showToast(
-                            this@LoginActivity,
-                            Utils.ERROR,
-                            R.string.something_went_wrong
-                        )
-                    }
-                } else if (response.code() == 401) {
-                    PreferencesHandler.clear(this@LoginActivity)
-                    binding.loading.visibility = View.GONE
-                    enableButtons()
-                    // Manejar el error de respuesta
-                    Utils.showToast(
-                        this@LoginActivity,
-                        Utils.ERROR,
-                        response.code().toString() + " : " + getString(R.string.unauthorized)
-                    )
-                } else {
-                    binding.loading.visibility = View.GONE
-                    enableButtons()
-                    Utils.showToast(
-                        this@LoginActivity,
-                        Utils.ERROR,
-                        response.code().toString() + " : " + getString(R.string.server_error)
-                    )
-                }
-            }
-
-            override fun onFailure(call: Call<ArrayList<NotesList>>, t: Throwable) {
-                binding.loading.visibility = View.GONE
-                enableButtons()
-                // Manejar el error de conexión o la excepción
-                Utils.showToast(
-                    this@LoginActivity,
-                    Utils.ERROR,
-                    getString(R.string.connection_error)
-                )
-            }
-        })
-    }*/
-
-    /*private fun syncNotes() {
-
-        // Obtener la instancia de Retrofit
-        val retrofit: Retrofit? = client
-
-        // Crear una instancia del servicio de la API
-        val apiService: Service? = retrofit?.create(
-            Service::class.java
-        )
-
-        // Utilizar el servicio para realizar llamadas a la API
-        val call = apiService?.getNotes(
-            PreferencesHandler.getToken(this), PreferencesHandler.getId(this)
-        )
-
-        // Ejecutar la llamada de forma asíncrona
-        call!!.enqueue(object : Callback<ArrayList<Note>> {
-            override fun onResponse(
-                call: Call<ArrayList<Note>>,
-                response: Response<ArrayList<Note>>
-            ) {
-                if (response.isSuccessful) {
-
-                    // Procesar la respuesta exitosa
-                    val result = response.body()
-                    if (result != null) {
-                        DB.getInstance(this@LoginActivity).setNotes(result)
-                    }
-                    syncTasks()
-                } else if (response.code() == 401) {
-                    binding.loading.visibility = View.GONE
-                    enableButtons()
-                    // Manejar el error de respuesta
-                    Utils.showToast(
-                        this@LoginActivity,
-                        Utils.ERROR,
-                        response.code().toString() + " : " + getString(R.string.unauthorized)
-                    )
-                } else {
-                    binding.loading.visibility = View.GONE
-                    enableButtons()
-                    Utils.showToast(
-                        this@LoginActivity,
-                        Utils.ERROR,
-                        response.code().toString() + " : " + getString(R.string.server_error)
-                    )
-                }
-            }
-
-            override fun onFailure(call: Call<ArrayList<Note>>, t: Throwable) {
-                binding.loading.visibility = View.GONE
-                enableButtons()
-                syncTasks()
-                // Manejar el error de conexión o la excepción
-                Utils.showToast(
-                    this@LoginActivity,
-                    Utils.ERROR,
-                    getString(R.string.connection_error)
-                )
-            }
-        })
-    }*/
-
-    /*private fun syncTasks() {
-
-        // Obtener la instancia de Retrofit
-        val retrofit: Retrofit? = client
-
-        // Crear una instancia del servicio de la API
-        val apiService: Service? = retrofit?.create(
-            Service::class.java
-        )
-
-        // Utilizar el servicio para realizar llamadas a la API
-        val call = apiService?.getTasks(
-            PreferencesHandler.getToken(this), PreferencesHandler.getId(this)
-        )
-
-        // Ejecutar la llamada de forma asíncrona
-        call!!.enqueue(object : Callback<ArrayList<Task>> {
-            override fun onResponse(
-                call: Call<ArrayList<Task>>,
-                response: Response<ArrayList<Task>>
-            ) {
-                if (response.isSuccessful) {
-
-                    // Procesar la respuesta exitosa
-                    val result = response.body()!!
-                    DB.getInstance(this@LoginActivity)
-                        .setTasks(result)
-                    onSyncFinished()
-                } else if (response.code() == 401) {
-                    binding.loading.visibility = View.GONE
-                    enableButtons()
-                    // Manejar el error de respuesta
-                    Utils.showToast(
-                        this@LoginActivity,
-                        Utils.ERROR,
-                        response.code().toString() + " : " + getString(R.string.unauthorized)
-                    )
-                } else {
-                    binding.loading.visibility = View.GONE
-                    enableButtons()
-                    Utils.showToast(
-                        this@LoginActivity,
-                        Utils.ERROR,
-                        response.code().toString() + " : " + getString(R.string.server_error)
-                    )
-                }
-            }
-
-            override fun onFailure(call: Call<ArrayList<Task>>, t: Throwable) {
-                onSyncFinished()
-                // Manejar el error de conexión o la excepción
-                Utils.showToast(
-                    this@LoginActivity,
-                    Utils.ERROR,
-                    getString(R.string.connection_error)
-                )
-            }
-        })
-    }*/
 
     private fun onSyncFinished() {
         binding.loading.visibility = View.GONE

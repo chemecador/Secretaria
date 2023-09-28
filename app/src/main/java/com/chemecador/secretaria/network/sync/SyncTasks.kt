@@ -22,7 +22,7 @@ class SyncTasks {
         fun getTasks(ctx: Context, callback: (Boolean) -> Unit) {
 
             // Obtener la instancia de Retrofit
-            val retrofit: Retrofit = Client.client!!
+            val retrofit: Retrofit = Client.client
 
             // Crear una instancia del servicio de la API
             val apiService: Service = retrofit.create(Service::class.java)

@@ -103,13 +103,13 @@ class NoteDetailFragment : Fragment() {
         if (mNote == null) return
         if (PreferencesHandler.isOnline(requireContext())) {
             // Obtener la instancia de Retrofit
-            val retrofit: Retrofit? = Client.client
+            val retrofit: Retrofit = Client.client
 
             // Crear una instancia del servicio de la API
-            val apiService: Service? = retrofit?.create(Service::class.java)
+            val apiService: Service = retrofit.create(Service::class.java)
             val nr = NoteRequest(mNote)
             // Utilizar el servicio para realizar llamadas a la API
-            val call: Call<ResponseBody>? = apiService?.updateNote(
+            val call: Call<ResponseBody> = apiService.updateNote(
                 PreferencesHandler.getToken(requireContext()),
                 PreferencesHandler.getId(requireContext()),
                 mNote.listId,
@@ -118,7 +118,7 @@ class NoteDetailFragment : Fragment() {
             )
 
             // Ejecutar la llamada de forma asíncrona
-            call?.enqueue(object : Callback<ResponseBody> {
+            call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
@@ -167,13 +167,13 @@ class NoteDetailFragment : Fragment() {
     private fun deleteNoteOnline(mNote: Note) {
         if (PreferencesHandler.isOnline(requireContext())) {
             // Obtener la instancia de Retrofit
-            val retrofit: Retrofit? = Client.client
+            val retrofit: Retrofit = Client.client
 
             // Crear una instancia del servicio de la API
-            val apiService: Service? = retrofit?.create(Service::class.java)
+            val apiService: Service = retrofit.create(Service::class.java)
 
             // Utilizar el servicio para realizar llamadas a la API
-            val call: Call<ResponseBody>? = apiService?.deleteNote(
+            val call: Call<ResponseBody> = apiService.deleteNote(
                 PreferencesHandler.getToken(requireContext()),
                 PreferencesHandler.getId(requireContext()),
                 mNote.listId,
@@ -181,7 +181,7 @@ class NoteDetailFragment : Fragment() {
             )
 
             // Ejecutar la llamada de forma asíncrona
-            call?.enqueue(object : Callback<ResponseBody> {
+            call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>

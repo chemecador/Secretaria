@@ -132,20 +132,20 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
     private fun updateListOnline(mList: NotesList) {
         if (PreferencesHandler.isOnline(ctx)) {
             // Obtener la instancia de Retrofit
-            val retrofit: Retrofit? = Client.client
+            val retrofit: Retrofit = Client.client
 
             // Crear una instancia del servicio de la API
-            val apiService: Service? = retrofit?.create(Service::class.java)
+            val apiService: Service = retrofit.create(Service::class.java)
 
             // Utilizar el servicio para realizar llamadas a la API
 
             // Ejecutar la llamada de forma asíncrona
-            apiService?.updateList(
+            apiService.updateList(
                 PreferencesHandler.getToken(ctx),
                 PreferencesHandler.getId(ctx),
                 mList.id!!,
                 mList
-            )?.enqueue(object : Callback<ResponseBody> {
+            ).enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
@@ -192,18 +192,18 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
     private fun deleteList(mList: NotesList) {
         if (PreferencesHandler.isOnline(ctx)) {
             // Obtener la instancia de Retrofit
-            val retrofit: Retrofit? = Client.client
+            val retrofit: Retrofit = Client.client
 
             // Crear una instancia del servicio de la API
-            val apiService: Service? = retrofit?.create(Service::class.java)
+            val apiService: Service = retrofit.create(Service::class.java)
 
             // Utilizar el servicio para realizar llamadas a la API
-            val call: Call<ResponseBody>? = apiService?.deleteList(
+            val call: Call<ResponseBody> = apiService.deleteList(
                 PreferencesHandler.getToken(ctx), PreferencesHandler.getId(ctx), mList.id!!
             )
 
             // Ejecutar la llamada de forma asíncrona
-            call?.enqueue(object : Callback<ResponseBody> {
+            call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>

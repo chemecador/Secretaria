@@ -8,6 +8,9 @@ object PreferencesHandler {
     const val PREF_ID = "id"
     const val PREF_ONLINE = "online"
     const val PREF_LAST_LOGIN_OK = "last_login_ok"
+    const val PREF_NEW_USER = "new_user"
+    const val PREF_NEW_VERSION = "new_version"
+
     fun save(context: Context?, id: Int, token: String?) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(
             context!!
@@ -65,6 +68,10 @@ object PreferencesHandler {
     fun getBoolean(context: Context, booleanName: String?): Boolean {
         return PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(booleanName, false)
+    }
+    fun getBoolean(context: Context, booleanName: String?, booleanDefault: Boolean): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+            .getBoolean(booleanName, booleanDefault)
     }
 
     fun getFloat(context: Context, floatName: String?): Float {

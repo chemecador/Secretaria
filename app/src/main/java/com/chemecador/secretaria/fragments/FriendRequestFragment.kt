@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.chemecador.secretaria.adapters.FriendRequestAdapter
-import com.chemecador.secretaria.network.retrofit.Client
-import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.databinding.FragmentFriendRequestBinding
 import com.chemecador.secretaria.items.Friend
+import com.chemecador.secretaria.network.retrofit.Client
+import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.utils.PreferencesHandler
 import retrofit2.Call
 import retrofit2.Callback
@@ -44,13 +44,13 @@ class FriendRequestFragment : Fragment() {
     private fun getFriendRequests(): ArrayList<Friend> {
 
         var requestsList: ArrayList<Friend> = ArrayList()
-        val retrofit: Retrofit? = Client.client
-        val apiService: Service? = retrofit?.create(
+        val retrofit: Retrofit = Client.client
+        val apiService: Service = retrofit.create(
             Service::class.java
         )
-        val call: Call<ArrayList<Friend>>? =
-            apiService?.getFriendRequests(PreferencesHandler.getToken(requireContext()), PreferencesHandler.getId(requireContext()))
-        call?.enqueue(object : Callback<ArrayList<Friend>> {
+        val call: Call<ArrayList<Friend>> =
+            apiService.getFriendRequests(PreferencesHandler.getToken(requireContext()), PreferencesHandler.getId(requireContext()))
+        call.enqueue(object : Callback<ArrayList<Friend>> {
             override fun onResponse(
                 call: Call<ArrayList<Friend>?>,
                 response: Response<ArrayList<Friend>?>

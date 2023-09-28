@@ -82,7 +82,7 @@ class ChangePassFragment : Fragment() {
         val retrofit = client
 
         // Crear una instancia del servicio de la API
-        val apiService = retrofit!!.create(
+        val apiService = retrofit.create(
             Service::class.java
         )
         val userId =

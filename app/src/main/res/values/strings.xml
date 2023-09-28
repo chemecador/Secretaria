@@ -18,6 +18,8 @@
     <string name="login_again">Su sesión ha expirado.\nPor favor, vuelva a iniciar sesión.</string>
     <string name="never_spam">Nunca enviaremos publicidad ni spam</string>
     <string name="only_use">Solo lo usaremos si olvidas tu contraseña</string>
+    <string name="welcome_title">¡Bienvenido a Secretaria!</string>
+    <string name="welcome_msg">Todavía estoy en desarrollo, así que es posible que encuentres algunos errores. Gracias por tu comprensión :)</string>
 
     <!-- Cambiar contraseña -->
     <string name="type_old_password">Introduce la contraseña antigua</string>
@@ -114,7 +116,9 @@
     <string name="today">Hoy</string>
     <string name="sync">Sincronizar</string>
     <string name="ok" translatable="false">OK</string>
+    <string name="understood">Entendido</string>
     <string name="cancel">Cancelar</string>
+    <string name="close">Cerrar</string>
     <string name="confirm">Confirmar</string>
     <string name="rename">Renombrar</string>
     <string name="delete">Eliminar</string>
@@ -128,6 +132,7 @@
     <string name="no_pdf_app_found">No se ha detectado ninguna aplicación para abrir documentos PDF</string>
     <string name="open_pdf_with">Abrir documento PDF con...</string>
     <string name="open_csv_with">Abrir documento csv con...</string>
+    <string name="patch_notes">Historial de cambios</string>
 
 
 </resources>

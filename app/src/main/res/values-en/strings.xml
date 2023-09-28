@@ -16,6 +16,8 @@
     <string name="login_again">Your session expired. Please, log in again.</string>
     <string name="never_spam">We will never send you spam or undesired emails.</string>
     <string name="only_use">We will only use it if you forget your password</string>
+    <string name="welcome_title">Welcome to My Secretary!</string>
+    <string name="welcome_msg">I am still under development, so bugs are expected to happen. Thank you for your understanding :)</string>
 
     <!-- Change password -->
     <string name="type_old_password">Type your old password</string>
@@ -104,7 +106,9 @@
     <!-- Others -->
     <string name="today">Today</string>
     <string name="sync">Sync</string>
+    <string name="understood">Understood</string>
     <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
     <string name="confirm">Confirm</string>
     <string name="lists">Lists</string>
     <string name="rename">Rename</string>
@@ -118,4 +122,5 @@
     <string name="no_pdf_app_found">No PDF opener app has been found</string>
     <string name="open_pdf_with">Open PDF with...</string>
     <string name="open_csv_with">Open CSV file with...</string>
+    <string name="patch_notes">Patch notes</string>
 </resources>
