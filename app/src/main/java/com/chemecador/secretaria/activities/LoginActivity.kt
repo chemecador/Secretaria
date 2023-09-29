@@ -17,7 +17,7 @@ import com.chemecador.secretaria.requests.LoginRequest
 import com.chemecador.secretaria.responses.login.LoginResponse
 import com.chemecador.secretaria.utils.PreferencesHandler
 import com.chemecador.secretaria.utils.Utils
-import com.chemecador.secretaria.version.Version
+import com.chemecador.secretaria.utils.Version
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import retrofit2.Call
 import retrofit2.Callback
@@ -59,7 +59,6 @@ class LoginActivity : AppCompatActivity() {
         } else if (PreferencesHandler.getBoolean(this, PreferencesHandler.PREF_NEW_VERSION, true)){
             Version.showPatchNotes(context = this)
         }
-        Version.showPatchNotes(context = this)
 
 
         PreferencesHandler.putBoolean(this, PreferencesHandler.PREF_NEW_VERSION, false)
@@ -131,7 +130,6 @@ class LoginActivity : AppCompatActivity() {
             }
         })
     }
-
 
     private fun register() {
         val username = binding.etUsername.text.toString()

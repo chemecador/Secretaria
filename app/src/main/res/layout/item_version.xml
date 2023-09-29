@@ -1,27 +1,61 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- item_version.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="8dp">
+    android:layout_marginTop="@dimen/spacing_rule_1"
+    android:orientation="vertical"
+    tools:background="@color/colorPrimary">
 
-    <TextView
-        android:id="@+id/tv_versionName"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        tools:text="1.0.0"/>
-
-    <TextView
-        android:id="@+id/tv_descripcion"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="4"
-        tools:text="Desplegar la versión 1.0 donde he puesto muchos cambios y la he publicado en el Play Store !!"/>
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_versionName"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:gravity="center_horizontal|bottom"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="1.0.0" />
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                tools:text="1.0.0" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/tv_descripcion"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3.5"
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            tools:text="Desplegar la versión 1.0 donde he puesto muchos cambios y la he publicado en el Play Store !!" />
+    </LinearLayout>
+    <!-- Separador -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/spacing_rule_1"
+        android:background="?android:attr/dividerHorizontal" />
 
 </LinearLayout>

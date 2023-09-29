@@ -2,6 +2,26 @@
     <string name="app_name" translatable="false">Secretaria</string>
     <string name="title_activity_main" translatable="false">Secretaria</string>
 
+
+    <array name="versions" translatable="false">
+        <item>1.0.2</item>
+        <item>1.0.1</item>
+        <item>1.0.0</item>
+    </array>
+
+    <array name="dates" translatable="false">
+        <item>01/10/23</item>
+        <item>07/09/23</item>
+        <item>01/08/23</item>
+    </array>
+
+    <array name="descriptions">
+        <item>Mejoras estéticas y de estabilidad. Se permite visualizar con más detalle las notas y las tareas. Migración del código a Kotlin.</item>
+        <item>Publicación de la aplicación el Play Store. Se permite insertar, actualizar y eliminar listas, notas y tareas.</item>
+        <item>Se permite insertar listas, notas y tareas, tanto offline como online. Programada en Java puro.</item>
+    </array>
+
+
     <!-- Login -->
     <string name="prompt_email" translatable="false">Email</string>
     <string name="prompt_password">Contraseña</string>
@@ -31,8 +51,6 @@
     <string name="insert_password">Inserta aquí tu nueva contraseña</string>
     <string name="unmatched_passwords">Las contraseñas no coinciden</string>
     <string name="change_password_success">Contraseña cambiada correctamente</string>
-
-
 
 
     <!-- Tareas, notas y listas -->
@@ -108,6 +126,7 @@
     <string name="about_us">Sobre nosotros...</string>
     <string name="logout">Cerrar sesión</string>
     <string name="contact_us">¡Contáctanos!</string>
+    <string name="version_history">Historial de versiones</string>
     <string name="front_end_developer" translatable="false">Front End Developer: Chemecador</string>
     <string name="back_end_developer" translatable="false">Back End Developer: PaesaCloud</string>
 

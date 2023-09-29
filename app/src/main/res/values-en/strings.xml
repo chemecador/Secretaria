@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+
+    <array name="descriptions">
+        <item>Improvements in aesthetics and stability. Allows for more detailed viewing of notes and tasks. Programmed in Kotlin.</item>
+        <item>Release of the app on the Play Store. Allows for inserting, updating, and deleting lists, notes, and tasks.</item>
+        <item>Allows for inserting lists, notes, and tasks, both offline and online. Programmed in pure Java.</item>
+    </array>
+
     <!-- Login -->
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Log in</string>
@@ -48,6 +55,7 @@
     <string name="about_us">About us...</string>
     <string name="logout">Log out</string>
     <string name="contact_us">Contact us!</string>
+    <string name="version_history">Version history</string>
 
 
     <!-- Lists, notes and tasks -->

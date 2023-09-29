@@ -8,4 +8,9 @@
     <dimen name="sides_margin">10dp</dimen>
     <dimen name="sides_margin_big">30dp</dimen>
     <dimen name="margin_big">60dp</dimen>
+
+    <dimen name="spacing_rule_1">16dp</dimen>
+    <dimen name="spacing_rule_2">8dp</dimen>
+    <dimen name="spacing_rule_3">4dp</dimen>
+
 </resources>

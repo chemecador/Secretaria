@@ -37,6 +37,17 @@
             android:text=""
             android:textSize="16sp" />
 
+        <Button
+            android:id="@+id/tv_versionHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:text="@string/version_history"
+            android:textSize="16sp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            />
+
         <TextView
             android:id="@+id/tv_front_end_developer"
             android:layout_width="wrap_content"

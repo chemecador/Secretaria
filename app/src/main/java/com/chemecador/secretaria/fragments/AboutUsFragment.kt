@@ -7,14 +7,15 @@ import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.chemecador.secretaria.BuildConfig
 import androidx.fragment.app.Fragment
+import com.chemecador.secretaria.BuildConfig
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.databinding.FragmentAboutUsBinding
+import com.chemecador.secretaria.utils.Version
 import java.util.concurrent.atomic.AtomicInteger
 
 class AboutUsFragment : Fragment() {
-    private var binding: FragmentAboutUsBinding? = null
+    private lateinit var binding: FragmentAboutUsBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -24,14 +25,14 @@ class AboutUsFragment : Fragment() {
         val version: String = try {
 
             val versionName = BuildConfig.VERSION_NAME
-            "Version : $versionName"
+            "Version $versionName"
         } catch (e: Exception) {
-            "Version 1.0.0"
+            ""
         }
-        binding!!.tvVersion.text = version
+        binding.tvVersion.text = version
         val shortClicks = AtomicInteger()
         val longClicks = AtomicInteger()
-        binding!!.tvVersion.setOnClickListener {
+        binding.tvVersion.setOnClickListener {
             shortClicks.getAndIncrement()
             if (longClicks.get() == 2) {
                 // Obtener el FragmentManager del host (actividad)
@@ -48,15 +49,19 @@ class AboutUsFragment : Fragment() {
             }
             if (shortClicks.get() > 2) shortClicks.set(0)
         }
-        binding!!.tvVersion.setOnLongClickListener {
+        binding.tvVersion.setOnLongClickListener {
             longClicks.getAndIncrement()
             if (longClicks.get() > 2) longClicks.set(0)
             true
         }
-        val tv = binding!!.tvContactUs
-        tv.movementMethod = LinkMovementMethod.getInstance()
-        tv.setOnClickListener { sendEmail() }
-        return binding!!.root
+        val tvContactUs = binding.tvContactUs
+        tvContactUs.movementMethod = LinkMovementMethod.getInstance()
+        tvContactUs.setOnClickListener { sendEmail() }
+
+
+        val tvVersionHistory = binding.tvVersionHistory
+        tvVersionHistory.setOnClickListener { Version.showPatchNotes(requireContext()) }
+        return binding.root
     }
 
     private fun sendEmail() {
@@ -69,10 +74,5 @@ class AboutUsFragment : Fragment() {
         if (intent.resolveActivity(requireContext().packageManager) != null) {
             startActivity(intent)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null
     }
 }
