@@ -62,6 +62,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
+
     private fun switchState() {
         var fragment: Fragment? = null
         when (mode) {

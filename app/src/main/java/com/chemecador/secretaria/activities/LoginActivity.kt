@@ -42,209 +42,225 @@ class LoginActivity : AppCompatActivity() {
         showWelcome()
         enableButtons()
         binding.btnGuest.setOnClickListener { loginOffline() }
-        binding.btnLogin.setOnClickListener { login() }
-        binding.btnRegister.setOnClickListener { register() }
+//        binding.btnLogin.setOnClickListener { login() }
+//        binding.btnRegister.setOnClickListener { register() }
+
+        binding.btnLogin.setOnClickListener { showDisclaimer(true) }
+        binding.btnRegister.setOnClickListener { showDisclaimer(false) }
     }
 
-    private fun showWelcome() {
+    private fun showDisclaimer(isLogin: Boolean) {
 
-        if (PreferencesHandler.getBoolean(this, PreferencesHandler.PREF_NEW_USER, true)) {
-            PreferencesHandler.putBoolean(this, PreferencesHandler.PREF_NEW_USER, false)
-            MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.welcome_title)
-                .setMessage(R.string.welcome_msg)
-                .setCancelable(false)
-                .setNeutralButton(R.string.understood) { _, _ -> Version.showPatchNotes(context = this) }
-                .show()
-        } else if (PreferencesHandler.getBoolean(this, PreferencesHandler.PREF_NEW_VERSION, true)){
-            Version.showPatchNotes(context = this)
-        }
-
-
-        PreferencesHandler.putBoolean(this, PreferencesHandler.PREF_NEW_VERSION, false)
-    }
-
-    private fun login() {
-        disableButtons()
-        binding.loading.visibility = View.VISIBLE // Mostrar el AlertDialog
-
-        username = binding.etUsername.text.toString()
-        password = binding.etPassword.text.toString()
-        // Obtener la instancia de Retrofit
-        val retrofit = client
-
-        // Crear una instancia del servicio de la API
-        val apiService = retrofit.create(
-            Service::class.java
-        )
-        val request = LoginRequest(username, password)
-
-        // Utilizar el servicio para realizar llamadas a la API
-        val call = apiService.login(request)
-
-        // Ejecutar la llamada de forma asíncrona
-        call.enqueue(object : Callback<LoginResponse?> {
-            override fun onResponse(
-                call: Call<LoginResponse?>,
-                response: Response<LoginResponse?>
-            ) {
-                if (response.isSuccessful) {
-                    val result = response.body()!!
-                    PreferencesHandler.save(
-                        this@LoginActivity,
-                        result.id,
-                        "Bearer " + result.token
-                    )
-                    syncDB()
-                } else {
-                    binding.loading.visibility = View.GONE
-                    enableButtons()
-                    e(className, "Error en el login" + response.code() + " - " + response.message())
-                    if (response.code() == 401) {
-                        Utils.showToast(
-                            this@LoginActivity,
-                            getString(R.string.login_incorrect)
-                        )
-                    } else if (response.code() == 403) {
-                        Utils.showToast(
-                            this@LoginActivity,
-                            getString(R.string.user_already_exists)
-                        )
-                    } else {
-                        Utils.showToast(
-                            this@LoginActivity,
-                            getString(R.string.server_error)
-                        )
-                    }
-                }
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.disclaimer_title)
+            .setMessage(R.string.disclaimer_msg)
+            .setCancelable(false)
+            .setNegativeButton(R.string.offline) { _, _ ->
+                loginOffline()
             }
+            .setPositiveButton(R.string.online) { _, _ ->
+                (if (isLogin) login() else register())
+            }
+            .show()
+    }
 
-            override fun onFailure(call: Call<LoginResponse?>, t: Throwable) {
+private fun showWelcome() {
+
+    if (PreferencesHandler.getBoolean(this, PreferencesHandler.PREF_NEW_USER, true)) {
+        PreferencesHandler.putBoolean(this, PreferencesHandler.PREF_NEW_USER, false)
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.welcome_title)
+            .setMessage(R.string.welcome_msg)
+            .setCancelable(false)
+            .setNeutralButton(R.string.understood) { _, _ -> Version.showPatchNotes(context = this) }
+            .show()
+    } else if (PreferencesHandler.getBoolean(this, PreferencesHandler.PREF_NEW_VERSION, true)) {
+        Version.showPatchNotes(context = this)
+    }
+    PreferencesHandler.putBoolean(this, PreferencesHandler.PREF_NEW_VERSION, false)
+}
+
+private fun login() {
+    disableButtons()
+    binding.loading.visibility = View.VISIBLE // Mostrar el AlertDialog
+
+    username = binding.etUsername.text.toString()
+    password = binding.etPassword.text.toString()
+    // Obtener la instancia de Retrofit
+    val retrofit = client
+
+    // Crear una instancia del servicio de la API
+    val apiService = retrofit.create(
+        Service::class.java
+    )
+    val request = LoginRequest(username, password)
+
+    // Utilizar el servicio para realizar llamadas a la API
+    val call = apiService.login(request)
+
+    // Ejecutar la llamada de forma asíncrona
+    call.enqueue(object : Callback<LoginResponse?> {
+        override fun onResponse(
+            call: Call<LoginResponse?>,
+            response: Response<LoginResponse?>
+        ) {
+            if (response.isSuccessful) {
+                val result = response.body()!!
+                PreferencesHandler.save(
+                    this@LoginActivity,
+                    result.id,
+                    "Bearer " + result.token
+                )
+                syncDB()
+            } else {
                 binding.loading.visibility = View.GONE
                 enableButtons()
-                e(className, "Error en el login ", t)
-                Utils.showToast(
-                    this@LoginActivity,
-                    getString(R.string.connection_error)
-                )
-            }
-        })
-    }
-
-    private fun register() {
-        val username = binding.etUsername.text.toString()
-        val password = binding.etPassword.text.toString()
-        disableButtons()
-        binding.loading.visibility = View.VISIBLE
-        val retrofit: Retrofit = client
-
-        // Crear una instancia del servicio de la API
-        val apiService: Service = retrofit.create(
-            Service::class.java
-        )
-        val request = LoginRequest(username, password)
-
-        // Utilizar el servicio para realizar llamadas a la API
-        val call: Call<LoginResponse?> = apiService.register(request)
-
-        // Ejecutar la llamada de forma asíncrona
-        call.enqueue(object : Callback<LoginResponse?> {
-            override fun onResponse(
-                call: Call<LoginResponse?>,
-                response: Response<LoginResponse?>
-            ) {
-                enableButtons()
-                if (response.isSuccessful) {
-                    val result: LoginResponse = response.body()!!
-                    PreferencesHandler.save(this@LoginActivity, result.id, "Bearer " + result.token)
-                    finish()
-                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                } else if (response.code() == 403) {
-                    binding.loading.visibility = View.GONE
-                    e(
-                        className,
-                        "Error en el login" + response.code() + " - " + response.message()
+                e(className, "Error en el login" + response.code() + " - " + response.message())
+                if (response.code() == 401) {
+                    Utils.showToast(
+                        this@LoginActivity,
+                        getString(R.string.login_incorrect)
                     )
+                } else if (response.code() == 403) {
                     Utils.showToast(
                         this@LoginActivity,
                         getString(R.string.user_already_exists)
                     )
                 } else {
-                    binding.loading.visibility = View.GONE
-                    e(
-                        className,
-                        "Error en el login" + response.code() + " - " + response.message()
-                    )
                     Utils.showToast(
                         this@LoginActivity,
                         getString(R.string.server_error)
                     )
                 }
             }
+        }
 
-            override fun onFailure(call: Call<LoginResponse?>, t: Throwable) {
+        override fun onFailure(call: Call<LoginResponse?>, t: Throwable) {
+            binding.loading.visibility = View.GONE
+            enableButtons()
+            e(className, "Error en el login ", t)
+            Utils.showToast(
+                this@LoginActivity,
+                getString(R.string.connection_error)
+            )
+        }
+    })
+}
+
+private fun register() {
+    val username = binding.etUsername.text.toString()
+    val password = binding.etPassword.text.toString()
+    disableButtons()
+    binding.loading.visibility = View.VISIBLE
+    val retrofit: Retrofit = client
+
+    // Crear una instancia del servicio de la API
+    val apiService: Service = retrofit.create(
+        Service::class.java
+    )
+    val request = LoginRequest(username, password)
+
+    // Utilizar el servicio para realizar llamadas a la API
+    val call: Call<LoginResponse?> = apiService.register(request)
+
+    // Ejecutar la llamada de forma asíncrona
+    call.enqueue(object : Callback<LoginResponse?> {
+        override fun onResponse(
+            call: Call<LoginResponse?>,
+            response: Response<LoginResponse?>
+        ) {
+            enableButtons()
+            if (response.isSuccessful) {
+                val result: LoginResponse = response.body()!!
+                PreferencesHandler.save(this@LoginActivity, result.id, "Bearer " + result.token)
+                finish()
+                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            } else if (response.code() == 403) {
                 binding.loading.visibility = View.GONE
-                enableButtons()
-                e(className, "Error en el login: ", t)
+                e(
+                    className,
+                    "Error en el login" + response.code() + " - " + response.message()
+                )
                 Utils.showToast(
                     this@LoginActivity,
-                    getString(R.string.connection_error)
+                    getString(R.string.user_already_exists)
+                )
+            } else {
+                binding.loading.visibility = View.GONE
+                e(
+                    className,
+                    "Error en el login" + response.code() + " - " + response.message()
+                )
+                Utils.showToast(
+                    this@LoginActivity,
+                    getString(R.string.server_error)
                 )
             }
-        })
-    }
+        }
 
-    private fun loginOffline() {
-        PreferencesHandler.clear(this)
-        finish()
-        startActivity(Intent(applicationContext, MainActivity::class.java))
-    }
+        override fun onFailure(call: Call<LoginResponse?>, t: Throwable) {
+            binding.loading.visibility = View.GONE
+            enableButtons()
+            e(className, "Error en el login: ", t)
+            Utils.showToast(
+                this@LoginActivity,
+                getString(R.string.connection_error)
+            )
+        }
+    })
+}
 
-    private fun syncDB() {
-        SyncLists.getLists(this) { listsSuccess ->
-            if (listsSuccess) {
-                SyncNotes.getNotes(this) { notesSuccess ->
-                    if (notesSuccess) {
-                        SyncTasks.getTasks(this) { tasksSuccess ->
-                            if (tasksSuccess) {
-                                onSyncFinished()
-                            } else {
-                                enableButtons()
-                            }
+private fun loginOffline() {
+    PreferencesHandler.clear(this)
+    finish()
+    startActivity(Intent(applicationContext, MainActivity::class.java))
+}
+
+private fun syncDB() {
+    SyncLists.getLists(this) { listsSuccess ->
+        if (listsSuccess) {
+            SyncNotes.getNotes(this) { notesSuccess ->
+                if (notesSuccess) {
+                    SyncTasks.getTasks(this) { tasksSuccess ->
+                        if (tasksSuccess) {
+                            onSyncFinished()
+                        } else {
+                            enableButtons()
                         }
-                    } else {
-                        enableButtons()
                     }
+                } else {
+                    enableButtons()
                 }
-            } else {
-                enableButtons()
             }
+        } else {
+            enableButtons()
         }
     }
+}
 
-    private fun onSyncFinished() {
-        binding.loading.visibility = View.GONE
-        enableButtons() // Ocultar el AlertDialog
-        finish()
-        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-    }
+private fun onSyncFinished() {
+    binding.loading.visibility = View.GONE
+    enableButtons() // Ocultar el AlertDialog
+    finish()
+    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+}
 
-    private fun disableButtons() {
-        binding.tilUser.helperText = ""
-       // binding.btnLogin.isEnabled = false
-        binding.btnRegister.isEnabled = false
-        binding.btnGuest.isEnabled = false
-    }
+private fun disableButtons() {
+    binding.tilUser.helperText = ""
+    // binding.btnLogin.isEnabled = false
+    binding.btnRegister.isEnabled = false
+    binding.btnGuest.isEnabled = false
+}
 
-    private fun enableButtons() {
-        binding.loading.visibility = View.GONE
-        binding.btnLogin.isEnabled = true
-        binding.btnRegister.isEnabled = true
-        binding.btnGuest.isEnabled = true
-    }
+private fun enableButtons() {
+    binding.loading.visibility = View.GONE
+    binding.btnLogin.isEnabled = true
+    binding.btnRegister.isEnabled = true
+    binding.btnGuest.isEnabled = true
+}
 
-    override fun onResume() {
-        super.onResume()
-        enableButtons()
-    }
+override fun onResume() {
+    super.onResume()
+    enableButtons()
+}
 }

@@ -36,10 +36,14 @@
     <string name="server_error">Servidor no disponible. Por favor, inicie sesión como invitado.</string>
     <string name="connection_error">Error de conexión con el servidor.</string>
     <string name="login_again">Su sesión ha expirado.\nPor favor, vuelva a iniciar sesión.</string>
+    <string name="offline">Local</string>
+    <string name="online">Online</string>
     <string name="never_spam">Nunca enviaremos publicidad ni spam</string>
     <string name="only_use">Solo lo usaremos si olvidas tu contraseña</string>
     <string name="welcome_title">¡Bienvenido a Secretaria!</string>
     <string name="welcome_msg">Todavía estoy en desarrollo, así que es posible que encuentres algunos errores. Gracias por tu comprensión :)</string>
+    <string name="disclaimer_title">Aviso</string>
+    <string name="disclaimer_msg">La base de datos online está en desarrollo y algunos datos podrían perderse en el futuro. Recomendamos utilizar la versión local de momento. ¿Quieres continuar?</string>
 
     <!-- Cambiar contraseña -->
     <string name="type_old_password">Introduce la contraseña antigua</string>

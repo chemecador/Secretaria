@@ -21,10 +21,14 @@
     <string name="server_error">Service is currently unavailable. Please, continue as guest.</string>
     <string name="connection_error">Connection failed. Please, try again.</string>
     <string name="login_again">Your session expired. Please, log in again.</string>
+    <string name="offline">Offline</string>
+    <string name="online">Online</string>
     <string name="never_spam">We will never send you spam or undesired emails.</string>
     <string name="only_use">We will only use it if you forget your password</string>
     <string name="welcome_title">Welcome to My Secretary!</string>
     <string name="welcome_msg">I am still under development, so bugs are expected to happen. Thank you for your understanding :)</string>
+    <string name="disclaimer_title">Disclaimer</string>
+    <string name="disclaimer_msg">Online database may be changed in the future, meaning your data could be lost. We strongly recommend using offline login. Do you wish to continue?</string>
 
     <!-- Change password -->
     <string name="type_old_password">Type your old password</string>
