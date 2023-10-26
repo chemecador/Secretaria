@@ -1,54 +1,33 @@
 package com.chemecador.secretaria.fragments
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.content.Context
-import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.DatePicker
-import android.widget.EditText
-import android.widget.RadioButton
 import android.widget.TextView
-import android.widget.TimePicker
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.chemecador.secretaria.R
-import com.chemecador.secretaria.activities.LoginActivity
 import com.chemecador.secretaria.adapters.TaskAdapter
+import com.chemecador.secretaria.databinding.CalendarDayLayoutBinding
 import com.chemecador.secretaria.databinding.FragmentCalendarBinding
-import com.chemecador.secretaria.db.DB
-import com.chemecador.secretaria.fragments.detail.TaskDetailFragment
 import com.chemecador.secretaria.interfaces.OnItemClickListener
 import com.chemecador.secretaria.items.Task
-import com.chemecador.secretaria.logger.Logger
-import com.chemecador.secretaria.network.retrofit.Client.client
-import com.chemecador.secretaria.network.retrofit.Service
-import com.chemecador.secretaria.network.sync.SyncTasks
-import com.chemecador.secretaria.responses.IdResponse
-import com.chemecador.secretaria.utils.PreferencesHandler
-import com.chemecador.secretaria.utils.Utils
-import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.checkbox.MaterialCheckBox
-import com.google.android.material.snackbar.Snackbar
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.CalendarMonth
+import com.kizitonwose.calendar.core.DayPosition
+import com.kizitonwose.calendar.core.daysOfWeek
+import com.kizitonwose.calendar.view.CalendarView
+import com.kizitonwose.calendar.view.MonthDayBinder
+import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
+import com.kizitonwose.calendar.view.ViewContainer
+import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.util.Calendar
+import java.time.YearMonth
+import java.time.format.TextStyle
 import java.util.Locale
 
 class CalendarFragment : Fragment(), OnItemClickListener {
@@ -66,268 +45,142 @@ class CalendarFragment : Fragment(), OnItemClickListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentCalendarBinding.inflate(inflater, container, false)
-        init()
+
         return binding.root
     }
 
-    private fun init() {
-        val toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
-        btnDay = toolbar.findViewById(R.id.btn_day)
-        btnDay?.visibility = View.VISIBLE
-        btnDay?.setOnClickListener { changeDay() }
-        taskList = DB.getInstance(ctx).getTasksByDay(LocalDateTime.now())
-        taskAdapter = TaskAdapter(ctx, taskList)
-        taskAdapter!!.onItemClickListener = this
-        val rv = binding.root.findViewById<RecyclerView>(R.id.rv)
-        rv.setHasFixedSize(true)
-        rv.layoutManager = LinearLayoutManager(ctx)
-        rv.adapter = taskAdapter
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
+        val currentMonth = YearMonth.now()
+        val firstMonth = currentMonth.minusMonths(1)
+        val lastMonth = currentMonth.plusMonths(1)
 
-        val swipeRefreshLayout = binding.root.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
-        swipeRefreshLayout.setOnRefreshListener {
-            SyncTasks.getTasks(ctx) { success ->
-                swipeRefreshLayout.isRefreshing = false
-                if (success) {
-                    Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
-                } else {
-                    Utils.showToast(ctx, R.string.update_error)
+        val daysOfWeek = daysOfWeek()
+        calendarView = binding.calendarView
+        calendarView.setup(firstMonth, lastMonth, java.time.DayOfWeek.SUNDAY)
+        calendarView.scrollToMonth(currentMonth)
+
+        calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
+            // Called only when a new container is needed.
+            override fun create(view: View) = DayViewContainer(view)
+
+            // Called every time we need to reuse a container.
+            override fun bind(container: DayViewContainer, data: CalendarDay) {
+                container.textView.text = data.date.dayOfMonth.toString()
+            }
+        }
+        val startMonth = currentMonth.minusMonths(100)  // Adjust as needed
+        val endMonth = currentMonth.plusMonths(100)  // Adjust as needed
+        calendarView.setup(startMonth, endMonth, daysOfWeek.first())
+        calendarView.scrollToMonth(currentMonth)
+
+        val titlesContainer = view.findViewById<ViewGroup>(R.id.titlesContainer)
+        titlesContainer.children
+            .map { it as TextView }
+            .forEachIndexed { index, textView ->
+                val dayOfWeek = daysOfWeek[index]
+                val title = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                textView.text = title
+            }
+
+        calendarView.monthHeaderBinder = object :
+            MonthHeaderFooterBinder<MonthViewContainer> {
+            override fun create(view: View) = MonthViewContainer(view)
+            override fun bind(container: MonthViewContainer, data: CalendarMonth) {
+                // Remember that the header is reused so this will be called for each month.
+                // However, the first day of the week will not change so no need to bind
+                // the same view every time it is reused.
+                if (container.titlesContainer.tag == null) {
+                    container.titlesContainer.tag = data.yearMonth
+                    container.titlesContainer.children.map { it as TextView }
+                        .forEachIndexed { index, textView ->
+                            val dayOfWeek = daysOfWeek[index]
+                            val title =
+                                dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                            textView.text = title
+                            // In the code above, we use the same `daysOfWeek` list
+                            // that was created when we set up the calendar.
+                            // However, we can also get the `daysOfWeek` list from the month data:
+                            // val daysOfWeek = data.weekDays.first().map { it.date.dayOfWeek }
+                            // Alternatively, you can get the value for this specific index:
+                            // val dayOfWeek = data.weekDays.first()[index].date.dayOfWeek
+                        }
                 }
             }
         }
-
-        // Obtener una referencia al ActionBar
-        val actionBar = (requireActivity() as AppCompatActivity).supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(false)
-        val calendar = Calendar.getInstance()
-        val year = calendar[Calendar.YEAR]
-        val month = calendar[Calendar.MONTH]
-        val day = calendar[Calendar.DAY_OF_MONTH]
-        setDay(year, month + 1, day)
-        binding.fab.setOnClickListener { createTask() }
-    }
-
-    private fun changeDay() {
-        val datePicker = DatePicker(requireContext())
-        val dialog = DatePickerDialog(
-            requireContext(),
-            { _: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
-                onDayChanged(
-                    year,
-                    monthOfYear,
-                    dayOfMonth
-                )
-            },
-            datePicker.year,
-            datePicker.month,
-            datePicker.dayOfMonth
-        )
-        dialog.show()
-    }
-
-    private fun setDay(year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        val day = String.format(Locale.getDefault(), "%02d", dayOfMonth)
-        val month = String.format(Locale.getDefault(), "%02d", monthOfYear)
-        val newDay =
-            if (Calendar.getInstance()[Calendar.YEAR] == year) "$day/$month" else "$day/$month/$year"
-        selectedDay = LocalDateTime.of(year, monthOfYear, dayOfMonth, 0, 0, 0)
-        btnDay!!.text = newDay
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun onDayChanged(year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        setDay(year, monthOfYear + 1, dayOfMonth)
-        taskList.clear()
-        taskList.addAll(DB.getInstance(ctx).getTasksByDay(selectedDay))
-        taskAdapter!!.notifyDataSetChanged()
-    }
-
-    private fun createTask() {
-        val mTask = Task()
-        mTask.startTime = selectedDay.toEpochSecond(ZoneOffset.UTC)
-        val builder = AlertDialog.Builder(
-            ctx
-        )
-        val inflater = LayoutInflater.from(ctx)
-        val dialogView = inflater.inflate(R.layout.dialog_new_task, null)
-        val editText = dialogView.findViewById<EditText>(R.id.et_title)
-        val selectTime = dialogView.findViewById<RadioButton>(R.id.radio_select_time)
-        val allDayLong = dialogView.findViewById<RadioButton>(R.id.radio_all_day_long)
-        val cbContent = dialogView.findViewById<MaterialCheckBox>(R.id.cb_content)
-        val etContent = dialogView.findViewById<EditText>(R.id.et_content)
-        dialogView.findViewById<TextView>(R.id.tv_title).text = getString(R.string.insert_task_for, Utils.beautifyDate(selectedDay))
-        val positiveButton = dialogView.findViewById<Button>(R.id.btn_ok)
-        val negativeButton = dialogView.findViewById<Button>(R.id.btn_cancel)
-        builder.setView(dialogView)
-        val dialog = builder.create()
-        cbContent.addOnCheckedStateChangedListener { _: MaterialCheckBox?, state: Int ->
-            if (state == 1) etContent.visibility = View.VISIBLE else etContent.visibility =
-                View.GONE
-        }
-        selectTime.setOnClickListener {
-            selectTime.isChecked = true
-            allDayLong.isChecked = false
-        }
-        allDayLong.setOnClickListener {
-            selectTime.isChecked = false
-            allDayLong.isChecked = true
-        }
-        positiveButton.setOnClickListener {
-            mTask.title = editText.text.toString()
-            if (etContent.visibility == View.VISIBLE) {
-                mTask.content = etContent.text.toString()
-            } else {
-                mTask.content = ""
-            }
-            if (allDayLong.isChecked) {
-                if (PreferencesHandler.isOnline(ctx)) {
-
-                    // Crear un objeto LocalDateTime con la fecha actual y la hora seleccionada
-                    val selectedDateTime = LocalDateTime.of(
-                        selectedDay.year,
-                        selectedDay.month, selectedDay.dayOfMonth, 0, 0, 0
-                    )
-
-                    // Asignar el valor formateado al objeto mTask
-                    mTask.startTime = selectedDateTime?.toEpochSecond(ZoneOffset.UTC)
-                    syncTask(mTask)
-                } else {
-                    insertTask(mTask)
-                }
-            } else if (selectTime.isChecked) {
-                askTime(mTask)
-            }
-            dialog.dismiss()
-        }
-        negativeButton.setOnClickListener { dialog.dismiss() }
-        dialog.show()
     }
 
     override fun onItemClick(position: Int) {
-
-
-        val taskDetailFragment = TaskDetailFragment()
-
-        val task = taskList[position]
-        val bundle = Bundle()
-        bundle.putString(TaskDetailFragment.TITLE, task.title)
-        bundle.putString(TaskDetailFragment.CONTENT, task.content)
-        bundle.putInt(TaskDetailFragment.ID, task.id)
-        task.startTime?.let { bundle.putLong(TaskDetailFragment.START_TIME, it) }
-        taskDetailFragment.arguments = bundle
-
-        // Obtener los datos del elemento en la posición 'position'
-        val transaction = (ctx as FragmentActivity).supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.container, taskDetailFragment)
-        transaction.addToBackStack(null)
-        transaction.commit()
+        TODO("Not yet implemented")
     }
 
-    private fun askTime(mTask: Task) {
-        val calendar = Calendar.getInstance()
-        val hourOfDay = calendar[Calendar.HOUR_OF_DAY]
-        val minute = calendar[Calendar.MINUTE]
-        val timePickerDialog = TimePickerDialog(
-            ctx,
-            { _: TimePicker?, hourOfDay1: Int, minute1: Int ->
+    class MonthViewContainer(view: View) : ViewContainer(view) {
+        // Alternatively, you can add an ID to the container layout and use findViewById()
+        val titlesContainer = view as ViewGroup
+    }
 
-                // Crear un objeto LocalDateTime con la fecha actual y la hora seleccionada
-                val selectedDateTime = LocalDateTime.of(
-                    selectedDay.year,
-                    selectedDay.month, selectedDay.dayOfMonth, hourOfDay1, minute1
-                )
+    class DayViewContainer(view: View) : ViewContainer(view) {
+        val textView = CalendarDayLayoutBinding.bind(view).calendarDayText
+        lateinit var day: CalendarDay
+        private var selectedDate: LocalDate? = null
 
-
-                // Asignar el valor formateado al objeto mTask
-                mTask.startTime = selectedDateTime.toEpochSecond(ZoneOffset.UTC)
-                if (PreferencesHandler.isOnline(ctx)) {
-                    syncTask(mTask)
-                } else {
-                    insertTask(mTask)
+        init {
+            view.setOnClickListener {
+                // Check the day position as we do not want to select in or out dates.
+                if (day.position == DayPosition.MonthDate) {
+                    // Keep a reference to any previous selection
+                    // in case we overwrite it and need to reload it.
+                    val currentSelection = selectedDate
+                    if (currentSelection == day.date) {
+                        // If the user clicks the same date, clear selection.
+                        selectedDate = null
+                        // Reload this date so the dayBinder is called
+                        // and we can REMOVE the selection background.
+                        calendarView.notifyDateChanged(currentSelection)
+                    } else {
+                        selectedDate = day.date
+                        // Reload the newly selected date so the dayBinder is
+                        // called and we can ADD the selection background.
+                        calendarView.notifyDateChanged(day.date)
+                        if (currentSelection != null) {
+                            // We need to also reload the previously selected
+                            // date so we can REMOVE the selection background.
+                            calendarView.notifyDateChanged(currentSelection)
+                        }
+                    }
                 }
-            },
-            hourOfDay,
-            minute,
-            true // true para formato de 24 horas, false para formato de 12 horas
-        )
-        timePickerDialog.show()
-    }
-
-    private fun insertTask(mTask: Task) {
-        // Agregar la tarea a la lista
-        taskList.add(mTask)
-
-        // Notificar al adaptador del cambio en la lista de tareas
-        taskAdapter!!.notifyItemInserted(taskList.size - 1)
-
-
-        // Almacenar la cadena en la base de datos SQLite
-        DB.getInstance(ctx).insertTask(mTask)
-        Snackbar.make(binding.root, getString(R.string.create_task_success), Snackbar.LENGTH_LONG)
-            .setAnchorView(R.id.fab)
-            .show()
-        Logger.i(className, "Tarea creada correctamente: $mTask")
-    }
-
-    private fun syncTask(mTask: Task) {
-
-        // Obtener la instancia de Retrofit
-        val retrofit = client
-
-        // Crear una instancia del servicio de la API
-        val apiService = retrofit.create(
-            Service::class.java
-        )
-        val userId = PreferenceManager.getDefaultSharedPreferences(ctx).getInt("id", -1)
-        val token = PreferencesHandler.getToken(ctx)
-        if (userId == -1) {
-            Toast.makeText(ctx, R.string.login_again, Toast.LENGTH_LONG).show()
-            (ctx as Activity?)!!.finish()
-            startActivity(Intent(ctx, LoginActivity::class.java))
-            return
+            }
+            calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
+                override fun create(view: View) = DayViewContainer(view)
+                override fun bind(container: DayViewContainer, data: CalendarDay) {
+                    container.day = data
+                    val day = data
+                    val textView = container.textView
+                    textView.text = day.date.dayOfMonth.toString()
+                    if (day.position == DayPosition.MonthDate) {
+                        // Show the month dates. Remember that views are reused!
+                        textView.visibility = View.VISIBLE
+                        if (day.date == selectedDate) {
+                            // If this is the selected date, show a round background and change the text color.
+                            textView.setTextColor(Color.YELLOW)
+                            //textView.setBackgroundResource(R.drawable.selection_background)
+                        } else {
+                            // If this is NOT the selected date, remove the background and reset the text color.
+                            textView.setTextColor(Color.BLACK)
+                            textView.background = null
+                        }
+                    } else {
+                        // Hide in and out dates
+                        textView.visibility = View.INVISIBLE
+                    }
+                }
+            }
         }
-
-        // Utilizar el servicio para realizar llamadas a la API
-        val call = apiService.createTask(token, userId, mTask)
-
-        // Ejecutar la llamada de forma asíncrona
-        call.enqueue(object : Callback<IdResponse?> {
-            override fun onResponse(call: Call<IdResponse?>, response: Response<IdResponse?>) {
-                if (response.isSuccessful) {
-
-                    // Procesar la respuesta exitosa
-                    val result = response.body() ?: return
-                    val id = result.id
-                    mTask.id = id
-                    insertTask(mTask)
-                } else if (response.code() == 401) {
-                    // Manejar el error de respuesta
-                    Utils.showToast(
-                        ctx,
-                        response.code().toString() + " : " + getString(R.string.unauthorized)
-                    )
-                } else {
-                    Utils.showToast(
-                        ctx,
-                        response.code().toString() + " : " + getString(R.string.server_error)
-                    )
-                }
-            }
-
-            override fun onFailure(call: Call<IdResponse?>, t: Throwable) {
-
-                // Manejar el error de conexión o la excepción
-                Utils.showToast(ctx, getString(R.string.server_error))
-            }
-        })
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        ctx = context
     }
 
     companion object {
-        private val className = CalendarFragment::class.java.simpleName
+        lateinit var calendarView: CalendarView
     }
+
 }

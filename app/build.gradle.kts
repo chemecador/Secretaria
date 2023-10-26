@@ -72,6 +72,11 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
+    // Calendar
+    implementation ("com.kizitonwose.calendar:view:2.4.0");
+
+
+
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
