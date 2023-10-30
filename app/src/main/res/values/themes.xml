@@ -13,7 +13,20 @@
         <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:fontFamily">@font/montserrat</item>
-        <!-- Customize your theme here. -->
+        <!-- <item name="android:fontFamily">@font/montserrat</item> -->
+        <item name="android:fontFamily">@font/garamond</item>
+
+    </style>
+
+
+    <style name="DialogStyle" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="buttonBarStyle">@style/ButtonStyle</item>
+    </style>
+
+    <style name="ButtonStyle">
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+    <style name="font">
+        <item name="android:fontFamily">@font/garamond</item>
     </style>
 </resources>

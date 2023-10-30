@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -33,7 +32,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import java.util.Objects
 
 class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
     RecyclerView.Adapter<ListAdapter.ViewHolder?>(), OnLongClickListener {
@@ -105,7 +103,7 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
         val dialogView: View = inflater.inflate(R.layout.detail_list, null)
         builder.setView(dialogView)
         val tilTitle: TextInputLayout = dialogView.findViewById(R.id.til_title)
-        Objects.requireNonNull<EditText>(tilTitle.editText).setText(mList.name)
+        tilTitle.editText?.setText(mList.name)
         val cbCheck: MaterialCheckBox =
             dialogView.findViewById(R.id.cb_check_list)
         cbCheck.isChecked = mList.type == 1

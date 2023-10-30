@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.DatePicker
-import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.TimePicker
@@ -43,6 +42,7 @@ import com.chemecador.secretaria.utils.Utils
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -150,11 +150,11 @@ class CalendarFragment : Fragment(), OnItemClickListener {
         )
         val inflater = LayoutInflater.from(ctx)
         val dialogView = inflater.inflate(R.layout.dialog_new_task, null)
-        val editText = dialogView.findViewById<EditText>(R.id.et_title)
+        val editText = dialogView.findViewById<TextInputEditText>(R.id.et_title)
         val selectTime = dialogView.findViewById<RadioButton>(R.id.radio_select_time)
         val allDayLong = dialogView.findViewById<RadioButton>(R.id.radio_all_day_long)
         val cbContent = dialogView.findViewById<MaterialCheckBox>(R.id.cb_content)
-        val etContent = dialogView.findViewById<EditText>(R.id.et_content)
+        val etContent = dialogView.findViewById<TextInputEditText>(R.id.et_content)
         dialogView.findViewById<TextView>(R.id.tv_title).text = getString(R.string.insert_task_for, Utils.beautifyDate(selectedDay))
         val positiveButton = dialogView.findViewById<Button>(R.id.btn_ok)
         val negativeButton = dialogView.findViewById<Button>(R.id.btn_cancel)

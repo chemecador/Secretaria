@@ -35,7 +35,6 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         Logger.crearSingleton(this)
         if (PreferencesHandler.isTokenValid(this) && PreferencesHandler.lastLoginOk(this)) {
-            PreferencesHandler.putBoolean(this, PreferencesHandler.PREF_LAST_LOGIN_OK, false)
             syncDB()
             return
         }
@@ -66,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
 
 private fun showWelcome() {
 
-    if (PreferencesHandler.getBoolean(this, PreferencesHandler.PREF_NEW_USER, true)) {
+    if (PreferencesHandler.isNewUser(this)) {
         PreferencesHandler.putBoolean(this, PreferencesHandler.PREF_NEW_USER, false)
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.welcome_title)
@@ -74,10 +73,9 @@ private fun showWelcome() {
             .setCancelable(false)
             .setNeutralButton(R.string.understood) { _, _ -> Version.showPatchNotes(context = this) }
             .show()
-    } else if (PreferencesHandler.getBoolean(this, PreferencesHandler.PREF_NEW_VERSION, true)) {
-        Version.showPatchNotes(context = this)
+    } else if (PreferencesHandler.isNewVersion(this)) {
+        Version.showPatchNotes(this)
     }
-    PreferencesHandler.putBoolean(this, PreferencesHandler.PREF_NEW_VERSION, false)
 }
 
 private fun login() {

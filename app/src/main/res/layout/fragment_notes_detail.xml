@@ -33,7 +33,7 @@
         app:layout_constraintTop_toTopOf="@id/et_title"
         app:layout_constraintBottom_toBottomOf="@id/et_title" />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/et_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
         app:layout_constraintTop_toTopOf="@+id/et_content"
         app:layout_constraintBottom_toBottomOf="@+id/et_content" />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/et_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

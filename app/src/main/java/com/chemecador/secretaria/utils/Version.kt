@@ -59,7 +59,7 @@ class Version {
 
         fun showPatchNotes(context: Context) {
 
-            val dialogBuilder = MaterialAlertDialogBuilder(context)
+            val dialogBuilder = MaterialAlertDialogBuilder(context, R.style.ButtonStyle)
             val inflater = LayoutInflater.from(context)
             val dialogView = inflater.inflate(R.layout.dialog_versions, null)
             val recyclerView = dialogView.findViewById<RecyclerView>(R.id.rv)
