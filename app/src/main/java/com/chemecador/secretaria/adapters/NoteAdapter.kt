@@ -89,8 +89,4 @@ class NoteAdapter(ctx: Context, notes: MutableList<Note>?, isPublic: Boolean) :
             }
         }
     }
-
-    companion object {
-        val className: String = NoteAdapter::class.java.simpleName
-    }
 }

@@ -38,7 +38,7 @@ class FriendListFragment : Fragment() {
         } else {
             binding!!.tvNoFriends.visibility = View.GONE
         }
-        val adapter = FriendListAdapter(requireContext(), friendList)
+        val adapter = FriendListAdapter(friendList)
         rv!!.adapter = adapter
         return binding!!.root
     }

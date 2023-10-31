@@ -43,9 +43,9 @@ import retrofit2.Response
 class ListsFragment : Fragment() {
     private lateinit var binding: FragmentListsBinding
     private lateinit var ctx: Context
-    private var rvLists: RecyclerView? = null
-    private var adapter: ListAdapter? = null
-    private var lists: MutableList<NotesList>? = null
+    private lateinit var rvLists: RecyclerView
+    private lateinit var adapter: ListAdapter
+    private lateinit var lists: List<NotesList>
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -62,16 +62,17 @@ class ListsFragment : Fragment() {
     private fun init() {
         lists = DB.getInstance(ctx).lists
         rvLists = binding.root.findViewById(R.id.rv)
-        rvLists?.layoutManager = LinearLayoutManager(ctx)
+        rvLists.layoutManager = LinearLayoutManager(ctx)
         adapter = ListAdapter(ctx, lists)
-        adapter!!.setOnLongClickListener(adapter)
-        rvLists?.adapter = adapter
+        adapter.setOnLongClickListener(adapter)
+        rvLists.adapter = adapter
 
         val actionBar = (requireActivity() as AppCompatActivity).supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(false)
         binding.fab.setOnClickListener { createList() }
 
-        val swipeRefreshLayout = binding.root.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        val swipeRefreshLayout =
+            binding.root.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
             SyncLists.getLists(ctx) { success ->
                 swipeRefreshLayout.isRefreshing = false
@@ -163,8 +164,8 @@ class ListsFragment : Fragment() {
     private fun insertList(mList: NotesList) {
         val listId = DB.getInstance(ctx).insertList(mList)
         if (!PreferencesHandler.isOnline(ctx)) mList.id = listId
-        lists!!.add(mList)
-        adapter!!.notifyItemInserted(lists!!.size - 1)
+        lists.plus(mList)
+        adapter.notifyItemInserted(lists.size - 1)
         Snackbar.make(binding.root, getString(R.string.create_list_success), Snackbar.LENGTH_LONG)
             .setAnchorView(R.id.fab)
             .show()
@@ -180,9 +181,7 @@ class ListsFragment : Fragment() {
         val apiService = retrofit.create(
             Service::class.java
         )
-        val userId = PreferenceManager.getDefaultSharedPreferences(
-            ctx
-        ).getInt("id", -1)
+        val userId = PreferenceManager.getDefaultSharedPreferences(ctx).getInt("id", -1)
         val token = PreferencesHandler.getToken(ctx)
         if (userId == -1) {
             Toast.makeText(ctx, R.string.login_again, Toast.LENGTH_LONG).show()

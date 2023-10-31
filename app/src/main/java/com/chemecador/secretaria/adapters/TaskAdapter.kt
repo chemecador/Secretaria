@@ -13,7 +13,7 @@ import com.chemecador.secretaria.items.Task
 class TaskAdapter(ctx: Context, private val taskList: MutableList<Task>) :
     RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
     private val mInflater: LayoutInflater = LayoutInflater.from(ctx)
-    var onItemClickListener: OnItemClickListener? = null
+    lateinit var onItemClickListener: OnItemClickListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = mInflater.inflate(R.layout.item_task, parent, false)
@@ -21,14 +21,10 @@ class TaskAdapter(ctx: Context, private val taskList: MutableList<Task>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        // Obtener la tarea actual
         val mTask = taskList[position]
         holder.bindData(mTask)
-        // Asignar un listener de clic al elemento de la lista
-        //holder.itemView.setOnClickListener { showTask(mTask) }
-
         holder.itemView.setOnClickListener {
-            onItemClickListener?.onItemClick(holder.adapterPosition)
+            onItemClickListener.onItemClick(holder.adapterPosition)
         }
     }
 

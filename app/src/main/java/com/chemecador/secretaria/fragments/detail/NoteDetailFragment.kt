@@ -11,12 +11,11 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.chemecador.secretaria.R
-import com.chemecador.secretaria.adapters.NoteAdapter
-import com.chemecador.secretaria.network.retrofit.Client
-import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.items.Note
 import com.chemecador.secretaria.logger.Logger
+import com.chemecador.secretaria.network.retrofit.Client
+import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.requests.NoteRequest
 import com.chemecador.secretaria.utils.PreferencesHandler
 import com.chemecador.secretaria.utils.Utils
@@ -28,7 +27,7 @@ import retrofit2.Retrofit
 
 class NoteDetailFragment : Fragment() {
 
-    private lateinit var mNote : Note
+    private lateinit var mNote: Note
     private lateinit var etTitle: EditText
     private lateinit var etContent: EditText
     private lateinit var tvStatus: TextView
@@ -68,9 +67,11 @@ class NoteDetailFragment : Fragment() {
                 1 -> {
                     getString(R.string.not_finished)
                 }
+
                 2 -> {
                     getString(R.string.finished)
                 }
+
                 else -> {
                     ""
                 }
@@ -81,7 +82,8 @@ class NoteDetailFragment : Fragment() {
         }
         cbStatus.isChecked = mNote.status == 2
         cbStatus.setOnCheckedChangeListener { _, b ->
-            val statusText = if (b) getString(R.string.finished) else getString(R.string.not_finished)
+            val statusText =
+                if (b) getString(R.string.finished) else getString(R.string.not_finished)
             tvStatus.text = statusText
         }
 
@@ -96,7 +98,6 @@ class NoteDetailFragment : Fragment() {
 
         return view
     }
-
 
 
     private fun updateNoteOnline(mNote: Note?) {
@@ -130,7 +131,8 @@ class NoteDetailFragment : Fragment() {
                             updateNoteFromDB(mNote)
                         } else {
                             Utils.showToast(
-                                requireContext(), requireContext().getString(R.string.update_error) + ": " + responseBody
+                                requireContext(),
+                                requireContext().getString(R.string.update_error) + ": " + responseBody
                             )
                         }
                     } else {
@@ -160,7 +162,7 @@ class NoteDetailFragment : Fragment() {
             Utils.showToast(requireContext(), requireContext().getString(R.string.updated_zero))
         } else {
             Utils.showToast(requireContext(), requireContext().getString(R.string.update_success))
-            Logger.i(NoteAdapter.className, "Nota actualizada correctamente: $mNote")
+            Logger.i("NoteDetailFragment", "Nota actualizada correctamente: $mNote")
         }
     }
 
@@ -193,7 +195,8 @@ class NoteDetailFragment : Fragment() {
                             deleteNoteFromDB(mNote)
                         } else {
                             Utils.showToast(
-                                requireContext(), requireContext().getString(R.string.delete_error) + ": " + responseBody
+                                requireContext(),
+                                requireContext().getString(R.string.delete_error) + ": " + responseBody
                             )
                         }
                     } else {
@@ -224,7 +227,7 @@ class NoteDetailFragment : Fragment() {
         } else {
             // La nota se eliminó correctamente
             Utils.showToast(requireContext(), requireContext().getString(R.string.delete_success))
-            Logger.e(NoteAdapter.className, "Nota eliminada correctamente $mNote")
+            Logger.e("NoteDetailFragment", "Nota eliminada correctamente $mNote")
         }
         onBackPressed()
     }

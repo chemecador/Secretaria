@@ -13,8 +13,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.chemecador.secretaria.R
+import com.chemecador.secretaria.adapters.diffutils.ListDiffUtil
 import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.fragments.NotesFragment
 import com.chemecador.secretaria.interfaces.OnLongClickListener
@@ -33,17 +35,17 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 
-class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
+class ListAdapter(ctx: Context, notesLists: List<NotesList>) :
     RecyclerView.Adapter<ListAdapter.ViewHolder?>(), OnLongClickListener {
-    private val lists: MutableList<NotesList>?
+    private var notesListsList: List<NotesList>
     private val mInflater: LayoutInflater
     private val ctx: Context
     private var dialog: AlertDialog? = null
-    private var longClickListener: OnLongClickListener? = null
+    private lateinit var longClickListener: OnLongClickListener
 
     init {
-        mInflater = LayoutInflater.from(ctx)
-        this.lists = lists
+        this.mInflater = LayoutInflater.from(ctx)
+        this.notesListsList = notesLists
         this.ctx = ctx
     }
 
@@ -53,12 +55,12 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
     }
 
     override fun getItemCount(): Int {
-        return lists?.size ?: 0
+        return notesListsList.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // Obtener la tarea actual
-        val mList: NotesList = lists!![position]
+        val mList: NotesList = notesListsList[position]
         holder.bindData(mList)
         // Asignar un listener de clic al elemento de la lista
         holder.itemView.setOnClickListener {
@@ -81,20 +83,17 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
                 .commit()
         }
         holder.itemView.setOnLongClickListener {
-            if (longClickListener != null) {
-                longClickListener!!.onLongClick(position)
-
-            }
+            longClickListener.onLongClick(position)
             true
         }
     }
 
-    fun setOnLongClickListener(listener: OnLongClickListener?) {
+    fun setOnLongClickListener(listener: OnLongClickListener) {
         longClickListener = listener
     }
 
     override fun onLongClick(position: Int) {
-        showList(lists!![position])
+        showList(notesListsList[position])
     }
 
     private fun showList(mList: NotesList) {
@@ -181,7 +180,7 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
             Utils.showToast(ctx, ctx.getString(R.string.updated_zero))
         } else {
             Utils.showToast(ctx, ctx.getString(R.string.update_success))
-            Logger.i(className, "Lista actualizada correctamente: $mList")
+            Logger.i("ListAdapter", "Lista actualizada correctamente: $mList")
         }
         notifyDataSetChanged()
         if (dialog!!.isShowing) dialog!!.dismiss()
@@ -207,7 +206,7 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
                     response: Response<ResponseBody>
                 ) {
                     if (response.isSuccessful) {
-                        val responseBody: String ? = response.body()?.string()
+                        val responseBody: String? = response.body()?.string()
 
                         if (responseBody == "OK") {
                             deleteListFromDB(mList)
@@ -216,7 +215,9 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
                                 ctx, ctx.getString(R.string.delete_error)
                             )
                         }
-                    } else if (response.code() == 500 && response.errorBody()?.string()?.contains("FOREIGN KEY") == true) {
+                    } else if (response.code() == 500 && response.errorBody()?.string()
+                            ?.contains("FOREIGN KEY") == true
+                    ) {
                         Utils.showToast(ctx, ctx.getString(R.string.error_list_not_empty))
 
                     } else {
@@ -243,13 +244,20 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
         } else {
             // La nota se eliminó correctamente
             Utils.showToast(ctx, ctx.getString(R.string.delete_success))
-            Logger.e(className, "Lista eliminada correctamente: $mList")
+            Logger.e("ListAdapter", "Lista eliminada correctamente: $mList")
         }
-        lists!!.remove(mList)
-        notifyDataSetChanged()
+        notesListsList.minus(mList)
+        //notifyDataSetChanged()
         if (dialog!!.isShowing) {
             dialog!!.dismiss()
         }
+    }
+
+    private fun updateList(newList: List<NotesList>){
+        val listDiff = ListDiffUtil(notesListsList, newList)
+        val result = DiffUtil.calculateDiff(listDiff)
+        notesListsList = newList
+        result.dispatchUpdatesTo(this)
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -270,9 +278,5 @@ class ListAdapter(ctx: Context, lists: MutableList<NotesList>?) :
             ivPublic.visibility =
                 if (list.privacy == 0) View.VISIBLE else View.INVISIBLE
         }
-    }
-
-    companion object {
-        val className: String = ListAdapter::class.java.simpleName
     }
 }
