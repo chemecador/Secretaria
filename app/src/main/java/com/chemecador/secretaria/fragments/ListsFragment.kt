@@ -45,7 +45,7 @@ class ListsFragment : Fragment() {
     private lateinit var ctx: Context
     private lateinit var rvLists: RecyclerView
     private lateinit var adapter: ListAdapter
-    private lateinit var lists: List<NotesList>
+    private lateinit var lists: MutableList<NotesList>
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -74,13 +74,18 @@ class ListsFragment : Fragment() {
         val swipeRefreshLayout =
             binding.root.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
-            SyncLists.getLists(ctx) { success ->
-                swipeRefreshLayout.isRefreshing = false
-                if (success) {
-                    Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
-                } else {
-                    Utils.showToast(ctx, R.string.update_error)
+            if (PreferencesHandler.isOnline(ctx)) {
+                SyncLists.getLists(ctx) { success ->
+                    swipeRefreshLayout.isRefreshing = false
+                    if (success) {
+                        Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
+                    } else {
+                        Utils.showToast(ctx, R.string.update_error)
+                    }
                 }
+            } else {
+                swipeRefreshLayout.isRefreshing = false
+                Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -127,10 +132,9 @@ class ListsFragment : Fragment() {
                     if (isPublic == NotesList.PUBLIC) isPublic =
                         if (switchPublic.isChecked) NotesList.PUBLIC else NotesList.PRIVATE
                     val mList = NotesList(
-                        null,
-                        listName,
-                        isPublic,
-                        if (cbCheck.isChecked) NotesList.CHECK_LIST else NotesList.NORMAL_LIST
+                        name = listName,
+                        privacy = isPublic,
+                        type = if (cbCheck.isChecked) NotesList.CHECK_LIST else NotesList.NORMAL_LIST
                     )
                     if (PreferencesHandler.isOnline(ctx)) {
                         syncList(mList)
@@ -164,8 +168,9 @@ class ListsFragment : Fragment() {
     private fun insertList(mList: NotesList) {
         val listId = DB.getInstance(ctx).insertList(mList)
         if (!PreferencesHandler.isOnline(ctx)) mList.id = listId
-        lists.plus(mList)
+        lists.add(mList)
         adapter.notifyItemInserted(lists.size - 1)
+        //adapter.updateList(lists)
         Snackbar.make(binding.root, getString(R.string.create_list_success), Snackbar.LENGTH_LONG)
             .setAnchorView(R.id.fab)
             .show()

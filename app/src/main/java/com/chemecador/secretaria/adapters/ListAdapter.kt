@@ -13,10 +13,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.chemecador.secretaria.R
-import com.chemecador.secretaria.adapters.diffutils.ListDiffUtil
 import com.chemecador.secretaria.db.DB
 import com.chemecador.secretaria.fragments.NotesFragment
 import com.chemecador.secretaria.interfaces.OnLongClickListener
@@ -35,9 +33,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 
-class ListAdapter(ctx: Context, notesLists: List<NotesList>) :
+class ListAdapter(ctx: Context, notesLists: MutableList<NotesList>) :
     RecyclerView.Adapter<ListAdapter.ViewHolder?>(), OnLongClickListener {
-    private var notesListsList: List<NotesList>
+    private var notesListsList: MutableList<NotesList>
     private val mInflater: LayoutInflater
     private val ctx: Context
     private var dialog: AlertDialog? = null
@@ -54,9 +52,8 @@ class ListAdapter(ctx: Context, notesLists: List<NotesList>) :
         return ViewHolder(v)
     }
 
-    override fun getItemCount(): Int {
-        return notesListsList.size
-    }
+    override fun getItemCount(): Int = notesListsList.size
+
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // Obtener la tarea actual
@@ -66,9 +63,7 @@ class ListAdapter(ctx: Context, notesLists: List<NotesList>) :
         holder.itemView.setOnClickListener {
             val notesFragment = NotesFragment()
             val args = Bundle()
-            if (mList.id != null) {
-                args.putInt("listId", mList.id!!)
-            }
+            args.putInt("listId", mList.id)
             notesFragment.arguments = args
 
             // Realizar la transacción del fragmento
@@ -134,13 +129,11 @@ class ListAdapter(ctx: Context, notesLists: List<NotesList>) :
             // Crear una instancia del servicio de la API
             val apiService: Service = retrofit.create(Service::class.java)
 
-            // Utilizar el servicio para realizar llamadas a la API
-
             // Ejecutar la llamada de forma asíncrona
             apiService.updateList(
                 PreferencesHandler.getToken(ctx),
                 PreferencesHandler.getId(ctx),
-                mList.id!!,
+                mList.id,
                 mList
             ).enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
@@ -196,7 +189,7 @@ class ListAdapter(ctx: Context, notesLists: List<NotesList>) :
 
             // Utilizar el servicio para realizar llamadas a la API
             val call: Call<ResponseBody> = apiService.deleteList(
-                PreferencesHandler.getToken(ctx), PreferencesHandler.getId(ctx), mList.id!!
+                PreferencesHandler.getToken(ctx), PreferencesHandler.getId(ctx), mList.id
             )
 
             // Ejecutar la llamada de forma asíncrona
@@ -238,7 +231,7 @@ class ListAdapter(ctx: Context, notesLists: List<NotesList>) :
 
     @SuppressLint("NotifyDataSetChanged")
     private fun deleteListFromDB(mList: NotesList) {
-        val deletedLists: Int = DB.getInstance(ctx).delete(DB.LISTS, mList.id!!)
+        val deletedLists: Int = DB.getInstance(ctx).delete(DB.LISTS, mList.id)
         if (deletedLists == 0) {
             Utils.showToast(ctx, ctx.getString(R.string.delete_zero))
         } else {
@@ -246,19 +239,21 @@ class ListAdapter(ctx: Context, notesLists: List<NotesList>) :
             Utils.showToast(ctx, ctx.getString(R.string.delete_success))
             Logger.e("ListAdapter", "Lista eliminada correctamente: $mList")
         }
-        notesListsList.minus(mList)
-        //notifyDataSetChanged()
+        notesListsList.remove(mList)
+        notifyDataSetChanged()
+       // updateList(notesListsList)
+
         if (dialog!!.isShowing) {
             dialog!!.dismiss()
         }
     }
 
-    private fun updateList(newList: List<NotesList>){
+    /*fun updateList(newList: List<NotesList>) {
         val listDiff = ListDiffUtil(notesListsList, newList)
         val result = DiffUtil.calculateDiff(listDiff)
         notesListsList = newList
         result.dispatchUpdatesTo(this)
-    }
+    }*/
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val cbCheckList: CheckBox

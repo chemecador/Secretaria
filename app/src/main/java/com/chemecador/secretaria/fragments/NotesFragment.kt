@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -74,15 +75,21 @@ class NotesFragment : Fragment(), OnItemClickListener {
         rvLists.adapter = adapter
 
 
-        val swipeRefreshLayout = binding.root.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        val swipeRefreshLayout =
+            binding.root.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
-            SyncNotes.getNotes(ctx) { success ->
-                swipeRefreshLayout.isRefreshing = false
-                if (success) {
-                    Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
-                } else {
-                    Utils.showToast(ctx, R.string.update_error)
+            if (PreferencesHandler.isOnline(ctx)) {
+                SyncNotes.getNotes(ctx) { success ->
+                    swipeRefreshLayout.isRefreshing = false
+                    if (success) {
+                        Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
+                    } else {
+                        Utils.showToast(ctx, R.string.update_error)
+                    }
                 }
+            } else {
+                swipeRefreshLayout.isRefreshing = false
+                Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -114,6 +121,11 @@ class NotesFragment : Fragment(), OnItemClickListener {
         builder.setView(dialogView)
         val dialog = builder.show()
         positiveButton.setOnClickListener {
+            val listName = tilTitle.editText!!.text.toString()
+            if (TextUtils.isEmpty(listName) || listName.trim { it <= ' ' } == "") {
+                tilTitle.error = getString(R.string.error_empty_field)
+                return@setOnClickListener
+            }
             val note = Note()
             note.title = tilTitle.editText!!.text.toString()
             note.listId = listId

@@ -7,6 +7,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -84,15 +85,21 @@ class CalendarFragment : Fragment(), OnItemClickListener {
         rv.adapter = taskAdapter
 
 
-        val swipeRefreshLayout = binding.root.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        val swipeRefreshLayout =
+            binding.root.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
-            SyncTasks.getTasks(ctx) { success ->
-                swipeRefreshLayout.isRefreshing = false
-                if (success) {
-                    Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
-                } else {
-                    Utils.showToast(ctx, R.string.update_error)
+            if (PreferencesHandler.isOnline(ctx)) {
+                SyncTasks.getTasks(ctx) { success ->
+                    swipeRefreshLayout.isRefreshing = false
+                    if (success) {
+                        Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
+                    } else {
+                        Utils.showToast(ctx, R.string.update_error)
+                    }
                 }
+            } else {
+                swipeRefreshLayout.isRefreshing = false
+                Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -155,7 +162,8 @@ class CalendarFragment : Fragment(), OnItemClickListener {
         val allDayLong = dialogView.findViewById<RadioButton>(R.id.radio_all_day_long)
         val cbContent = dialogView.findViewById<MaterialCheckBox>(R.id.cb_content)
         val etContent = dialogView.findViewById<TextInputEditText>(R.id.et_content)
-        dialogView.findViewById<TextView>(R.id.tv_title).text = getString(R.string.insert_task_for, Utils.beautifyDate(selectedDay))
+        dialogView.findViewById<TextView>(R.id.tv_title).text =
+            getString(R.string.insert_task_for, Utils.beautifyDate(selectedDay))
         val positiveButton = dialogView.findViewById<Button>(R.id.btn_ok)
         val negativeButton = dialogView.findViewById<Button>(R.id.btn_cancel)
         builder.setView(dialogView)
@@ -173,7 +181,12 @@ class CalendarFragment : Fragment(), OnItemClickListener {
             allDayLong.isChecked = true
         }
         positiveButton.setOnClickListener {
-            mTask.title = editText.text.toString()
+            val title = editText.text.toString()
+            if (TextUtils.isEmpty(title) || title.trim { it <= ' ' } == "") {
+                editText.error = getString(R.string.error_empty_field)
+                return@setOnClickListener
+            }
+            mTask.title = title
             if (etContent.visibility == View.VISIBLE) {
                 mTask.content = etContent.text.toString()
             } else {

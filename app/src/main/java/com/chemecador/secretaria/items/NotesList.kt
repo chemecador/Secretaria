@@ -1,24 +1,17 @@
 package com.chemecador.secretaria.items
 
 class NotesList(
-    var id: Int? = null,
-    var name: String,
+    var id: Int = 0,
+    var name: String = "",
     /**
      * Privacidad de la nota: 0 (pública), 1 (privada)
      */
-    var privacy: Int,
+    var privacy: Int = 0,
     /**
      * Tipo de lista: 0 (lista normal), 1 (check list)
      */
-    var type: Int
+    var type: Int = 0
 ) {
-
-    // Constructor vacío
-    constructor() : this(null, "", 0, 0)
-
-    // Constructor sin el parámetro id
-    constructor(name: String, privacy: Int, type: Int) : this(null, name, privacy, type)
-
 
     override fun toString(): String {
         return "NotesList {" +

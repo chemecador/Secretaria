@@ -97,7 +97,7 @@ interface Service {
         @Header("Authorization") token: String,
         @Path("userId") userId: Int,
         @Path("listId") listId: Int,
-        @Body list: NotesList?
+        @Body list: NotesList
     ): Call<ResponseBody>
 
     @PUT("/users/{userId}/lists/{listId}/notes/{noteId}")
