@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,6 +37,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -75,18 +77,18 @@ class ListsFragment : Fragment() {
             binding.root.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
             if (PreferencesHandler.isOnline(ctx)) {
-                SyncLists.getLists(ctx) { success ->
-                    swipeRefreshLayout.isRefreshing = false
-                    if (success) {
+                lifecycleScope.launch {
+                    val gotLists = SyncLists.getLists(ctx)
+                    if (gotLists) {
                         Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
                     } else {
                         Utils.showToast(ctx, R.string.update_error)
                     }
                 }
-            } else {
-                swipeRefreshLayout.isRefreshing = false
-                Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
             }
+            swipeRefreshLayout.isRefreshing = false
+            Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
+
         }
 
     }

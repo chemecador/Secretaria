@@ -32,24 +32,24 @@ interface Service {
     /* GETTERS */
     @GET("/users/{userId}/lists")
     @Headers("Content-Type: application/json")
-    fun getLists(
+    suspend fun getLists(
         @Header("Authorization") token: String,
         @Path("userId") userId: Int
-    ): Call<ArrayList<NotesList>>
+    ): ArrayList<NotesList>
 
     @GET("/users/{userId}/notes")
     @Headers("Content-Type: application/json")
-    fun getNotes(
+    suspend fun getNotes(
         @Header("Authorization") token: String,
         @Path("userId") userId: Int
-    ): Call<ArrayList<Note>>
+    ): ArrayList<Note>
 
     @GET("/users/{userId}/tasks")
     @Headers("Content-Type: application/json")
-    fun getTasks(
+    suspend fun getTasks(
         @Header("Authorization") token: String,
         @Path("userId") userId: Int
-    ): Call<ArrayList<Task>>
+    ): ArrayList<Task>
 
     @GET("/users/{userId}/friendRequests")
     fun getFriendRequests(

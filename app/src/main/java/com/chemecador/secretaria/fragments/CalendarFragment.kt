@@ -21,6 +21,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -44,6 +45,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -89,18 +91,17 @@ class CalendarFragment : Fragment(), OnItemClickListener {
             binding.root.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
             if (PreferencesHandler.isOnline(ctx)) {
-                SyncTasks.getTasks(ctx) { success ->
-                    swipeRefreshLayout.isRefreshing = false
-                    if (success) {
+                lifecycleScope.launch {
+                    val gotTasks = SyncTasks.getTasks(ctx)
+                    if (gotTasks){
                         Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
                     } else {
                         Utils.showToast(ctx, R.string.update_error)
                     }
                 }
-            } else {
-                swipeRefreshLayout.isRefreshing = false
-                Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
             }
+            swipeRefreshLayout.isRefreshing = false
+            Toast.makeText(ctx, R.string.update_success, Toast.LENGTH_SHORT).show()
         }
 
         // Obtener una referencia al ActionBar

@@ -8,71 +8,58 @@ import com.chemecador.secretaria.network.retrofit.Client
 import com.chemecador.secretaria.network.retrofit.Service
 import com.chemecador.secretaria.utils.PreferencesHandler
 import com.chemecador.secretaria.utils.Utils
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 import retrofit2.Retrofit
 
 class SyncTasks {
 
     companion object {
 
-        private const val className = "SyncTask"
+        suspend fun getTasks(ctx: Context): Boolean {
+            return withContext(Dispatchers.IO) {
+                try {
+                    // Obtener la instancia de Retrofit
+                    val retrofit: Retrofit = Client.client
 
-        fun getTasks(ctx: Context, callback: (Boolean) -> Unit) {
+                    // Crear una instancia del servicio de la API
+                    val apiService: Service = retrofit.create(Service::class.java)
 
-            // Obtener la instancia de Retrofit
-            val retrofit: Retrofit = Client.client
+                    // Utilizar el servicio para realizar llamadas a la API
+                    val result: ArrayList<Task> = apiService.getTasks(
+                        PreferencesHandler.getToken(ctx),
+                        PreferencesHandler.getId(ctx)
+                    )
 
-            // Crear una instancia del servicio de la API
-            val apiService: Service = retrofit.create(Service::class.java)
-
-            // Utilizar el servicio para realizar llamadas a la API
-            val call = apiService.getTasks(
-                PreferencesHandler.getToken(ctx), PreferencesHandler.getId(ctx)
-            )
-
-            // Ejecutar la llamada de forma asíncrona
-            call.enqueue(object : Callback<ArrayList<Task>> {
-                override fun onResponse(
-                    call: Call<ArrayList<Task>>,
-                    response: Response<ArrayList<Task>>
-                ) {
-                    if (response.isSuccessful) {
-                        val result: ArrayList<Task> = response.body()!!
-                        if (DB.getInstance(ctx).setTasks(result)) {
-                            // Llamamos al callback con true si la sincronización fue exitosa
-                            callback(true)
-                        } else {
-                            Utils.showToast(ctx, R.string.something_went_wrong)
-                            // Llamamos al callback con false en caso de error
-                            callback(false)
-                        }
-                    } else if (response.code() == 401) {
-                        Utils.showToast(
-                            ctx,
-                            response.code()
-                                .toString() + " : " + ctx.getString(R.string.unauthorized)
-                        )
-                        // Llamamos al callback con false en caso de error
-                        callback(false)
-                    } else {
-                        Utils.showToast(
-                            ctx,
-                            response.code()
-                                .toString() + " : " + ctx.getString(R.string.server_error)
-                        )
-                        // Llamamos al callback con false en caso de error
-                        callback(false)
+                    if (result.isEmpty()) {
+                        return@withContext true
                     }
-                }
 
-                override fun onFailure(call: Call<ArrayList<Task>>, t: Throwable) {
+                    if (DB.getInstance(ctx).setTasks(result)) {
+                        true
+                    } else {
+                        Utils.showToast(ctx, R.string.something_went_wrong)
+                        false
+                    }
+                } catch (e: HttpException) {
+                    when (e.code()) {
+                        401 -> Utils.showToast(
+                            ctx,
+                            e.code().toString() + " : " + ctx.getString(R.string.unauthorized)
+                        )
+
+                        else -> Utils.showToast(
+                            ctx,
+                            e.code().toString() + " : " + ctx.getString(R.string.server_error)
+                        )
+                    }
+                    false
+                } catch (t: Throwable) {
                     Utils.showToast(ctx, ctx.getString(R.string.connection_error))
-                    // Llamamos al callback con false en caso de error
-                    callback(false)
+                    false
                 }
-            })
+            }
         }
     }
 }
