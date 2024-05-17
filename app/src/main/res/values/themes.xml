@@ -1,0 +1,22 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Secretaria" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.Secretaria" parent="Base.Theme.Secretaria" >
+
+        <!-- Colores principales -->
+        <item name="android:textViewStyle">@style/Theme.Secretaria.TextViewStyle</item>
+    </style>
+
+    <style name="Theme.Secretaria.TextViewStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="Theme.Secretaria.TitleStyle" parent="Theme.Secretaria.TextViewStyle">
+
+        <item name="android:textSize">23sp</item>
+    </style>
+</resources>
