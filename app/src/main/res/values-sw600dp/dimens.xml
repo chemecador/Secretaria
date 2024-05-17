@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Margins -->
+    <dimen name="margin_size_1">6dp</dimen>
+    <dimen name="margin_size_2">12dp</dimen>
+    <dimen name="margin_size_3">24dp</dimen>
+    <dimen name="margin_size_4">48dp</dimen>
+    <dimen name="margin_size_5">72dp</dimen>
+    <dimen name="margin_size_6">96dp</dimen>
+    <dimen name="margin_size_7">116dp</dimen>
+
+
+    <dimen name="activity_horizontal_margin">48dp</dimen>
+</resources>

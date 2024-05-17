@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+
+    <string name="action_sign_in">Iniciar sesión</string>
+    <string name="action_register">Registrarse</string>
+
+    <string name="action_guest">Continuar como invitado</string>
+    <string name="label_other_login">Otras formas de iniciar sesión</string>
+
+    <string name="label_login_google">Iniciar sesión con Google</string>
+</resources>
