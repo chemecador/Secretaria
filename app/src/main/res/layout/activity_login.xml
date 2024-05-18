@@ -86,7 +86,6 @@
         android:layout_marginTop="@dimen/margin_size_6"
         android:layout_marginEnd="@dimen/margin_size_2"
         android:layout_marginBottom="10dp"
-        android:enabled="false"
         android:text="@string/action_sign_in"
         app:layout_constraintEnd_toStartOf="@id/btn_register"
         app:layout_constraintStart_toStartOf="@+id/til_user"
