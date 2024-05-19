@@ -16,14 +16,12 @@ import com.chemecador.secretaria.ui.viewmodel.login.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private var _binding: ActivityLoginBinding? = null
     private val binding get() = _binding ?: throw IllegalStateException("Null binding")
     private val loginViewModel: LoginViewModel by viewModels()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,20 +50,35 @@ class LoginActivity : AppCompatActivity() {
     private fun initListeners() {
         binding.btnLogin.setOnClickListener {
             loginViewModel.login(
-                user = binding.etUsername.text.toString(),
-                password = binding.etPassword.text.toString()
-            ) { Toast.makeText(this@LoginActivity, "Login OK!", Toast.LENGTH_SHORT).show() }
+                user = binding.etUsername.text.toString().trim(),
+                password = binding.etPassword.text.toString().trim().
+            ) {
+                Toast.makeText(this@LoginActivity, "Login OK!", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     private fun initUIState() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                loginViewModel.isLoading.collect {
-                    binding.pb.isVisible = it
+                launch {
+                    loginViewModel.isLoading.collect {
+                        binding.pb.isVisible = it
+                    }
+                }
+                launch {
+                    loginViewModel.loginError.collect { error ->
+                        error?.let {
+                            Toast.makeText(this@LoginActivity, it, Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 }

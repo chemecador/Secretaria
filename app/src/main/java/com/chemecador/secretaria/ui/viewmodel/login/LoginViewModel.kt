@@ -17,6 +17,10 @@ class LoginViewModel @Inject constructor(private val authService: AuthService) :
     private var _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    private var _loginError = MutableStateFlow<String?>(null)
+    val loginError: StateFlow<String?> = _loginError
+
+
     fun login(user: String, password: String, onLoginSuccess: () -> Unit) {
         viewModelScope.launch {
             _isLoading.value = true
@@ -25,10 +29,11 @@ class LoginViewModel @Inject constructor(private val authService: AuthService) :
                 authService.login(user, password)
             }
 
-            if (result != null) {
+            if (result.isSuccess) {
                 onLoginSuccess()
+                _loginError.value = null
             } else {
-                // TODO : Handle error
+                _loginError.value = result.exceptionOrNull()?.message
             }
 
             _isLoading.value = false
