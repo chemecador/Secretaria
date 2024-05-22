@@ -11,8 +11,11 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.chemecador.secretaria.R
 import com.chemecador.secretaria.databinding.ActivityLoginBinding
 import com.chemecador.secretaria.ui.viewmodel.login.LoginViewModel
+import com.chemecador.secretaria.utils.DeviceUtils
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -49,12 +52,24 @@ class LoginActivity : AppCompatActivity() {
 
     private fun initListeners() {
         binding.btnLogin.setOnClickListener {
+            if (!isEmailValid()){
+                binding.etUsername.requestFocus()
+                binding.etUsername.error = getString(R.string.error_invalid_email)
+                return@setOnClickListener
+            }
+            if (!isPasswordValid()){
+                binding.etPassword.requestFocus()
+                binding.etPassword.error = getString(R.string.error_invalid_password)
+                return@setOnClickListener
+            }
+            DeviceUtils.hideKeyboard(this)
             loginViewModel.login(
                 user = binding.etUsername.text.toString().trim(),
-                password = binding.etPassword.text.toString().trim().
+                password = binding.etPassword.text.toString().trim()
             ) {
                 Toast.makeText(this@LoginActivity, "Login OK!", Toast.LENGTH_SHORT).show()
             }
+
         }
     }
 
@@ -69,12 +84,21 @@ class LoginActivity : AppCompatActivity() {
                 launch {
                     loginViewModel.loginError.collect { error ->
                         error?.let {
-                            Toast.makeText(this@LoginActivity, it, Toast.LENGTH_SHORT).show()
+                            Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun isEmailValid() = binding.etUsername.text.toString().isValidEmail()
+
+    private fun isPasswordValid() = binding.etPassword.text.toString().length >= 6
+
+
+    private fun String.isValidEmail(): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
     }
 
     override fun onDestroy() {

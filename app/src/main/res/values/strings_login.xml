@@ -7,9 +7,15 @@
 
     <string name="action_sign_in">Iniciar sesión</string>
     <string name="action_register">Registrarse</string>
-
     <string name="action_guest">Continuar como invitado</string>
-    <string name="label_other_login">Otras formas de iniciar sesión</string>
 
+    <string name="label_other_login">Otras formas de iniciar sesión</string>
     <string name="label_login_google">Iniciar sesión con Google</string>
+
+    <string name="error_invalid_email">El email no es válido</string>
+    <string name="error_invalid_password">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="error_authentication">Error al iniciar sesión: %1$s</string>
+    <string name="error_user_not_found">El usuario no existe</string>
+    <string name="error_wrong_password">La contraseña es incorrecta</string>
+
 </resources>

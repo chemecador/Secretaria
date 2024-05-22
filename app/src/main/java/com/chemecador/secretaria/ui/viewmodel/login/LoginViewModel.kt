@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.chemecador.secretaria.data.network.services.AuthService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -34,6 +35,8 @@ class LoginViewModel @Inject constructor(private val authService: AuthService) :
                 _loginError.value = null
             } else {
                 _loginError.value = result.exceptionOrNull()?.message
+                delay(100)  // Pequeño retraso para permitir la captura del error
+                _loginError.value = null
             }
 
             _isLoading.value = false
