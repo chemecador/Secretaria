@@ -1,20 +1,30 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Secretaria" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
+<resources>
 
-    <style name="Theme.Secretaria" parent="Base.Theme.Secretaria" >
+    <style name="Theme.Secretaria" parent="Theme.Material3.DayNight.NoActionBar">
 
-        <!-- Colores principales -->
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorSecondaryVariant">@color/colorSecondaryDark</item>
+        <item name="colorOnSecondary">@color/colorOnSecondary</item>
+        <item name="colorOnSecondaryContainer">@color/colorOnSecondaryContainer</item>
+        <item name="android:windowBackground">@color/colorBackground</item>
         <item name="android:textViewStyle">@style/Theme.Secretaria.TextViewStyle</item>
+        <item name="android:buttonStyle">@style/Theme.Secretaria.ButtonStyle</item>
     </style>
+
+    <style name="Theme.Secretaria.ButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton.Icon">
+        <item name="strokeColor">@color/white</item>
+    </style>
+
 
     <style name="Theme.Secretaria.TextViewStyle" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">16sp</item>
         <item name="android:gravity">center</item>
     </style>
+
     <style name="Theme.Secretaria.TitleStyle" parent="Theme.Secretaria.TextViewStyle">
 
         <item name="android:textSize">23sp</item>

@@ -1,7 +1,7 @@
 package com.chemecador.secretaria.ui.view.login
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.databinding.ActivityLoginBinding
+import com.chemecador.secretaria.ui.view.main.MainActivity
 import com.chemecador.secretaria.ui.viewmodel.login.LoginViewModel
 import com.chemecador.secretaria.utils.DeviceUtils
 import com.google.android.material.snackbar.Snackbar
@@ -28,14 +29,8 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         _binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
         initUI()
     }
 
@@ -52,12 +47,12 @@ class LoginActivity : AppCompatActivity() {
 
     private fun initListeners() {
         binding.btnLogin.setOnClickListener {
-            if (!isEmailValid()){
+            if (!isEmailValid()) {
                 binding.etUsername.requestFocus()
                 binding.etUsername.error = getString(R.string.error_invalid_email)
                 return@setOnClickListener
             }
-            if (!isPasswordValid()){
+            if (!isPasswordValid()) {
                 binding.etPassword.requestFocus()
                 binding.etPassword.error = getString(R.string.error_invalid_password)
                 return@setOnClickListener
@@ -67,7 +62,8 @@ class LoginActivity : AppCompatActivity() {
                 user = binding.etUsername.text.toString().trim(),
                 password = binding.etPassword.text.toString().trim()
             ) {
-                Toast.makeText(this@LoginActivity, "Login OK!", Toast.LENGTH_SHORT).show()
+                finish()
+                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
             }
 
         }
