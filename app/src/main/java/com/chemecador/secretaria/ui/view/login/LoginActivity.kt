@@ -17,6 +17,10 @@ import com.chemecador.secretaria.ui.view.main.MainActivity
 import com.chemecador.secretaria.ui.viewmodel.login.LoginViewModel
 import com.chemecador.secretaria.ui.viewmodel.login.SignupViewmodel
 import com.chemecador.secretaria.utils.DeviceUtils
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -28,6 +32,7 @@ class LoginActivity : AppCompatActivity() {
     private val binding get() = _binding ?: throw IllegalStateException("Null binding")
     private val loginViewModel: LoginViewModel by viewModels()
     private val signupViewmodel: SignupViewmodel by viewModels()
+    private lateinit var googleSignInClient: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +50,17 @@ class LoginActivity : AppCompatActivity() {
         }
         initListeners()
         initUIState()
+        initGoogle()
+    }
+
+    private fun initGoogle() {
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+
     }
 
     private fun initListeners() {
@@ -53,6 +69,33 @@ class LoginActivity : AppCompatActivity() {
         }
         binding.btnSignup.setOnClickListener {
             handleSingup()
+        }
+        binding.btnGoogle.setOnClickListener {
+            handleGoogleSignIn()
+        }
+    }
+
+
+
+    private fun handleGoogleSignIn() {
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)!!
+                loginViewModel.signInWithGoogle(account.idToken!!) {
+                    finish()
+                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                }
+            } catch (e: ApiException) {
+                Snackbar.make(binding.root, "${getString(R.string.error_login)} + ${e.message}", Snackbar.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -141,5 +184,11 @@ class LoginActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+
+
+    companion object {
+        private const val RC_SIGN_IN = 9001
     }
 }

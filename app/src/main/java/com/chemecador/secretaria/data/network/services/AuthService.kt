@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
@@ -43,6 +44,16 @@ class AuthService @Inject constructor(
         } catch (e: Exception) {
             Timber.e(e)
             Result.failure(Exception(e.message))
+        }
+    }
+
+    suspend fun signInWithGoogle(idToken: String): Result<FirebaseUser> {
+        return try {
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            val authResult = firebaseAuth.signInWithCredential(credential).await()
+            Result.success(authResult.user!!)
+        } catch (e: Exception) {
+            Result.failure(Exception("${res.getString(R.string.error_login)} + ${e.message}"))
         }
     }
 }

@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,11 +33,34 @@ class LoginViewModel @Inject constructor(private val authService: AuthService) :
 
             if (result.isSuccess) {
                 onLoginSuccess()
-                _loginError.value = null
+                _loginError.emit(null)
             } else {
-                _loginError.value = result.exceptionOrNull()?.message
-                delay(100)
-                _loginError.value = null
+                _loginError.emit(result.exceptionOrNull()?.message)
+                Timber.e(result.exceptionOrNull())
+                _loginError.emit(null)
+            }
+
+            _isLoading.value = false
+        }
+    }
+
+
+    fun signInWithGoogle(idToken: String, onLoginSuccess: () -> Unit) {
+        viewModelScope.launch {
+            _isLoading.value = true
+
+            val result = withContext(Dispatchers.IO) {
+                authService.signInWithGoogle(idToken)
+            }
+
+            if (result.isSuccess) {
+                onLoginSuccess()
+                _loginError.emit(null)
+            } else {
+                val errorMessage = result.exceptionOrNull()?.message ?: "Unknown error"
+                _loginError.emit(errorMessage)
+                Timber.e(errorMessage)
+                _loginError.emit(null)
             }
 
             _isLoading.value = false
