@@ -90,18 +90,17 @@
         android:layout_marginEnd="@dimen/margin_size_2"
         android:layout_marginBottom="10dp"
         android:text="@string/action_sign_in"
-        app:layout_constraintEnd_toStartOf="@id/btn_register"
+        app:layout_constraintEnd_toStartOf="@id/btn_signup"
         app:layout_constraintStart_toStartOf="@+id/til_user"
         app:layout_constraintTop_toBottomOf="@id/til_password" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_register"
+        android:id="@+id/btn_signup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_size_2"
         android:layout_marginBottom="10dp"
-        android:enabled="false"
-        android:text="@string/action_register"
+        android:text="@string/action_signup"
         app:layout_constraintEnd_toEndOf="@id/til_user"
         app:layout_constraintStart_toEndOf="@+id/btn_login"
         app:layout_constraintTop_toTopOf="@id/btn_login" />
@@ -130,19 +129,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_otherLogin"
         app:tint="@color/white" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_guest"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_size_3"
-        android:layout_marginBottom="10dp"
-        android:enabled="true"
-        android:text="@string/action_guest"
-        app:layout_constraintEnd_toStartOf="@+id/space_end"
-        app:layout_constraintStart_toEndOf="@+id/space_start"
-        app:layout_constraintTop_toBottomOf="@id/btn_google" />
-
     <ProgressBar
         android:id="@+id/pb"
         android:layout_width="wrap_content"

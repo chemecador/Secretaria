@@ -13,34 +13,33 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val authService: AuthService) : ViewModel() {
+class SignupViewmodel @Inject constructor(
+    private val authService: AuthService
+) : ViewModel() {
 
     private var _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    private var _loginError = MutableStateFlow<String?>(null)
-    val loginError: StateFlow<String?> = _loginError
+    private var _signupError = MutableStateFlow<String?>(null)
+    val signupError: StateFlow<String?> = _signupError
 
-
-    fun login(user: String, password: String, onLoginSuccess: () -> Unit) {
+    fun signup(user: String, password: String, onSignupSuccess: () -> Unit) {
         viewModelScope.launch {
             _isLoading.value = true
 
             val result = withContext(Dispatchers.IO) {
-                authService.login(user, password)
+                authService.signup(user, password)
             }
 
             if (result.isSuccess) {
-                onLoginSuccess()
-                _loginError.value = null
+                onSignupSuccess()
+                _signupError.value = null
             } else {
-                _loginError.value = result.exceptionOrNull()?.message
+                _signupError.value = result.exceptionOrNull()?.message
                 delay(100)
-                _loginError.value = null
+                _signupError.value = null
             }
-
             _isLoading.value = false
         }
     }
-
 }

@@ -13,10 +13,12 @@
         <item name="android:windowBackground">@color/colorBackground</item>
         <item name="android:textViewStyle">@style/Theme.Secretaria.TextViewStyle</item>
         <item name="android:buttonStyle">@style/Theme.Secretaria.ButtonStyle</item>
+        <item name="materialButtonStyle">@style/Theme.Secretaria.ButtonStyle</item>
+
     </style>
 
-    <style name="Theme.Secretaria.ButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton.Icon">
-        <item name="strokeColor">@color/white</item>
+    <style name="Theme.Secretaria.ButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeColor">@color/colorPrimaryDark</item>
     </style>
 
 

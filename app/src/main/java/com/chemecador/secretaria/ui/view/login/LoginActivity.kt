@@ -15,6 +15,7 @@ import com.chemecador.secretaria.R
 import com.chemecador.secretaria.databinding.ActivityLoginBinding
 import com.chemecador.secretaria.ui.view.main.MainActivity
 import com.chemecador.secretaria.ui.viewmodel.login.LoginViewModel
+import com.chemecador.secretaria.ui.viewmodel.login.SignupViewmodel
 import com.chemecador.secretaria.utils.DeviceUtils
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,6 +27,7 @@ class LoginActivity : AppCompatActivity() {
     private var _binding: ActivityLoginBinding? = null
     private val binding get() = _binding ?: throw IllegalStateException("Null binding")
     private val loginViewModel: LoginViewModel by viewModels()
+    private val signupViewmodel: SignupViewmodel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,25 +49,52 @@ class LoginActivity : AppCompatActivity() {
 
     private fun initListeners() {
         binding.btnLogin.setOnClickListener {
-            if (!isEmailValid()) {
-                binding.etUsername.requestFocus()
-                binding.etUsername.error = getString(R.string.error_invalid_email)
-                return@setOnClickListener
-            }
-            if (!isPasswordValid()) {
-                binding.etPassword.requestFocus()
-                binding.etPassword.error = getString(R.string.error_invalid_password)
-                return@setOnClickListener
-            }
-            DeviceUtils.hideKeyboard(this)
-            loginViewModel.login(
-                user = binding.etUsername.text.toString().trim(),
-                password = binding.etPassword.text.toString().trim()
-            ) {
-                finish()
-                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-            }
+            handleLogin()
+        }
+        binding.btnSignup.setOnClickListener {
+            handleSingup()
+        }
+    }
 
+    private fun handleSingup() {
+        if (!isEmailValid()) {
+            binding.etUsername.requestFocus()
+            binding.etUsername.error = getString(R.string.error_email_invalid)
+            return
+        }
+        if (!isPasswordValid()) {
+            binding.etPassword.requestFocus()
+            binding.etPassword.error = getString(R.string.error_password_invalid)
+            return
+        }
+        DeviceUtils.hideKeyboard(this)
+        signupViewmodel.signup(
+            user = binding.etUsername.text.toString().trim(),
+            password = binding.etPassword.text.toString().trim()
+        ) {
+            finish()
+            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+        }
+    }
+
+    private fun handleLogin() {
+        if (!isEmailValid()) {
+            binding.etUsername.requestFocus()
+            binding.etUsername.error = getString(R.string.error_email_invalid)
+            return
+        }
+        if (!isPasswordValid()) {
+            binding.etPassword.requestFocus()
+            binding.etPassword.error = getString(R.string.error_password_invalid)
+            return
+        }
+        DeviceUtils.hideKeyboard(this)
+        loginViewModel.login(
+            user = binding.etUsername.text.toString().trim(),
+            password = binding.etPassword.text.toString().trim()
+        ) {
+            finish()
+            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
         }
     }
 
@@ -78,7 +107,19 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
                 launch {
+                    signupViewmodel.isLoading.collect {
+                        binding.pb.isVisible = it
+                    }
+                }
+                launch {
                     loginViewModel.loginError.collect { error ->
+                        error?.let {
+                            Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                launch {
+                    signupViewmodel.signupError.collect { error ->
                         error?.let {
                             Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
                         }
