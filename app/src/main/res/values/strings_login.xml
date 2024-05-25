@@ -11,11 +11,12 @@
     <string name="label_other_login">Otras formas de iniciar sesión</string>
     <string name="label_login_google">Iniciar sesión con Google</string>
 
-    <string name="error_authentication">Error al iniciar sesión: %1$s</string>
+    <string name="error_login">Error al iniciar sesión: </string>
     <string name="error_email_already_exists">El usuario ya existe</string>
     <string name="error_email_not_found">El usuario no existe</string>
     <string name="error_email_invalid">El email no es válido</string>
     <string name="error_password_invalid">La contraseña debe tener al menos 6 caracteres</string>
     <string name="error_password_wrong">La contraseña es incorrecta</string>
+
 
 </resources>
