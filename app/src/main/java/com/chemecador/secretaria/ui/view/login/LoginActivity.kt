@@ -1,8 +1,13 @@
+@file:Suppress("DEPRECATION")
+
 package com.chemecador.secretaria.ui.view.login
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -32,7 +37,10 @@ class LoginActivity : AppCompatActivity() {
     private val binding get() = _binding ?: throw IllegalStateException("Null binding")
     private val loginViewModel: LoginViewModel by viewModels()
     private val signupViewmodel: SignupViewmodel by viewModels()
+
     private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,12 +63,29 @@ class LoginActivity : AppCompatActivity() {
 
     private fun initGoogle() {
 
+
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestIdToken(getString(R.string.default_web_client_id)) // Asegúrate de que este es el ID de cliente correcto
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
+        googleSignInLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                try {
+                    val account = task.getResult(ApiException::class.java)!!
+                    loginViewModel.signInWithGoogle(account.idToken!!) {
+                        finish()
+                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                    }
+                } catch (e: ApiException) {
+                    Snackbar.make(binding.root, getString(R.string.error_login) + " " + e.message, Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun initListeners() {
@@ -75,28 +100,9 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-
-
     private fun handleGoogleSignIn() {
         val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)!!
-                loginViewModel.signInWithGoogle(account.idToken!!) {
-                    finish()
-                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                }
-            } catch (e: ApiException) {
-                Snackbar.make(binding.root, "${getString(R.string.error_login)} + ${e.message}", Snackbar.LENGTH_SHORT).show()
-            }
-        }
+        googleSignInLauncher.launch(signInIntent)
     }
 
     private fun handleSingup() {
@@ -184,11 +190,5 @@ class LoginActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-
-
-    companion object {
-        private const val RC_SIGN_IN = 9001
     }
 }
