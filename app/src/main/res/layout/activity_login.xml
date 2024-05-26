@@ -114,8 +114,7 @@
         android:text="@string/label_other_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_login" />
-
+        app:layout_constraintTop_toBottomOf="@id/pb" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_google"
@@ -129,18 +128,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_otherLogin"
         app:tint="@color/white" />
+
     <ProgressBar
         android:id="@+id/pb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="64dp"
-        android:layout_marginBottom="64dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@id/btn_login"
+        android:layout_marginTop="@dimen/margin_size_4"
+        app:layout_constraintTop_toBottomOf="@id/btn_login"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/til_password" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Space
         android:id="@+id/space_start"

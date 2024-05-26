@@ -17,6 +17,9 @@ class AuthService @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val res: ResourceProvider,
 ) {
+
+    fun getUser() = firebaseAuth.currentUser
+
     suspend fun login(user: String, password: String): Result<FirebaseUser> {
         return try {
             val authResult = firebaseAuth.signInWithEmailAndPassword(user, password).await()

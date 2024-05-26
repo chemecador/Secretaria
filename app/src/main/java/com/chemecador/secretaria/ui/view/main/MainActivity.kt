@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     private fun initUI() {
         enableEdgeToEdge()
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
@@ -32,7 +31,6 @@ class MainActivity : AppCompatActivity() {
         //initListeners()
         //initUIState()
     }
-
 
 
     override fun onDestroy() {
