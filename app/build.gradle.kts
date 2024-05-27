@@ -73,9 +73,13 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.annotation)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.preference.ktx)
+
 
     // Firebase
-
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
     implementation(libs.play.services.auth)
@@ -89,14 +93,16 @@ dependencies {
 
     // Dagger Hilt
     implementation(libs.hilt.android)
-    implementation(libs.androidx.annotation)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    kapt (libs.hilt.android.compiler)
+    kapt(libs.hilt.android.compiler)
 
 
-    // Timber (logs)
+    // Logs
     implementation(libs.timber)
+
+
+    // Images
+    implementation(libs.circleimageview)
+    implementation(libs.glide)
 
 
     // Testing
