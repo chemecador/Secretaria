@@ -28,11 +28,16 @@
 
         <activity
             android:name=".ui.view.main.MainActivity"
-            android:exported="false" />
-
+            android:exported="false"
+            android:label="@string/title_activity_main" />
         <activity
             android:name=".ui.view.login.LoginActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:label="@string/title_activity_login" />
+        <activity
+            android:name=".ui.view.settings.SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings" />
     </application>
 
 </manifest>

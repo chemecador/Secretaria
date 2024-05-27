@@ -14,21 +14,25 @@
         <item name="android:textViewStyle">@style/Theme.Secretaria.TextViewStyle</item>
         <item name="android:buttonStyle">@style/Theme.Secretaria.ButtonStyle</item>
         <item name="materialButtonStyle">@style/Theme.Secretaria.ButtonStyle</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:textColor">@color/colorText</item>
 
     </style>
 
     <style name="Theme.Secretaria.ButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="strokeColor">@color/colorPrimaryDark</item>
+        <item name="android:textColor">@color/colorText</item>
     </style>
 
 
     <style name="Theme.Secretaria.TextViewStyle" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">16sp</item>
         <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/colorText</item>
     </style>
 
     <style name="Theme.Secretaria.TitleStyle" parent="Theme.Secretaria.TextViewStyle">
-
         <item name="android:textSize">23sp</item>
+        <item name="android:textColor">@color/colorText</item>
     </style>
 </resources>
