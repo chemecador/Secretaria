@@ -3,4 +3,12 @@
     <string name="title_activity_login">Iniciar sesión</string>
     <string name="title_activity_main">Secretaria</string>
     <string name="title_activity_settings">Configuración</string>
+
+
+    <!-- Label -->
+    <string name="label_empty_data">No hay registros</string>
+
+    <!-- Errors -->
+    <string name="error_unknown">Error desconocido</string>
+
 </resources>

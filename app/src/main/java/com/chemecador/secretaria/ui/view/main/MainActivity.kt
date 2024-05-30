@@ -27,14 +27,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         initUI()
 
-
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.container, NotesListFragment())
+                .commitNow()
+        }
     }
 
 
     private fun initUI() {
         initToolbar()
-        //initListeners()
-        //initUIState()
 
         binding.ivProfile.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
@@ -45,8 +47,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-
-        // Observar cambios en la URL de la foto del usuario
         lifecycleScope.launch {
             mainViewModel.pfpUri.collect { uri ->
                 if (uri == null) {
@@ -69,5 +69,4 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         _binding = null
     }
-
 }
