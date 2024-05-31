@@ -14,6 +14,7 @@
         <item name="android:textViewStyle">@style/Theme.Secretaria.TextViewStyle</item>
         <item name="android:buttonStyle">@style/Theme.Secretaria.ButtonStyle</item>
         <item name="materialButtonStyle">@style/Theme.Secretaria.ButtonStyle</item>
+        <item name="floatingActionButtonStyle">@style/Theme.Secretaria.FabStyle</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="android:textColor">@color/colorText</item>
 
@@ -22,6 +23,10 @@
     <style name="Theme.Secretaria.ButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="strokeColor">@color/colorPrimaryDark</item>
         <item name="android:textColor">@color/colorText</item>
+    </style>
+
+    <style name="Theme.Secretaria.FabStyle" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="backgroundTint">@color/colorPrimaryDark</item>
     </style>
 
 
@@ -34,5 +39,6 @@
     <style name="Theme.Secretaria.TitleStyle" parent="Theme.Secretaria.TextViewStyle">
         <item name="android:textSize">23sp</item>
         <item name="android:textColor">@color/colorText</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private var _binding: ActivityMainBinding? = null
-    private val binding get() = _binding ?: throw IllegalStateException("Null binding")
+    private val binding get() = _binding!!
     private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 class LoginActivity : AppCompatActivity() {
 
     private var _binding: ActivityLoginBinding? = null
-    private val binding get() = _binding ?: throw IllegalStateException("Null binding")
+    private val binding get() = _binding!!
     private val loginViewModel: LoginViewModel by viewModels()
     private val signupViewmodel: SignupViewmodel by viewModels()
 

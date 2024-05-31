@@ -2,8 +2,8 @@
 <resources>
 
     <!-- Login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Password</string>
 
     <string name="action_sign_in">Iniciar sesión</string>
     <string name="action_signup">Registrarse</string>
