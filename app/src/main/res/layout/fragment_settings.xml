@@ -12,7 +12,7 @@
         style="@style/Theme.Secretaria.TitleStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_size_5"
+        android:layout_marginTop="@dimen/margin_large"
         android:gravity="start"
         android:text="@string/label_email"
         app:layout_constraintTop_toTopOf="parent" />
@@ -21,7 +21,7 @@
         android:id="@+id/tv_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_size_3"
+        android:layout_marginTop="@dimen/margin_small"
         android:gravity="start"
         app:layout_constraintTop_toBottomOf="@id/tv_label_email"
         tools:text="chemecador@gmail.com" />
@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/margin_size_5"
+        android:layout_marginTop="@dimen/margin_large"
         android:text="@string/action_logout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
