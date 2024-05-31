@@ -37,7 +37,7 @@
     </style>
 
     <style name="Theme.Secretaria.TitleStyle" parent="Theme.Secretaria.TextViewStyle">
-        <item name="android:textSize">23sp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:textColor">@color/colorText</item>
         <item name="android:textStyle">bold</item>
     </style>

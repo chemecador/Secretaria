@@ -2,4 +2,11 @@
 <resources>
 
     <!-- Main -->
+    <string name="label_name_list">Dale un nombre a la lista</string>
+    <string name="label_name_note">Dale un nombre a la nota</string>
+
+    <string name="label_list_name">Nombre de la lista</string>
+    <string name="label_note_name">Nombre de la nota</string>
+
+    <string name="label_checklist">Checklist</string>
 </resources>

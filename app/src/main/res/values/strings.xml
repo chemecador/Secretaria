@@ -4,6 +4,10 @@
     <string name="title_activity_main">Secretaria</string>
     <string name="title_activity_settings">Configuración</string>
 
+    <!-- Actions -->
+    <string name="action_accept">Aceptar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_ok">OK</string>
 
     <!-- Label -->
     <string name="label_empty_data">No hay registros</string>

@@ -1,14 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">24dp</dimen>
+    <dimen name="activity_vertical_margin">24dp</dimen>
+
+    <!-- Icons -->
+    <dimen name="icon_small">32dp</dimen>
+    <dimen name="icon_medium">64dp</dimen>
+    <dimen name="icon_big">128dp</dimen>
+
+    <!-- Text size -->
+    <dimen name="text_size_small">14sp</dimen>
+    <dimen name="text_size_medium">18sp</dimen>
+    <dimen name="text_size_large">22sp</dimen>
+    <dimen name="text_size_xlarge">26sp</dimen>
+
     <!-- Margins -->
-    <dimen name="margin_size_1">6dp</dimen>
-    <dimen name="margin_size_2">12dp</dimen>
-    <dimen name="margin_size_3">24dp</dimen>
-    <dimen name="margin_size_4">48dp</dimen>
-    <dimen name="margin_size_5">72dp</dimen>
-    <dimen name="margin_size_6">96dp</dimen>
-    <dimen name="margin_size_7">116dp</dimen>
+    <dimen name="margin_xsmall">8dp</dimen>
+    <dimen name="margin_small">12dp</dimen>
+    <dimen name="margin_medium">20dp</dimen>
+    <dimen name="margin_large">28dp</dimen>
+    <dimen name="margin_xlarge">36dp</dimen>
+    <dimen name="margin_xxlarge">56dp</dimen>
 
+    <!-- Padding -->
+    <dimen name="padding_small">12dp</dimen>
+    <dimen name="padding_medium">20dp</dimen>
+    <dimen name="padding_large">28dp</dimen>
+    <dimen name="padding_xlarge">36dp</dimen>
 
-    <dimen name="activity_horizontal_margin">48dp</dimen>
+    <!-- Buttons and icons -->
+    <dimen name="button_height">56dp</dimen>
+    <dimen name="button_width">180dp</dimen>
+    <dimen name="icon_size_small">28dp</dimen>
+    <dimen name="icon_size_medium">40dp</dimen>
+    <dimen name="icon_size_large">52dp</dimen>
+
+    <!-- CardView -->
+    <dimen name="cardview_default_elevation">8dp</dimen>
+    <dimen name="cardview_default_radius">8dp</dimen>
+
+    <dimen name="corner_radius_small">6dp</dimen>
+    <dimen name="corner_radius_medium">12dp</dimen>
+    <dimen name="corner_radius_large">20dp</dimen>
 </resources>

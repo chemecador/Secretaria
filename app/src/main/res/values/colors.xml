@@ -13,4 +13,5 @@
     <color name="colorBackground">#F8F7D8</color>
     <color name="colorText">#353535</color>
     <color name="colorTextSecondary">#F9FAE2</color>
+    <color name="red">#FF1100</color>
 </resources>

@@ -21,11 +21,11 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/iv_profile"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginEnd="16dp"
-                android:src="@drawable/ic_people"
-            android:layout_gravity="end|center_vertical" />
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="match_parent"
+                android:layout_gravity="end|center_vertical"
+                android:padding="@dimen/margin_medium"
+                android:src="@drawable/ic_people" />
         </androidx.appcompat.widget.Toolbar>
 
 
