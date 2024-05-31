@@ -1,8 +1,10 @@
 package com.chemecador.secretaria.di
 
 import android.content.Context
+import com.chemecador.secretaria.data.local.UserPreferences
 import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.chemecador.secretaria.data.provider.ResourceProviderImpl
+import com.chemecador.secretaria.data.repositories.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +18,17 @@ object LocalModule {
 
     @Provides
     @Singleton
-    fun provideResourceProvider(@ApplicationContext context: Context): ResourceProvider {
-        return ResourceProviderImpl(context)
-    }
+    fun provideResourceProvider(@ApplicationContext context: Context): ResourceProvider =
+        ResourceProviderImpl(context)
+
+
+    @Provides
+    @Singleton
+    fun provideUserPreferences(@ApplicationContext context: Context) = UserPreferences(context)
+
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(userPreferences: UserPreferences) = UserRepository(userPreferences)
+
 }

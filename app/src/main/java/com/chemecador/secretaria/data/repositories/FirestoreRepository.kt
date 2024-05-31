@@ -14,10 +14,10 @@ import javax.inject.Singleton
 
 
 @Singleton
-class FirestoreTodoRepository @Inject constructor(
+class FirestoreRepository @Inject constructor(
     firestore: FirebaseFirestore,
     private val res: ResourceProvider
-) : Repository {
+) : OnlineRepository {
 
     private val usersRef = firestore.collection(USERS)
 

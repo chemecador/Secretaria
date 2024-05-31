@@ -3,6 +3,7 @@ package com.chemecador.secretaria.ui.viewmodel.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chemecador.secretaria.data.network.services.AuthService
+import com.chemecador.secretaria.data.repositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,10 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val authService: AuthService) : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val authService: AuthService,
+    private val userRepository: UserRepository
+) : ViewModel() {
 
     private var _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -31,8 +35,16 @@ class LoginViewModel @Inject constructor(private val authService: AuthService) :
             }
 
             if (result.isSuccess) {
-                onLoginSuccess()
-                _loginError.emit(null)
+                val firebaseUser = result.getOrNull()
+                if (firebaseUser != null) {
+                    userRepository.saveUserDetails(
+                        userId = firebaseUser.uid,
+                        email = firebaseUser.email
+                    )
+
+                    onLoginSuccess()
+                    _loginError.emit(null)
+                }
             } else {
                 _loginError.emit(result.exceptionOrNull()?.message)
                 Timber.e(result.exceptionOrNull())
@@ -53,8 +65,16 @@ class LoginViewModel @Inject constructor(private val authService: AuthService) :
             }
 
             if (result.isSuccess) {
-                onLoginSuccess()
-                _loginError.emit(null)
+                val firebaseUser = result.getOrNull()
+                if (firebaseUser != null) {
+                    userRepository.saveUserDetails(
+                        userId = firebaseUser.uid,
+                        email = firebaseUser.email,
+                    )
+
+                    onLoginSuccess()
+                    _loginError.emit(null)
+                }
             } else {
                 val errorMessage = result.exceptionOrNull()?.message ?: "Unknown error"
                 _loginError.emit(errorMessage)

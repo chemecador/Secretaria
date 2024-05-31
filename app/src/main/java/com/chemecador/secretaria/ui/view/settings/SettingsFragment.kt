@@ -17,7 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class SettingsFragment : Fragment() {
 
     private var _binding: FragmentSettingsBinding? = null
-    private val binding get() = _binding ?: throw IllegalStateException("Null binding")
+    private val binding get() = _binding!!
     private val viewModel: SettingsViewModel by viewModels()
 
     override fun onCreateView(
@@ -31,6 +31,7 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUI()
+        observeViewModel()
     }
 
     private fun initUI() {
@@ -42,8 +43,18 @@ class SettingsFragment : Fragment() {
         }
     }
 
+    private fun observeViewModel() {
+
+
+        viewModel.email.observe(viewLifecycleOwner) {
+            binding.tvEmail.text = it ?: "No Email"
+        }
+
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
+

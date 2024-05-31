@@ -4,6 +4,6 @@ import androidx.lifecycle.LiveData
 import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.utils.Resource
 
-interface Repository {
+interface OnlineRepository {
     fun getAllLists(userId: String): LiveData<Resource<List<NotesList>>>
 }
