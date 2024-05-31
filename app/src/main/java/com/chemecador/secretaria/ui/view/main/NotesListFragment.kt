@@ -9,10 +9,13 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.chemecador.secretaria.R
+import com.chemecador.secretaria.databinding.DialogCreateListBinding
 import com.chemecador.secretaria.databinding.FragmentNotesListBinding
 import com.chemecador.secretaria.ui.view.rv.adapters.NotesListAdapter
 import com.chemecador.secretaria.ui.viewmodel.main.NotesListViewModel
 import com.chemecador.secretaria.utils.Resource
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -43,11 +46,36 @@ class NotesListFragment : Fragment() {
         initRV()
 
         binding.fab.setOnClickListener {
-            Toast.makeText(context, "jaja era broma, todavía no he hecho eso", Toast.LENGTH_SHORT)
-                .show()
+            showCreateListDialog()
         }
     }
 
+    private fun showCreateListDialog() {
+        val dialogBinding = DialogCreateListBinding.inflate(layoutInflater)
+        val dialog = MaterialAlertDialogBuilder(requireContext()).create().apply {
+            setView(dialogBinding.root)
+            dialogBinding.btnOk.setOnClickListener {
+                val listName = dialogBinding.etListName.text.toString()
+                if (listName.isNotBlank()) {
+                    dialogBinding.etListName.error = null
+                    //viewModel.createList(name)
+                    Toast.makeText(
+                        requireContext(),
+                        "jaja era broma, todavía no puedes crear una lista :P",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    dismiss()
+                } else {
+                    dialogBinding.etListName.requestFocus()
+                    dialogBinding.etListName.error = getString(R.string.error_empty_field)
+                }
+            }
+            dialogBinding.btnCancel.setOnClickListener {
+                dismiss()
+            }
+        }
+        dialog.show()
+    }
     private fun initRV() {
         adapter = NotesListAdapter { listId ->
             Toast.makeText(requireContext(), "List ID: $listId", Toast.LENGTH_SHORT).show()

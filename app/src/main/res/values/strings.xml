@@ -15,6 +15,7 @@
 
     <!-- Errors -->
     <string name="error_unknown">Error desconocido</string>
+    <string name="error_empty_field">El campo no puede estar vacío</string>
 
     <!-- Accesibility -->
     <string name="image">Imagen</string>
