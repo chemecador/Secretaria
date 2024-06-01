@@ -58,12 +58,7 @@ class NotesListFragment : Fragment() {
                 val listName = dialogBinding.etListName.text.toString()
                 if (listName.isNotBlank()) {
                     dialogBinding.etListName.error = null
-                    //viewModel.createList(name)
-                    Toast.makeText(
-                        requireContext(),
-                        "jaja era broma, todavía no puedes crear una lista :P",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    viewModel.createList(listName)
                     dismiss()
                 } else {
                     dialogBinding.etListName.requestFocus()

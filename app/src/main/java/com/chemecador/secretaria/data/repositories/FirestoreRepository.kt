@@ -8,6 +8,7 @@ import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.chemecador.secretaria.utils.Resource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
+import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,7 +16,7 @@ import javax.inject.Singleton
 
 @Singleton
 class FirestoreRepository @Inject constructor(
-    firestore: FirebaseFirestore,
+    private val firestore: FirebaseFirestore,
     private val res: ResourceProvider
 ) : OnlineRepository {
 
@@ -48,6 +49,18 @@ class FirestoreRepository @Inject constructor(
                 }
             }
         return liveData
+    }
+
+
+    override suspend fun createList(userId: String, name: String) {
+        val newList = NotesList(
+            id = firestore.collection(USERS).document(userId).collection(NOTES_LIST).document().id,
+            name = name,
+            observers = listOf(),
+            date = com.google.firebase.Timestamp.now()
+        )
+        firestore.collection(USERS).document(userId).collection(NOTES_LIST)
+            .document(newList.id).set(newList).await()
     }
 
     companion object {
