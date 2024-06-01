@@ -25,7 +25,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="end|center_vertical"
                 android:padding="@dimen/margin_medium"
-                android:src="@drawable/ic_people" />
+                android:src="@drawable/ic_settings" />
         </androidx.appcompat.widget.Toolbar>
 
 

@@ -7,11 +7,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.databinding.DialogCreateListBinding
 import com.chemecador.secretaria.databinding.FragmentNotesListBinding
+import com.chemecador.secretaria.ui.view.main.MainActivity.Companion.TITLE_KEY
+import com.chemecador.secretaria.ui.view.main.MainActivity.Companion.TITLE_REQUEST_KEY
 import com.chemecador.secretaria.ui.view.rv.adapters.NotesListAdapter
 import com.chemecador.secretaria.ui.viewmodel.main.NotesListViewModel
 import com.chemecador.secretaria.utils.Resource
@@ -40,11 +43,15 @@ class NotesListFragment : Fragment() {
         initUI()
         observeViewModel()
 
+        setFragmentResult(TITLE_REQUEST_KEY, Bundle().apply {
+            putString(TITLE_KEY, getString(R.string.title_noteslist))
+        })
+
     }
 
     private fun initUI() {
-        initRV()
 
+        initRV()
         binding.fab.setOnClickListener {
             showCreateListDialog()
         }
@@ -71,9 +78,19 @@ class NotesListFragment : Fragment() {
         }
         dialog.show()
     }
+
     private fun initRV() {
-        adapter = NotesListAdapter { listId ->
-            Toast.makeText(requireContext(), "List ID: $listId", Toast.LENGTH_SHORT).show()
+        adapter = NotesListAdapter { listId, name ->
+            val fragment = NotesFragment().apply {
+                arguments = Bundle().apply {
+                    putString(LIST_ID, listId)
+                    putString(LIST_NAME, name)
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, fragment)
+                .addToBackStack(null)
+                .commit()
         }
         binding.rv.layoutManager = LinearLayoutManager(context)
         binding.rv.adapter = adapter
@@ -90,15 +107,19 @@ class NotesListFragment : Fragment() {
                 is Resource.Success -> {
                     binding.pb.isVisible = false
                     adapter.submitList(resource.data)
+                    binding.tvEmpty.isVisible = resource.data.isNullOrEmpty()
                 }
 
                 is Resource.Error -> {
                     binding.pb.isVisible = false
-                    Toast.makeText(context, "Error: ${resource.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        getString(R.string.error, resource.message),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    binding.tvEmpty.isVisible = resource.data.isNullOrEmpty()
                 }
             }
-
-            binding.tvEmpty.isVisible = resource.data.isNullOrEmpty()
         }
     }
 
@@ -106,5 +127,11 @@ class NotesListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+
+    companion object {
+        const val LIST_ID = "listId"
+        const val LIST_NAME = "listName"
     }
 }

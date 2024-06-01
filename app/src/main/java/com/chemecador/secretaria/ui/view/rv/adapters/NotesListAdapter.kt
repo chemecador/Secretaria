@@ -9,7 +9,7 @@ import com.chemecador.secretaria.databinding.ListItemNoteslistBinding
 import com.chemecador.secretaria.ui.view.rv.holders.NotesListViewHolder
 
 class NotesListAdapter(
-    private val onListClicked: (String) -> Unit
+    private val onListClick: (String, String) -> Unit
 ) : ListAdapter<NotesList, NotesListViewHolder>(NotesListDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesListViewHolder {
@@ -20,7 +20,7 @@ class NotesListAdapter(
 
     override fun onBindViewHolder(holder: NotesListViewHolder, position: Int) {
         val notesList = getItem(position)
-        holder.bind(notesList, onListClicked)
+        holder.bind(notesList, onListClick)
     }
 
 }
