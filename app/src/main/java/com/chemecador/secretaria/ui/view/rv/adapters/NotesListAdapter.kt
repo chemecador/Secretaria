@@ -2,11 +2,11 @@ package com.chemecador.secretaria.ui.view.rv.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.databinding.ListItemNoteslistBinding
 import com.chemecador.secretaria.ui.view.rv.holders.NotesListViewHolder
+import com.chemecador.secretaria.utils.NotesListDiffCallback
 
 class NotesListAdapter(
     private val onListClick: (String, String) -> Unit
@@ -23,14 +23,4 @@ class NotesListAdapter(
         holder.bind(notesList, onListClick)
     }
 
-}
-
-class NotesListDiffCallback : DiffUtil.ItemCallback<NotesList>() {
-    override fun areItemsTheSame(oldItem: NotesList, newItem: NotesList): Boolean {
-        return oldItem.id == newItem.id
-    }
-
-    override fun areContentsTheSame(oldItem: NotesList, newItem: NotesList): Boolean {
-        return oldItem == newItem
-    }
 }

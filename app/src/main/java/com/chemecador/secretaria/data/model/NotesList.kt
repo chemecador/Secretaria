@@ -3,7 +3,7 @@ package com.chemecador.secretaria.data.model
 import com.google.firebase.Timestamp
 
 data class NotesList(
-    val id: String = "",
+    var id: String = "",
     val name: String = "",
     val observers: List<String> = emptyList(),
     val date: Timestamp = Timestamp.now(),
