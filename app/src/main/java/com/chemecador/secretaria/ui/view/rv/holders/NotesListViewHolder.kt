@@ -7,11 +7,11 @@ import com.chemecador.secretaria.databinding.ListItemNoteslistBinding
 
 class NotesListViewHolder(private val binding: ListItemNoteslistBinding) :
     RecyclerView.ViewHolder(binding.root) {
-    fun bind(notesList: NotesList, onListClicked: (String) -> Unit) {
+    fun bind(notesList: NotesList, onListClick: (String, String) -> Unit) {
         binding.tvTitle.text = notesList.name
 
         binding.root.setOnClickListener {
-            onListClicked(notesList.id)
+            onListClick(notesList.id, notesList.name)
         }
     }
 }

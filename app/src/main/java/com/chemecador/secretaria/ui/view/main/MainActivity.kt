@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.chemecador.secretaria.R
@@ -23,21 +24,29 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initUI()
 
+
+        // Init fragment
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, NotesListFragment())
-                .commitNow()
+            supportFragmentManager.commit {
+                replace(R.id.container, NotesListFragment())
+            }
+        }
+
+        // Listen for fragment results to update the title
+        supportFragmentManager.setFragmentResultListener(TITLE_REQUEST_KEY, this) { _, bundle ->
+            val title = bundle.getString(TITLE_KEY)
+            supportActionBar?.title = title
         }
     }
 
 
     private fun initUI() {
         initToolbar()
-
         binding.ivProfile.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
@@ -45,7 +54,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun initToolbar() {
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         lifecycleScope.launch {
             mainViewModel.pfpUri.collect { uri ->
@@ -68,5 +76,10 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    companion object {
+        const val TITLE_REQUEST_KEY = "titleRequestKey"
+        const val TITLE_KEY = "titleKey"
     }
 }
