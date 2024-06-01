@@ -19,6 +19,7 @@ import com.chemecador.secretaria.ui.view.rv.adapters.NotesListAdapter
 import com.chemecador.secretaria.ui.viewmodel.main.NotesListViewModel
 import com.chemecador.secretaria.utils.Resource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -120,6 +121,10 @@ class NotesListFragment : Fragment() {
                     binding.tvEmpty.isVisible = resource.data.isNullOrEmpty()
                 }
             }
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG).show()
         }
     }
 

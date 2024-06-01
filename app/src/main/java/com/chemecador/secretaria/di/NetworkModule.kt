@@ -3,6 +3,7 @@ package com.chemecador.secretaria.di
 import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.chemecador.secretaria.data.repositories.FirestoreRepository
 import com.chemecador.secretaria.data.repositories.OnlineRepository
+import com.chemecador.secretaria.data.repositories.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -25,6 +26,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRepository(firestore: FirebaseFirestore, res: ResourceProvider): OnlineRepository =
-        FirestoreRepository(firestore, res)
+    fun provideRepository(
+        firestore: FirebaseFirestore,
+        userRepository: UserRepository,
+        res: ResourceProvider
+    ): OnlineRepository =
+        FirestoreRepository(firestore, userRepository, res)
 }
