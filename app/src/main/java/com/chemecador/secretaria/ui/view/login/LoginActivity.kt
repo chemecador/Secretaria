@@ -5,19 +5,24 @@ package com.chemecador.secretaria.ui.view.login
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.databinding.ActivityLoginBinding
+import com.chemecador.secretaria.databinding.DialogLoginPhoneBinding
 import com.chemecador.secretaria.ui.view.main.MainActivity
 import com.chemecador.secretaria.ui.viewmodel.login.LoginViewModel
 import com.chemecador.secretaria.ui.viewmodel.login.SignupViewmodel
@@ -65,7 +70,7 @@ class LoginActivity : AppCompatActivity() {
 
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id)) // Asegúrate de que este es el ID de cliente correcto
+            .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
@@ -82,7 +87,11 @@ class LoginActivity : AppCompatActivity() {
                         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                     }
                 } catch (e: ApiException) {
-                    Snackbar.make(binding.root, getString(R.string.error_login) + " " + e.message, Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.error_login) + e.message,
+                        Snackbar.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -98,6 +107,43 @@ class LoginActivity : AppCompatActivity() {
         binding.btnGoogle.setOnClickListener {
             handleGoogleSignIn()
         }
+        binding.btnPhone.setOnClickListener {
+            handlePhoneSignIn()
+        }
+    }
+
+    private fun handlePhoneSignIn() {
+        val phoneBinding = DialogLoginPhoneBinding.inflate(layoutInflater)
+        val alertDialog = AlertDialog.Builder(this).apply { setView(phoneBinding.root) }.create()
+
+        phoneBinding.btnPhone.setOnClickListener {
+            loginViewModel.loginWithPhone(phoneBinding.etPhone.text.toString(),
+                this,
+                onCodeSent = {
+                    phoneBinding.etPhone.isEnabled = false
+                    phoneBinding.btnPhone.isEnabled = false
+                    phoneBinding.pinView.isVisible = true
+                    phoneBinding.pinView.requestFocus()
+                    val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.showSoftInput(phoneBinding.pinView, InputMethodManager.SHOW_IMPLICIT)
+                },
+                onVerificationComplete = { initApp() },
+                onVerificationFailed = {
+                    Toast.makeText(
+                        this,
+                        getString(R.string.error, it),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                })
+        }
+
+        phoneBinding.pinView.doOnTextChanged { text, _, _, _ ->
+            if (text?.length == 6) {
+                loginViewModel.verifyCode(text.toString()) { initApp() }
+            }
+        }
+
+        alertDialog.show()
     }
 
     private fun handleGoogleSignIn() {
@@ -121,8 +167,7 @@ class LoginActivity : AppCompatActivity() {
             user = binding.etUsername.text.toString().trim(),
             password = binding.etPassword.text.toString().trim()
         ) {
-            finish()
-            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            initApp()
         }
     }
 
@@ -142,8 +187,7 @@ class LoginActivity : AppCompatActivity() {
             user = binding.etUsername.text.toString().trim(),
             password = binding.etPassword.text.toString().trim()
         ) {
-            finish()
-            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            initApp()
         }
     }
 
@@ -176,6 +220,11 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun initApp() {
+        finish()
+        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
     }
 
     private fun isEmailValid() = binding.etUsername.text.toString().isValidEmail()

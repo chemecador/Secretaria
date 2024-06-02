@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.chemecador.secretaria.R
 import com.chemecador.secretaria.databinding.FragmentSettingsBinding
 import com.chemecador.secretaria.ui.view.login.LoginActivity
 import com.chemecador.secretaria.ui.viewmodel.settings.SettingsViewModel
@@ -45,9 +46,9 @@ class SettingsFragment : Fragment() {
 
     private fun observeViewModel() {
 
-
         viewModel.email.observe(viewLifecycleOwner) {
-            binding.tvEmail.text = it ?: "No Email"
+            binding.tvEmail.text =
+                if (it.isNullOrEmpty()) getString(R.string.label_data_not_provided) else it
         }
 
     }

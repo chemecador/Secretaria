@@ -8,9 +8,13 @@
     <string name="action_sign_in">Iniciar sesión</string>
     <string name="action_signup">Registrarse</string>
 
-    <string name="label_other_login">Otras formas de iniciar sesión</string>
+    <string name="label_login_other">Otras formas de iniciar sesión</string>
     <string name="label_login_google">Iniciar sesión con Google</string>
+    <string name="label_login_phone">Iniciar sesión con número de teléfono</string>
+    <string name="label_phone_number">Número de teléfono</string>
+    <string name="label_send_sms">Enviar SMS</string>
 
+    <!-- Errors -->
     <string name="error_login">Error al iniciar sesión: </string>
     <string name="error_email_already_exists">El usuario ya existe</string>
     <string name="error_email_not_found">El usuario no existe</string>
