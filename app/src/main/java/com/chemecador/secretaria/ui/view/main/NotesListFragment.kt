@@ -103,22 +103,26 @@ class NotesListFragment : Fragment() {
             when (resource) {
                 is Resource.Loading -> {
                     binding.pb.isVisible = true
+                    binding.tvError.isVisible = false
+                    binding.tvEmpty.isVisible = false
                 }
 
                 is Resource.Success -> {
                     binding.pb.isVisible = false
-                    adapter.submitList(resource.data)
+                    binding.tvError.isVisible = false
                     binding.tvEmpty.isVisible = resource.data.isNullOrEmpty()
+                    adapter.submitList(resource.data)
                 }
 
                 is Resource.Error -> {
                     binding.pb.isVisible = false
+                    binding.tvError.isVisible = resource.data.isNullOrEmpty()
+                    binding.tvEmpty.isVisible = false
                     Toast.makeText(
                         context,
                         getString(R.string.error, resource.message),
                         Toast.LENGTH_LONG
                     ).show()
-                    binding.tvEmpty.isVisible = resource.data.isNullOrEmpty()
                 }
             }
         }
