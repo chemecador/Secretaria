@@ -17,8 +17,8 @@ android {
         applicationId = "com.chemecador.secretaria"
         minSdk = 26
         targetSdk = 34
-        versionCode = 5
-        versionName = "1.1"
+        versionCode = 6
+        versionName = "1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -107,6 +107,7 @@ dependencies {
     // Images
     implementation(libs.circleimageview)
     implementation(libs.glide)
+    implementation(libs.pinview)
 
 
     // Testing
