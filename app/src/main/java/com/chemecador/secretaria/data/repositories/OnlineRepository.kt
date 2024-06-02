@@ -9,4 +9,5 @@ interface OnlineRepository {
     fun getAllLists(): LiveData<Resource<List<NotesList>>>
     suspend fun createList(name: String): Resource<Unit>
     fun getNotes(listId: String): LiveData<Resource<List<Note>>>
+    suspend fun createNote(listId: String, note: Note): Resource<Unit>
 }

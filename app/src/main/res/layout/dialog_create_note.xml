@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/margin_small">
@@ -21,13 +22,13 @@
             app:srcCompat="@android:drawable/ic_menu_edit" />
 
         <TextView
-            android:id="@+id/tv_nameList"
+            android:id="@+id/tv_namenote"
             style="@style/Theme.Secretaria.TitleStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_medium"
             android:gravity="start|center_vertical"
-            android:text="@string/label_name_list"
+            android:text="@string/label_name_note"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintBottom_toBottomOf="@id/iv_icon"
             app:layout_constraintEnd_toEndOf="parent"
@@ -35,22 +36,53 @@
             app:layout_constraintTop_toTopOf="@id/iv_icon" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_listName"
+            android:id="@+id/til_noteName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/margin_medium"
-            android:hint="@string/label_list_name"
+            android:hint="@string/label_note_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_nameList">
+            app:layout_constraintTop_toBottomOf="@+id/tv_namenote">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_listName"
+                android:id="@+id/et_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cb_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/margin_medium"
+            android:checked="false"
+            android:text="@string/label_add_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_noteName" />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/margin_medium"
+            android:hint="@string/label_type_content"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cb_content"
+            tools:visibility="visible">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -59,7 +91,7 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/til_listName">
+            app:layout_constraintTop_toBottomOf="@+id/til_content">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_cancel"
