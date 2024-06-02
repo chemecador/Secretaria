@@ -52,35 +52,43 @@ class NotesFragment : Fragment() {
 
     private fun initUI() {
 
-        val adapter = NotesAdapter()
+        adapter = NotesAdapter()
         binding.rv.layoutManager = LinearLayoutManager(context)
         binding.rv.adapter = adapter
 
         val listId = arguments?.getString(LIST_ID)
-        if (listId != null) {
-            viewModel.getNotes(listId).observe(viewLifecycleOwner) { resource ->
-                when (resource) {
-                    is Resource.Loading -> {
-                        binding.pb.isVisible = true
-                    }
+        if (listId == null) {
+            binding.tvError.isVisible = true
+            return
+        }
+        viewModel.getNotes(listId).observe(viewLifecycleOwner) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    binding.pb.isVisible = true
+                    binding.tvEmpty.isVisible = false
+                    binding.tvError.isVisible = false
+                }
 
-                    is Resource.Success -> {
-                        binding.pb.isVisible = false
-                        adapter.submitList(resource.data)
-                        binding.tvEmpty.isVisible = resource.data.isNullOrEmpty()
-                    }
+                is Resource.Success -> {
+                    binding.pb.isVisible = false
+                    binding.tvError.isVisible = false
+                    binding.tvEmpty.isVisible = resource.data.isNullOrEmpty()
+                    adapter.submitList(resource.data)
+                }
 
-                    is Resource.Error -> {
-                        binding.pb.isVisible = false
-                        Toast.makeText(
-                            context,
-                            getString(R.string.error, resource.message),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
+                is Resource.Error -> {
+                    binding.pb.isVisible = false
+                    binding.tvEmpty.isVisible = false
+                    binding.tvError.isVisible = resource.data.isNullOrEmpty()
+                    Toast.makeText(
+                        context,
+                        getString(R.string.error, resource.message),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
+
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
             Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG).show()

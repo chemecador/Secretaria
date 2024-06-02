@@ -38,3 +38,6 @@ replay_pid*
 
 # Release folder
 /app/release
+
+# To-do file
+*/TO-DO.md
