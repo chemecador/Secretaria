@@ -7,6 +7,7 @@ import com.chemecador.secretaria.data.model.Note
 import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.chemecador.secretaria.utils.Resource
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -114,10 +115,32 @@ class FirestoreRepository @Inject constructor(
                     .document().id,
                 name = name,
                 observers = listOf(),
-                date = com.google.firebase.Timestamp.now()
+                date = Timestamp.now()
             )
             firestore.collection(USERS).document(userId).collection(NOTES_LIST)
                 .document(newList.id).set(newList).await()
+            Resource.Success(Unit)
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: res.getString(R.string.error_unknown))
+        }
+    }
+
+    override suspend fun createNote(listId: String, note: Note): Resource<Unit> {
+        return try {
+
+            val userId = getUserId()
+            if (userId == null) {
+                Timber.e("UserID is null ??")
+                return Resource.Error(res.getString(R.string.error_unknown))
+            }
+            val newNote = note.copy(
+                id = firestore.collection(USERS).document(userId)
+                    .collection(NOTES_LIST).document(listId)
+                    .collection(NOTES).document().id
+            )
+            firestore.collection(USERS).document(userId)
+                .collection(NOTES_LIST).document(listId)
+                .collection(NOTES).document(newNote.id).set(newNote).await()
             Resource.Success(Unit)
         } catch (e: Exception) {
             Resource.Error(e.message ?: res.getString(R.string.error_unknown))

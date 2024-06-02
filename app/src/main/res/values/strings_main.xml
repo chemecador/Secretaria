@@ -7,6 +7,8 @@
 
     <string name="label_list_name">Nombre de la lista</string>
     <string name="label_note_name">Nombre de la nota</string>
+    <string name="label_add_content">Añadir contenido</string>
+    <string name="label_type_content">Escribe aquí el contenido...</string>
     <string name="label_checklist">Checklist</string>
 
 

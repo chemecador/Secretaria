@@ -11,6 +11,8 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chemecador.secretaria.R
+import com.chemecador.secretaria.data.model.Note
+import com.chemecador.secretaria.databinding.DialogCreateNoteBinding
 import com.chemecador.secretaria.databinding.FragmentNotesBinding
 import com.chemecador.secretaria.ui.view.main.MainActivity.Companion.TITLE_KEY
 import com.chemecador.secretaria.ui.view.main.MainActivity.Companion.TITLE_REQUEST_KEY
@@ -19,7 +21,9 @@ import com.chemecador.secretaria.ui.view.main.NotesListFragment.Companion.LIST_N
 import com.chemecador.secretaria.ui.view.rv.adapters.NotesAdapter
 import com.chemecador.secretaria.ui.viewmodel.main.NotesViewModel
 import com.chemecador.secretaria.utils.Resource
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.Timestamp
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,6 +32,7 @@ class NotesFragment : Fragment() {
     private var _binding: FragmentNotesBinding? = null
     private val binding get() = _binding!!
     private val viewModel: NotesViewModel by viewModels()
+    private val listId by lazy { requireArguments().getString(LIST_ID) }
     private lateinit var adapter: NotesAdapter
 
     override fun onCreateView(
@@ -43,25 +48,43 @@ class NotesFragment : Fragment() {
 
         // Set the title for this fragment
         setFragmentResult(TITLE_REQUEST_KEY, Bundle().apply {
-            putString(TITLE_KEY, getString(R.string.title_notes, arguments?.getString(LIST_NAME)))
+            putString(
+                TITLE_KEY,
+                getString(R.string.title_notes, requireArguments().getString(LIST_NAME))
+            )
         })
 
         initUI()
+        observeViewModel()
 
     }
 
     private fun initUI() {
+        initRV()
+        binding.fab.setOnClickListener {
+            showCreateNoteDialog()
+        }
+    }
+
+    private fun initRV() {
 
         adapter = NotesAdapter()
         binding.rv.layoutManager = LinearLayoutManager(context)
         binding.rv.adapter = adapter
 
-        val listId = arguments?.getString(LIST_ID)
         if (listId == null) {
             binding.tvError.isVisible = true
             return
         }
-        viewModel.getNotes(listId).observe(viewLifecycleOwner) { resource ->
+
+    }
+
+    private fun observeViewModel() {
+
+        if (listId == null) {
+            return
+        }
+        viewModel.getNotes(listId!!).observe(viewLifecycleOwner) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     binding.pb.isVisible = true
@@ -94,6 +117,41 @@ class NotesFragment : Fragment() {
             Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG).show()
         }
     }
+
+
+    private fun showCreateNoteDialog() {
+        val dialogBinding = DialogCreateNoteBinding.inflate(layoutInflater)
+        val dialog = MaterialAlertDialogBuilder(requireContext()).create().apply {
+            setView(dialogBinding.root)
+            dialogBinding.cbContent.setOnCheckedChangeListener { _, isChecked ->
+                dialogBinding.tilContent.isVisible = isChecked
+            }
+            dialogBinding.btnOk.setOnClickListener {
+                val noteTitle = dialogBinding.etTitle.text.toString()
+                val noteContent = dialogBinding.etContent.text.toString()
+                if (noteTitle.isNotBlank()) {
+                    dialogBinding.etTitle.error = null
+                    viewModel.createNote(
+                        listId!!,
+                        Note(
+                            title = noteTitle,
+                            content = noteContent,
+                            date = Timestamp.now()
+                        )
+                    )
+                    dismiss()
+                } else {
+                    dialogBinding.tilNoteName.requestFocus()
+                    dialogBinding.etTitle.error = getString(R.string.error_empty_field)
+                }
+            }
+            dialogBinding.btnCancel.setOnClickListener {
+                dismiss()
+            }
+        }
+        dialog.show()
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -11,12 +11,16 @@
         <item name="colorOnSecondary">@color/colorOnSecondary</item>
         <item name="colorOnSecondaryContainer">@color/colorOnSecondaryContainer</item>
         <item name="android:windowBackground">@color/colorBackground</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:textColor">@color/colorText</item>
+
+        <!-- Styles -->
         <item name="android:textViewStyle">@style/Theme.Secretaria.TextViewStyle</item>
         <item name="android:buttonStyle">@style/Theme.Secretaria.ButtonStyle</item>
         <item name="materialButtonStyle">@style/Theme.Secretaria.ButtonStyle</item>
         <item name="floatingActionButtonStyle">@style/Theme.Secretaria.FabStyle</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-        <item name="android:textColor">@color/colorText</item>
+        <item name="textInputStyle">@style/Theme.Secretaria.TextInputLayoutStyle</item>
+        <item name="editTextStyle">@style/Theme.Secretaria.TextInputEditTextStyle</item>
 
     </style>
 
@@ -29,7 +33,6 @@
         <item name="backgroundTint">@color/colorPrimaryDark</item>
     </style>
 
-
     <style name="Theme.Secretaria.TextViewStyle" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">16sp</item>
         <item name="android:gravity">center</item>
@@ -41,4 +44,14 @@
         <item name="android:textColor">@color/colorText</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <style name="Theme.Secretaria.TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:maxWidth">488dp</item>
+    </style>
+
+    <style name="Theme.Secretaria.TextInputEditTextStyle" parent="Widget.MaterialComponents.TextInputEditText.OutlinedBox">
+        <item name="android:textColorHighlight">@color/colorPrimary</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
 </resources>
