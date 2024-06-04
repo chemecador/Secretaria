@@ -2,6 +2,8 @@ package com.chemecador.secretaria.ui.view.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
@@ -47,13 +49,30 @@ class MainActivity : AppCompatActivity() {
 
     private fun initUI() {
         initToolbar()
+        handleOnBackPressed()
         binding.ivProfile.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
     }
 
+    private fun handleOnBackPressed() {
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (supportFragmentManager.backStackEntryCount > 0) {
+                    supportFragmentManager.popBackStack()
+                } else {
+                    finish()
+                }
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, callback)
+    }
+
     private fun initToolbar() {
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         lifecycleScope.launch {
             mainViewModel.pfpUri.collect { uri ->
@@ -72,6 +91,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressedDispatcher.onBackPressed()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
