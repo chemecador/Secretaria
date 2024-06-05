@@ -1,5 +1,6 @@
 package com.chemecador.secretaria.ui.view.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.databinding.DialogCreateListBinding
 import com.chemecador.secretaria.databinding.FragmentNotesListBinding
+import com.chemecador.secretaria.ui.view.login.LoginActivity
 import com.chemecador.secretaria.ui.view.main.MainActivity.Companion.TITLE_KEY
 import com.chemecador.secretaria.ui.view.main.MainActivity.Companion.TITLE_REQUEST_KEY
 import com.chemecador.secretaria.ui.view.rv.adapters.NotesListAdapter
@@ -104,26 +106,24 @@ class NotesListFragment : Fragment() {
             when (resource) {
                 is Resource.Loading -> {
                     binding.pb.isVisible = true
-                    binding.tvError.isVisible = false
                     binding.tvEmpty.isVisible = false
                 }
 
                 is Resource.Success -> {
                     binding.pb.isVisible = false
-                    binding.tvError.isVisible = false
                     binding.tvEmpty.isVisible = resource.data.isNullOrEmpty()
                     adapter.submitList(resource.data)
                 }
 
                 is Resource.Error -> {
                     binding.pb.isVisible = false
-                    binding.tvError.isVisible = resource.data.isNullOrEmpty()
                     binding.tvEmpty.isVisible = false
                     Toast.makeText(
                         context,
                         getString(R.string.error, resource.message),
                         Toast.LENGTH_LONG
                     ).show()
+                    logout()
                 }
             }
         }
@@ -131,6 +131,12 @@ class NotesListFragment : Fragment() {
         viewModel.error.observe(viewLifecycleOwner) { error ->
             Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG).show()
         }
+    }
+
+    private fun logout() {
+        val intent = Intent(requireActivity(), LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
     }
 
 
