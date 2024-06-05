@@ -20,6 +20,7 @@
     <string name="error_unknown">Error desconocido</string>
     <string name="error_empty_field">El campo no puede estar vacío</string>
     <string name="error_retrieving_data">Error al obtener los datos</string>
+    <string name="error_session_expired">Su sesión ha expirado. Por favor, inicie sesión de nuevo.</string>
 
     <!-- Accesibility -->
     <string name="image">Imagen</string>

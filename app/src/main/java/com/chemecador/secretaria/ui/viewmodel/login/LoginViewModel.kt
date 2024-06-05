@@ -23,7 +23,7 @@ class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private lateinit var verificationCode: String
+    private var verificationCode: String = ""
     private var _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
@@ -156,6 +156,8 @@ class LoginViewModel @Inject constructor(
     fun verifyCode(phoneCode: String, onSuccessVerification: () -> Unit) {
         viewModelScope.launch {
             _isLoading.value = true
+            if (verificationCode.isEmpty())
+                return@launch
 
             val result = withContext(Dispatchers.IO) {
                 authService.verifyCode(verificationCode, phoneCode)
