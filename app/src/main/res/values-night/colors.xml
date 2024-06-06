@@ -7,6 +7,7 @@
     <color name="colorSecondaryDark">#016C4B</color>
     <color name="colorOnSecondary">#000000</color>
     <color name="colorBackground">#011904</color>
-    <color name="colorText">#F9FAE2</color>
-    <color name="colorTextSecondary">#353535</color>
+
+    <color name="colorText">@color/colorTextLight</color>
+
 </resources>

@@ -39,8 +39,8 @@
     <dimen name="icon_size_large">48dp</dimen>
 
     <!-- CardView -->
-    <dimen name="cardview_default_elevation">6dp</dimen>
-    <dimen name="cardview_default_radius">6dp</dimen>
+    <dimen name="cardview_default_elevation">2dp</dimen>
+    <dimen name="cardview_default_radius">16dp</dimen>
 
     <dimen name="corner_radius_small">4dp</dimen>
     <dimen name="corner_radius_medium">8dp</dimen>

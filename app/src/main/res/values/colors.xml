@@ -4,16 +4,19 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="colorPrimary">#29BA0D</color>
-    <color name="colorPrimaryDark">#40AF65</color>
+    <color name="colorPrimaryDark">#FFFFFF</color>
     <color name="colorOnPrimary">#FFFFFF</color>
     <color name="colorSecondary">#03DAC6</color>
     <color name="colorSecondaryDark">#018786</color>
     <color name="colorOnSecondary">#000000</color>
     <color name="colorOnSecondaryContainer">#6C6652</color>
     <color name="colorBackground">#F8F7D8</color>
-    <color name="colorText">#353535</color>
-    <color name="colorTextSecondary">#F9FAE2</color>
+    <color name="colorTextDark">#353535</color>
+    <color name="colorTextLight">#F9FAE2</color>
 
+    <color name="colorText">@color/colorTextDark</color>
+
+    <color name="colorStatusBar">#033915</color>
 
     <!-- Colors -->
     <color name="light_red">#FF9D9D</color>
