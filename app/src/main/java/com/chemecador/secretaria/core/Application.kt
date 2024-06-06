@@ -14,6 +14,8 @@ class Application : Application() {
         FileLoggingTree.deleteOldLogs(applicationContext)
 
         Timber.plant(FileLoggingTree(applicationContext))
+
+        Timber.plant(Timber.DebugTree())
     }
 }
 
