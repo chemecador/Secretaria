@@ -12,7 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/margin_small">
+        android:padding="@dimen/margin_xsmall">
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/cb"
@@ -29,10 +29,10 @@
             android:layout_height="wrap_content"
             android:gravity="start|center_vertical"
             android:paddingHorizontal="@dimen/margin_small"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tv_content"
+            app:layout_constraintEnd_toStartOf="@id/iv_more"
             app:layout_constraintStart_toEndOf="@id/cb"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/tv_content"
             tools:text="Comprar pan" />
 
 
@@ -44,11 +44,22 @@
             android:gravity="start|center_vertical"
             android:maxLines="2"
             android:paddingHorizontal="@dimen/margin_small"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/iv_more"
             app:layout_constraintStart_toEndOf="@id/cb"
             app:layout_constraintTop_toBottomOf="@id/tv_title"
-            app:layout_constraintBottom_toBottomOf="parent"
             tools:text="@string/lorem_ipsum" />
+
+
+        <ImageView
+            android:id="@+id/iv_more"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:contentDescription="@string/title_activity_settings"
+            android:src="@drawable/ic_more_vert"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
