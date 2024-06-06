@@ -78,9 +78,9 @@ class MainActivity : AppCompatActivity() {
             mainViewModel.pfpUri.collect { uri ->
                 if (uri == null) {
                     Glide.with(this@MainActivity)
-                        .load(R.drawable.ic_settings)
-                        .placeholder(R.drawable.ic_settings)
-                        .error(R.drawable.ic_settings)
+                        .load(R.drawable.ic_settings_white)
+                        .placeholder(R.drawable.ic_settings_white)
+                        .error(R.drawable.ic_settings_white)
                         .into(binding.ivProfile)
                 } else {
                     Glide.with(this@MainActivity)

@@ -29,7 +29,7 @@ class SettingsActivity : AppCompatActivity() {
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back_white)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
