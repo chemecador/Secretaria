@@ -1,7 +1,9 @@
 package com.chemecador.secretaria.ui.view.settings
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,6 +44,8 @@ class SettingsFragment : Fragment() {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
+        binding.btnContactUs.movementMethod = LinkMovementMethod.getInstance()
+        binding.btnContactUs.setOnClickListener { sendEmail() }
     }
 
     private fun observeViewModel() {
@@ -51,6 +55,17 @@ class SettingsFragment : Fragment() {
                 if (it.isNullOrEmpty()) getString(R.string.label_data_not_provided) else it
         }
 
+    }
+
+
+    private fun sendEmail() {
+        val recipients = arrayOf(getString(R.string.contact_mail))
+        val subject = getString(R.string.label_mail_subject)
+        val intent = Intent(Intent.ACTION_SENDTO)
+        intent.data = Uri.parse("mailto:")
+        intent.putExtra(Intent.EXTRA_EMAIL, recipients)
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+        startActivity(intent)
     }
 
     override fun onDestroyView() {
