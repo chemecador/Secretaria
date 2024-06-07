@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="@dimen/activity_horizontal_margin"
-    android:paddingVertical="@dimen/activity_vertical_margin"
+    android:padding="@dimen/margin_small"
     tools:context=".ui.view.main.NotesListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -42,6 +41,8 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        app:elevation="@dimen/cardview_default_elevation"
         android:contentDescription="@string/fab"
         android:src="@drawable/ic_plus"
         app:layout_constraintBottom_toBottomOf="parent"

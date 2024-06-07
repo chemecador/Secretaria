@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -30,6 +31,16 @@ class LoginViewModel @Inject constructor(
     private var _loginError = MutableStateFlow<String?>(null)
     val loginError: StateFlow<String?> = _loginError
 
+    private val _shouldShowWelcomeMessage = MutableStateFlow(false)
+    val shouldShowWelcomeMessage: StateFlow<Boolean> = _shouldShowWelcomeMessage.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            userRepository.shouldShowWelcomeMessage().collect { show ->
+                _shouldShowWelcomeMessage.value = show
+            }
+        }
+    }
 
     fun login(user: String, password: String, onLoginSuccess: () -> Unit) {
         viewModelScope.launch {
@@ -179,6 +190,12 @@ class LoginViewModel @Inject constructor(
             }
 
             _isLoading.value = false
+        }
+    }
+
+    fun dontShowAgain() {
+        viewModelScope.launch(Dispatchers.IO) {
+            userRepository.dontShowAgain()
         }
     }
 
