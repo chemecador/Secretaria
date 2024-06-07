@@ -25,8 +25,4 @@
     <!-- Accesibility -->
     <string name="image">Imagen</string>
     <string name="fab">Pulsa para añadir</string>
-
-    <!-- Utils -->
-    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Gravida cum sociis natoque penatibus et magnis dis parturient. Vitae aliquet nec ullamcorper sit amet risus. Aliquet porttitor lacus luctus accumsan tortor posuere ac. Blandit aliquam etiam erat velit. Nisi lacus sed viverra tellus in. Elementum integer enim neque volutpat ac tincidunt vitae semper. Sodales ut eu sem integer vitae. Consectetur adipiscing elit ut aliquam purus sit amet luctus venenatis. Et malesuada fames ac turpis egestas maecenas pharetra convallis posuere. Quis ipsum suspendisse ultrices gravida dictum fusce ut placerat orci.</string>
-
 </resources>

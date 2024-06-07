@@ -21,5 +21,6 @@
     <!-- Error -->
     <string name="error_retrieving_lists">Error al obtener las listas</string>
     <string name="error_retrieving_notes">No se han podido obtener las notas</string>
+    <string name="error_retrieving_note">Error al obtener la información de la nota</string>
 
 </resources>

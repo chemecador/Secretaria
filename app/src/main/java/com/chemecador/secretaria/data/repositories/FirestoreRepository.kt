@@ -9,6 +9,7 @@ import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.chemecador.secretaria.utils.Resource
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Source
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
@@ -35,7 +36,7 @@ class FirestoreRepository @Inject constructor(
         }
     }
 
-    override fun getAllLists(): LiveData<Resource<List<NotesList>>> {
+    override fun getLists(): LiveData<Resource<List<NotesList>>> {
         val liveData = MutableLiveData<Resource<List<NotesList>>>()
         liveData.postValue(Resource.Loading())
 
@@ -56,9 +57,9 @@ class FirestoreRepository @Inject constructor(
                         )
                     } else {
                         val lists = snapshot.documents.mapNotNull { documentSnapshot ->
-                            documentSnapshot.toObject(NotesList::class.java)?.apply {
+                            documentSnapshot.toObject(NotesList::class.java)?.copy(
                                 id = documentSnapshot.id
-                            }
+                            )
                         }
                         liveData.postValue(Resource.Success(lists))
                     }
@@ -91,7 +92,11 @@ class FirestoreRepository @Inject constructor(
                             )
                         )
                     } else {
-                        val notes = snapshot.documents.mapNotNull { it.toObject(Note::class.java) }
+                        val notes = snapshot.documents.mapNotNull { documentSnapshot ->
+                            documentSnapshot.toObject(Note::class.java)?.copy(
+                                id = documentSnapshot.id
+                            )
+                        }
                         liveData.postValue(Resource.Success(notes))
                     }
                 }
@@ -145,5 +150,35 @@ class FirestoreRepository @Inject constructor(
         } catch (e: Exception) {
             Resource.Error(e.message ?: res.getString(R.string.error_unknown))
         }
+    }
+
+    override fun getNote(listId: String, noteId: String): MutableLiveData<Resource<Note>> {
+        val result = MutableLiveData<Resource<Note>>()
+        result.postValue(Resource.Loading())
+
+        val userId = getUserId()
+        if (userId == null) {
+            Timber.e("UserID is null ??")
+            result.postValue(Resource.Error(res.getString(R.string.error_unknown)))
+            return result
+        }
+        firestore.collection(USERS).document(userId).collection(NOTES_LIST).document(listId)
+            .collection(
+                NOTES
+            ).document(noteId)
+            .get(Source.CACHE)  // Asegúrate de usar la caché local si prefieres
+            .addOnSuccessListener { document ->
+                val note = document.toObject(Note::class.java)
+                if (note != null) {
+                    result.postValue(Resource.Success(note))
+                } else {
+                    result.postValue(Resource.Error("Nota no encontrada"))
+                }
+            }
+            .addOnFailureListener { exception ->
+                result.postValue(Resource.Error(exception.message ?: "Error desconocido"))
+            }
+
+        return result
     }
 }

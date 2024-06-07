@@ -18,7 +18,7 @@ class NotesListViewModel @Inject constructor(
     private val repository: FirestoreRepository
 ) : ViewModel() {
 
-    val notesLists: LiveData<Resource<List<NotesList>>> = repository.getAllLists()
+    val notesLists: LiveData<Resource<List<NotesList>>> = repository.getLists()
 
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
