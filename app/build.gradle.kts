@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.services)
     alias(libs.plugins.android.hilt)
+    alias(libs.plugins.firebase.crashlytics)
     kotlin("kapt")
 }
 
@@ -86,6 +87,7 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.play.services.auth)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.crashlytics.ktx)
 
 
 
