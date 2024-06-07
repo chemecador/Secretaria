@@ -33,7 +33,7 @@ class NotesFragment : Fragment() {
     private var _binding: FragmentNotesBinding? = null
     private val binding get() = _binding!!
     private val viewModel: NotesViewModel by viewModels()
-    private val listId by lazy { requireArguments().getString(LIST_ID) }
+    private lateinit var listId: String
     private lateinit var adapter: NotesAdapter
 
     override fun onCreateView(
@@ -54,6 +54,7 @@ class NotesFragment : Fragment() {
                 getString(R.string.title_notes, requireArguments().getString(LIST_NAME))
             )
         })
+        listId = requireArguments().getString(LIST_ID, "")
 
         initUI()
         observeViewModel()
@@ -62,7 +63,7 @@ class NotesFragment : Fragment() {
 
     private fun initUI() {
         initRV()
-        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.fab.setOnClickListener {
             showCreateNoteDialog()
         }
@@ -70,23 +71,38 @@ class NotesFragment : Fragment() {
 
     private fun initRV() {
 
-        adapter = NotesAdapter()
+        adapter = NotesAdapter { noteId ->
+            navigateToNoteDetail(noteId)
+        }
         binding.rv.layoutManager = LinearLayoutManager(context)
         binding.rv.adapter = adapter
 
-        if (listId == null) {
+        if (listId.isEmpty()) {
             binding.tvError.isVisible = true
             return
         }
 
     }
 
+    private fun navigateToNoteDetail(noteId: String) {
+        val fragment = NoteDetailFragment().apply {
+            arguments = Bundle().apply {
+                putString(LIST_ID, listId)
+                putString(NOTE_ID, noteId)
+            }
+        }
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
     private fun observeViewModel() {
 
-        if (listId == null) {
+        if (listId.isEmpty()) {
             return
         }
-        viewModel.getNotes(listId!!).observe(viewLifecycleOwner) { resource ->
+        viewModel.getNotes(listId).observe(viewLifecycleOwner) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     binding.pb.isVisible = true
@@ -134,7 +150,7 @@ class NotesFragment : Fragment() {
                 if (noteTitle.isNotBlank()) {
                     dialogBinding.etTitle.error = null
                     viewModel.createNote(
-                        listId!!,
+                        listId,
                         Note(
                             title = noteTitle,
                             content = noteContent,
@@ -158,5 +174,10 @@ class NotesFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+
+    companion object {
+        const val NOTE_ID = "noteId"
     }
 }
