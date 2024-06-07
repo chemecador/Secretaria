@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Contact -->
+    <string name="label_mail_subject">Contacto desde Secretaria</string>
+    <string name="label_contact_us">¿Quieres ponerte en contacto con nosotros?</string>
+    <string name="btn_contact_us">¡Contáctanos!</string>
+
     <!-- Logout -->
     <string name="action_logout">Cerrar sesión</string>
 </resources>
