@@ -2,7 +2,9 @@
 agp = "8.4.1"
 circleimageview = "3.1.0"
 datastorePreferences = "1.1.1"
-firebaseBom = "33.0.0"
+crashlytics = "3.0.1"
+crashlyticsKtx = "19.0.1"
+firebaseBom = "33.1.0"
 firebaseFirestoreKtx = "25.0.0"
 fragmentKtx = "1.7.1"
 glide = "3.7.0"
@@ -12,7 +14,7 @@ coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
-appcompat = "1.6.1"
+appcompat = "1.7.0"
 loggingInterceptor = "4.11.0"
 material = "1.12.0"
 activity = "1.9.0"
@@ -22,9 +24,9 @@ playServicesAuth = "21.2.0"
 retrofit = "2.9.0"
 timber = "4.7.1"
 annotation = "1.8.0"
-lifecycleLivedataKtx = "2.8.0"
-lifecycleViewmodelKtx = "2.8.0"
-services = "4.4.1"
+lifecycleLivedataKtx = "2.8.1"
+lifecycleViewmodelKtx = "2.8.1"
+services = "4.4.2"
 preferenceKtx = "1.2.1"
 
 [libraries]
@@ -37,6 +39,7 @@ converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "crashlyticsKtx" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }
@@ -62,5 +65,4 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "services"}
 android-hilt = {id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid"}
-
-
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
