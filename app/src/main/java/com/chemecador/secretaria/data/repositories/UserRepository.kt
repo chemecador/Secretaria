@@ -18,4 +18,11 @@ class UserRepository @Inject constructor(
     suspend fun clearUserDetails() {
         userPreferences.clearUserDetails()
     }
+
+
+    suspend fun dontShowAgain() {
+        userPreferences.dontShowAgain()
+    }
+
+    fun shouldShowWelcomeMessage() = userPreferences.shouldShowWelcomeMessage()
 }

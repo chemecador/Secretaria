@@ -13,6 +13,7 @@
         <item name="android:windowBackground">@color/colorBackground</item>
         <item name="android:statusBarColor">@color/colorStatusBar</item>
         <item name="android:textColor">@color/colorText</item>
+        <item name="android:fontFamily">@font/montserrat</item>
 
         <!-- Styles -->
         <item name="android:textViewStyle">@style/Theme.Secretaria.TextViewStyle</item>

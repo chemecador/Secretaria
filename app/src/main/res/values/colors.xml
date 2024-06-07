@@ -21,4 +21,5 @@
     <!-- Colors -->
     <color name="light_red">#FF9D9D</color>
     <color name="light_green">#B7FBC2</color>
+    <color name="colorLink">#3AE2FF</color>
 </resources>

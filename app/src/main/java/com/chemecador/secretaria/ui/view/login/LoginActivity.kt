@@ -23,6 +23,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.databinding.ActivityLoginBinding
 import com.chemecador.secretaria.databinding.DialogLoginPhoneBinding
+import com.chemecador.secretaria.databinding.DialogShowWelcomeBinding
 import com.chemecador.secretaria.ui.view.main.MainActivity
 import com.chemecador.secretaria.ui.viewmodel.login.LoginViewModel
 import com.chemecador.secretaria.ui.viewmodel.login.SignupViewmodel
@@ -31,6 +32,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -45,7 +47,6 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -218,8 +219,31 @@ class LoginActivity : AppCompatActivity() {
                         }
                     }
                 }
+                launch {
+                    loginViewModel.shouldShowWelcomeMessage.collect { shouldShow ->
+                        if (shouldShow) {
+                            showWelcome()
+                        }
+                    }
+                }
             }
         }
+    }
+
+    private fun showWelcome() {
+        val dialogBinding = DialogShowWelcomeBinding.inflate(layoutInflater)
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setView(dialogBinding.root)
+            .show()
+
+        dialogBinding.btnOk.setOnClickListener {
+            if (dialogBinding.cbDontShowAgain.isChecked) {
+                loginViewModel.dontShowAgain()
+            }
+            dialog.dismiss()
+        }
+
+
     }
 
     private fun initApp() {

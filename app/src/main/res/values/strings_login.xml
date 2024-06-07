@@ -13,6 +13,7 @@
     <string name="label_login_phone">Iniciar sesión con número de teléfono</string>
     <string name="label_phone_number">Número de teléfono</string>
     <string name="label_send_sms">Enviar SMS</string>
+    <string name="label_dont_show_again">No mostrar de nuevo</string>
 
     <!-- Errors -->
     <string name="error_login">Error al iniciar sesión: </string>
@@ -22,5 +23,11 @@
     <string name="error_password_invalid">La contraseña debe tener al menos 6 caracteres</string>
     <string name="error_password_wrong">La contraseña es incorrecta</string>
 
+
+    <!-- Welcome dialog -->
+    <string name="welcome_title">¡Bienvenido a Secretaria!</string>
+    <string name="welcome_msg">Todavía estoy en desarrollo, así que es posible que encuentres algunos errores.\nGracias por tu comprensión :)</string>
+    <string name="label_last_update">Última actualización: junio, 2024</string>
+    <string name="contact_mail">chemecador@gmail.com</string>
 
 </resources>
