@@ -1,0 +1,73 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_corners_rounded"
+    android:padding="@dimen/margin_medium">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="@dimen/icon_medium"
+        android:layout_height="@dimen/icon_medium"
+        android:contentDescription="@string/image"
+        android:src="@mipmap/ic_launcher"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/Theme.Secretaria.TitleStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_small"
+        android:maxLines="2"
+        android:text="@string/label_warning"
+        android:textColor="@color/colorTextLight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/icon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_msg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_small"
+        android:layout_marginVertical="@dimen/margin_medium"
+        android:text="@string/label_confirm_delete"
+        android:textColor="@color/colorTextLight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/icon"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_cancel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small"
+        android:text="@string/action_cancel"
+        android:textColor="@color/colorTextLight"
+        app:icon="@drawable/ic_cancel"
+        app:iconTint="@color/colorDisabled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_confirm"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_msg"
+        app:strokeColor="@color/colorDisabled" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_confirm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small"
+        android:text="@string/action_delete"
+        android:textColor="@color/colorTextLight"
+        app:icon="@drawable/ic_delete"
+        app:iconTint="@color/red"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_cancel"
+        app:layout_constraintTop_toBottomOf="@id/tv_msg"
+        app:strokeColor="@color/red" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

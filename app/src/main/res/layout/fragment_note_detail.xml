@@ -114,25 +114,66 @@
                 android:id="@+id/et_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="top"
                 tools:text="@tools:sample/lorem/random" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Buttons -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_edit"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/label_edit"
-            app:layout_constraintBottom_toTopOf="@id/btn_delete"
-            app:strokeColor="@color/colorPrimary" />
+            android:layout_margin="@dimen/margin_small"
+            android:text="@string/action_edit"
+            app:icon="@drawable/ic_edit"
+            app:iconTint="@color/orange"
+            app:layout_constraintBottom_toTopOf="@id/btn_confirm"
+            app:layout_constraintEnd_toStartOf="@id/btn_delete"
+            app:layout_constraintStart_toStartOf="parent"
+            app:strokeColor="@color/orange" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_delete"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/label_delete"
+            android:layout_margin="@dimen/margin_small"
+            android:text="@string/action_delete"
+            app:icon="@drawable/ic_delete"
+            app:iconTint="@color/red"
+            app:layout_constraintBottom_toTopOf="@id/btn_confirm"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_edit"
+            app:strokeColor="@color/red" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_small"
+            android:text="@string/action_cancel"
+            android:visibility="gone"
+            app:icon="@drawable/ic_cancel"
+            app:iconTint="@color/red"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:strokeColor="@color/light_red" />
+            app:layout_constraintEnd_toStartOf="@id/btn_confirm"
+            app:layout_constraintStart_toStartOf="parent"
+            app:strokeColor="@color/red"
+            tools:visibility="visible" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_confirm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_small"
+            android:text="@string/action_confirm"
+            android:visibility="gone"
+            app:icon="@drawable/ic_check"
+            app:iconTint="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_cancel"
+            app:strokeColor="@color/colorPrimary"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

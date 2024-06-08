@@ -54,7 +54,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/margin_large"
         android:text="@string/action_logout"
-        app:backgroundTint="@color/light_red"
+        app:backgroundTint="@color/red"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
