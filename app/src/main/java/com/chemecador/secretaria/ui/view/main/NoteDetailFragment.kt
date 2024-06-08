@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.data.model.Note
@@ -198,6 +199,15 @@ class NoteDetailFragment : Fragment() {
     }
 
     private fun bindNote() {
+
+        // Set the title for this fragment
+        setFragmentResult(MainActivity.TITLE_REQUEST_KEY, Bundle().apply {
+            putString(
+                MainActivity.TITLE_KEY,
+                note.title
+            )
+        })
+
         binding.tvTitle.text = note.title
         binding.etTitle.setText(note.title)
         binding.tvContent.text = note.content
