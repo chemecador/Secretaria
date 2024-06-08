@@ -98,7 +98,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/action_cancel"
-                app:strokeColor="@color/light_red" />
+                app:strokeColor="@color/red" />
 
             <Space
                 android:layout_width="0dp"
@@ -110,7 +110,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/action_ok"
-                app:strokeColor="@color/light_green" />
+                app:strokeColor="@color/green" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,8 @@ import com.chemecador.secretaria.data.model.Note
 import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.chemecador.secretaria.utils.Resource
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
@@ -166,7 +168,7 @@ class FirestoreRepository @Inject constructor(
             .collection(
                 NOTES
             ).document(noteId)
-            .get(Source.CACHE)  // Asegúrate de usar la caché local si prefieres
+            .get(Source.CACHE)
             .addOnSuccessListener { document ->
                 val note = document.toObject(Note::class.java)
                 if (note != null) {
@@ -180,5 +182,30 @@ class FirestoreRepository @Inject constructor(
             }
 
         return result
+    }
+
+    override fun deleteNote(listId: String, noteId: String): Task<Void> {
+        val userId = getUserId()
+        if (userId == null) {
+            Timber.e("UserID is null ??")
+            return Tasks.forException(IllegalStateException("User ID cannot be null"))
+        }
+
+        return firestore.collection(USERS).document(userId)
+            .collection(NOTES_LIST).document(listId)
+            .collection(NOTES).document(noteId).delete()
+    }
+
+    override fun editNote(listId: String, note: Note): Task<Void> {
+        val userId = getUserId()
+        if (userId == null) {
+            Timber.e("UserID is null ??")
+            return Tasks.forException(IllegalStateException("User ID cannot be null"))
+        }
+
+        return firestore.collection(USERS).document(userId)
+            .collection(NOTES_LIST).document(listId)
+            .collection(NOTES).document(note.id)
+            .set(note)
     }
 }

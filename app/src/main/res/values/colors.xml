@@ -19,7 +19,9 @@
     <color name="colorStatusBar">#033915</color>
 
     <!-- Colors -->
-    <color name="light_red">#FF9D9D</color>
-    <color name="light_green">#B7FBC2</color>
+    <color name="red">#FF5454</color>
+    <color name="orange">#F4B470</color>
+    <color name="green">#B7FBC2</color>
     <color name="colorLink">#3AE2FF</color>
+    <color name="colorDisabled">#878585</color>
 </resources>
