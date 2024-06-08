@@ -18,8 +18,8 @@ android {
         applicationId = "com.chemecador.secretaria"
         minSdk = 26
         targetSdk = 34
-        versionCode = 6
-        versionName = "1.2"
+        versionCode = 7
+        versionName = "1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
