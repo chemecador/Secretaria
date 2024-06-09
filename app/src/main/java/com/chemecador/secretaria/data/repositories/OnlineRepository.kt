@@ -15,4 +15,5 @@ interface OnlineRepository {
     fun getNote(listId: String, noteId: String): MutableLiveData<Resource<Note>>
     fun deleteNote(listId: String, noteId: String): Task<Void>?
     fun editNote(listId: String, note: Note): Task<Void>
+    fun deleteList(listId: String): LiveData<Resource<Void>>
 }

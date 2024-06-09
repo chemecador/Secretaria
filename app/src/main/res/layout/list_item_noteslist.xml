@@ -21,10 +21,19 @@
             android:layout_height="wrap_content"
             android:gravity="start|center_vertical"
             android:paddingHorizontal="@dimen/margin_small"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/iv_more"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Mi lista de la compra" />
+
+        <ImageView
+            android:id="@+id/iv_more"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/label_more"
+            android:src="@drawable/ic_more_vert"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

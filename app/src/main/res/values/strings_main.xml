@@ -4,6 +4,7 @@
     <!-- Lists -->
     <string name="label_name_list">Dale un nombre a la lista</string>
     <string name="label_list_name">Nombre de la lista</string>
+    <string name="label_list_deleted">Lista eliminada correctamente</string>
     <string name="label_checklist">Checklist</string>
 
     <!-- Notes -->
@@ -13,10 +14,12 @@
     <string name="label_type_content">Escribe aquí el contenido...</string>
     <string name="label_note_updated">Nota actualizada correctamente</string>
     <string name="label_note_deleted">Nota eliminada correctamente</string>
+    <string name="label_note_not_found">Nota no encontrada</string>
 
 
     <!-- Confirmation -->
     <string name="label_confirm_delete">¿Estás seguro?\nEsta acción no se puede deshacer.</string>
+    <string name="label_confirm_delete_list">Al eliminar esta lista, se eliminarán también todas sus notas.\nEsta acción no se puede deshacer.</string>
 
     <!-- Empty -->
     <string name="label_empty_lists">¡Todavía no has añadido ninguna lista!\n\nPara crear una, pulsa en el botón de +</string>
@@ -26,8 +29,9 @@
     <string name="error_retrieving_lists">Error al obtener las listas</string>
     <string name="error_retrieving_notes">No se han podido obtener las notas</string>
     <string name="error_retrieving_note">Error al obtener la información de la nota</string>
-
     <string name="error_updating_note">Error al actualizar la nota: %1$s</string>
+    <string name="error_deleting_list">Error al eliminar la lista: %1$s</string>
+    <string name="error_invalid_userid">El usuario no es válido</string>
 
 
 </resources>

@@ -13,6 +13,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chemecador.secretaria.R
+import com.chemecador.secretaria.databinding.DialogConfirmDeleteBinding
 import com.chemecador.secretaria.databinding.DialogCreateListBinding
 import com.chemecador.secretaria.databinding.FragmentNotesListBinding
 import com.chemecador.secretaria.ui.view.login.LoginActivity
@@ -84,20 +85,67 @@ class NotesListFragment : Fragment() {
     }
 
     private fun initRV() {
-        adapter = NotesListAdapter { listId, name ->
-            val fragment = NotesFragment().apply {
-                arguments = Bundle().apply {
-                    putString(LIST_ID, listId)
-                    putString(LIST_NAME, name)
-                }
-            }
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
-                .addToBackStack(null)
-                .commit()
-        }
+        adapter = NotesListAdapter(
+            onListClick = { listId, name -> onListClick(listId, name) },
+            onEditList = { listId -> onEditList(listId) },
+            onDeleteList = { listId -> onDeleteList(listId) })
+
         binding.rv.layoutManager = LinearLayoutManager(context)
         binding.rv.adapter = adapter
+    }
+
+    private fun onDeleteList(listId: String) {
+        val dialogBinding = DialogConfirmDeleteBinding.inflate(layoutInflater)
+        dialogBinding.tvMsg.text = getString(R.string.label_confirm_delete_list)
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(dialogBinding.root)
+            .show()
+
+        dialogBinding.btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialogBinding.btnConfirm.setOnClickListener {
+            viewModel.deleteList(listId).observe(viewLifecycleOwner) { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        Toast.makeText(context, R.string.label_list_deleted, Toast.LENGTH_SHORT)
+                            .show()
+                        binding.pb.isVisible = false
+                    }
+
+                    is Resource.Error -> {
+                        binding.pb.isVisible = false
+                        Toast.makeText(
+                            context,
+                            getString(R.string.error_deleting_list, result.message),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+
+                    is Resource.Loading -> {
+                        binding.pb.isVisible = true
+                    }
+                }
+            }
+            dialog.dismiss()
+        }
+    }
+
+    private fun onEditList(listId: String) {
+        TODO("Not yet implemented")
+    }
+
+    private fun onListClick(listId: String, name: String) {
+        val fragment = NotesFragment().apply {
+            arguments = Bundle().apply {
+                putString(LIST_ID, listId)
+                putString(LIST_NAME, name)
+            }
+        }
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
 

@@ -18,6 +18,7 @@
     <string name="label_warning">Atención</string>
     <string name="label_data_empty">No hay registros</string>
     <string name="label_data_not_provided">Sin informar</string>
+    <string name="label_more">Más...</string>
 
     <!-- Errors -->
     <string name="error">Error: %1$s</string>
