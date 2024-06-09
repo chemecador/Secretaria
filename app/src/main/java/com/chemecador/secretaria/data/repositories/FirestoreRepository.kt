@@ -174,11 +174,15 @@ class FirestoreRepository @Inject constructor(
                 if (note != null) {
                     result.postValue(Resource.Success(note))
                 } else {
-                    result.postValue(Resource.Error("Nota no encontrada"))
+                    result.postValue(Resource.Error(res.getString(R.string.label_note_not_found)))
                 }
             }
             .addOnFailureListener { exception ->
-                result.postValue(Resource.Error(exception.message ?: "Error desconocido"))
+                result.postValue(
+                    Resource.Error(
+                        exception.message ?: res.getString(R.string.error_unknown)
+                    )
+                )
             }
 
         return result
@@ -188,7 +192,7 @@ class FirestoreRepository @Inject constructor(
         val userId = getUserId()
         if (userId == null) {
             Timber.e("UserID is null ??")
-            return Tasks.forException(IllegalStateException("User ID cannot be null"))
+            return Tasks.forException(IllegalStateException(""))
         }
 
         return firestore.collection(USERS).document(userId)
@@ -200,12 +204,36 @@ class FirestoreRepository @Inject constructor(
         val userId = getUserId()
         if (userId == null) {
             Timber.e("UserID is null ??")
-            return Tasks.forException(IllegalStateException("User ID cannot be null"))
+            return Tasks.forException(IllegalStateException(res.getString(R.string.error_invalid_userid)))
         }
 
         return firestore.collection(USERS).document(userId)
             .collection(NOTES_LIST).document(listId)
             .collection(NOTES).document(note.id)
             .set(note)
+    }
+
+    override fun deleteList(listId: String): LiveData<Resource<Void>> {
+        val result = MutableLiveData<Resource<Void>>()
+
+        val userId = getUserId()
+        if (userId == null) {
+            Timber.e("UserID is null ??")
+            result.postValue(Resource.Error(res.getString(R.string.error_unknown)))
+            return result
+        }
+        firestore.collection(USERS).document(userId).collection(NOTES_LIST).document(listId)
+            .delete()
+            .addOnSuccessListener {
+                result.postValue(Resource.Success(null))
+            }
+            .addOnFailureListener { e ->
+                result.postValue(
+                    Resource.Error(
+                        e.localizedMessage ?: res.getString(R.string.error_unknown)
+                    )
+                )
+            }
+        return result
     }
 }

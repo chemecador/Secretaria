@@ -32,4 +32,7 @@ class NotesListViewModel @Inject constructor(
             }
         }
     }
+
+    fun deleteList(listId: String) = repository.deleteList(listId)
+
 }
