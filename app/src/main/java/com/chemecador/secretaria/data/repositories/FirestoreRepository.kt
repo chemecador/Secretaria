@@ -236,4 +236,17 @@ class FirestoreRepository @Inject constructor(
             }
         return result
     }
+
+    override fun editList(updatedList: NotesList): Task<Void> {
+        val userId = getUserId()
+
+        if (userId == null) {
+            Timber.e("UserID is null ??")
+            return Tasks.forException(IllegalStateException(res.getString(R.string.error_invalid_userid)))
+        }
+
+        return firestore.collection(USERS).document(userId)
+            .collection(NOTES_LIST).document(updatedList.id)
+            .set(updatedList)
+    }
 }

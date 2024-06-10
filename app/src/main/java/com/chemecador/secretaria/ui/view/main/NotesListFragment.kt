@@ -13,6 +13,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chemecador.secretaria.R
+import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.databinding.DialogConfirmDeleteBinding
 import com.chemecador.secretaria.databinding.DialogCreateListBinding
 import com.chemecador.secretaria.databinding.FragmentNotesListBinding
@@ -87,7 +88,7 @@ class NotesListFragment : Fragment() {
     private fun initRV() {
         adapter = NotesListAdapter(
             onListClick = { listId, name -> onListClick(listId, name) },
-            onEditList = { listId -> onEditList(listId) },
+            onEditList = { updatedList -> editList(updatedList) },
             onDeleteList = { listId -> onDeleteList(listId) })
 
         binding.rv.layoutManager = LinearLayoutManager(context)
@@ -131,9 +132,32 @@ class NotesListFragment : Fragment() {
         }
     }
 
-    private fun onEditList(listId: String) {
-        TODO("Not yet implemented")
+    private fun editList(currentList: NotesList) {
+        val dialogBinding = DialogCreateListBinding.inflate(layoutInflater)
+        val dialog = MaterialAlertDialogBuilder(requireContext()).create().apply {
+            setView(dialogBinding.root)
+            dialogBinding.etListName.setText(currentList.name)
+
+            dialogBinding.btnOk.setOnClickListener {
+                val newName = dialogBinding.etListName.text.toString()
+                if (newName.isNotBlank()) {
+                    dialogBinding.etListName.error = null
+                    val updatedList = currentList.copy(name = newName)
+                    viewModel.editList(updatedList)
+                    dismiss()
+                } else {
+                    dialogBinding.etListName.requestFocus()
+                    dialogBinding.etListName.error = getString(R.string.error_empty_field)
+                }
+            }
+
+            dialogBinding.btnCancel.setOnClickListener {
+                dismiss()
+            }
+        }
+        dialog.show()
     }
+
 
     private fun onListClick(listId: String, name: String) {
         val fragment = NotesFragment().apply {
@@ -172,6 +196,27 @@ class NotesListFragment : Fragment() {
                         Toast.LENGTH_LONG
                     ).show()
                     logout()
+                }
+            }
+        }
+        viewModel.updateStatus.observe(viewLifecycleOwner) { status ->
+            when (status) {
+                is Resource.Loading -> {
+                    binding.pb.isVisible = true
+                    binding.tvEmpty.isVisible = false
+                }
+
+                is Resource.Success -> {
+                    binding.pb.isVisible = false
+                }
+
+                is Resource.Error -> {
+                    binding.pb.isVisible = false
+                    Toast.makeText(
+                        context,
+                        getString(R.string.error_updating_list, status.message),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }

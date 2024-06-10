@@ -23,6 +23,9 @@ class NotesListViewModel @Inject constructor(
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
 
+    private val _updateStatus = MutableLiveData<Resource<Unit>>()
+    val updateStatus: LiveData<Resource<Unit>> get() = _updateStatus
+
     fun createList(name: String) {
         viewModelScope.launch {
             val result = repository.createList(name)
@@ -34,5 +37,16 @@ class NotesListViewModel @Inject constructor(
     }
 
     fun deleteList(listId: String) = repository.deleteList(listId)
+
+    fun editList(updatedList: NotesList) {
+        _updateStatus.postValue(Resource.Loading())
+        repository.editList(updatedList)
+            .addOnSuccessListener {
+                _updateStatus.postValue(Resource.Success(null))
+            }
+            .addOnFailureListener { e ->
+                _updateStatus.postValue(Resource.Error(e.localizedMessage ?: "Error"))
+            }
+    }
 
 }
