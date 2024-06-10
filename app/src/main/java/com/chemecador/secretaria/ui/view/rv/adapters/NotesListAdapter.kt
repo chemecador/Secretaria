@@ -13,7 +13,7 @@ import com.chemecador.secretaria.utils.NotesListDiffCallback
 
 class NotesListAdapter(
     private val onListClick: (String, String) -> Unit,
-    private val onEditList: (String) -> Unit,
+    private val onEditList: (NotesList) -> Unit,
     private val onDeleteList: (String) -> Unit
 ) : ListAdapter<NotesList, NotesListViewHolder>(NotesListDiffCallback()) {
 
@@ -38,7 +38,7 @@ class NotesListAdapter(
             val notesList = getItem(position)
             when (item.itemId) {
                 R.id.option_edit -> {
-                    onEditList(notesList.id)
+                    onEditList(notesList)
                     true
                 }
 

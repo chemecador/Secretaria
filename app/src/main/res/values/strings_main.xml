@@ -4,6 +4,7 @@
     <!-- Lists -->
     <string name="label_name_list">Dale un nombre a la lista</string>
     <string name="label_list_name">Nombre de la lista</string>
+    <string name="label_list_updated">Lista actualizada correctamente</string>
     <string name="label_list_deleted">Lista eliminada correctamente</string>
     <string name="label_checklist">Checklist</string>
 
@@ -29,8 +30,10 @@
     <string name="error_retrieving_lists">Error al obtener las listas</string>
     <string name="error_retrieving_notes">No se han podido obtener las notas</string>
     <string name="error_retrieving_note">Error al obtener la información de la nota</string>
+    <string name="error_updating_list">Error al actualizar la lista: %1$s</string>
     <string name="error_updating_note">Error al actualizar la nota: %1$s</string>
     <string name="error_deleting_list">Error al eliminar la lista: %1$s</string>
+    <string name="error_deleting_note">Error al eliminar la nota: %1$s</string>
     <string name="error_invalid_userid">El usuario no es válido</string>
 
 

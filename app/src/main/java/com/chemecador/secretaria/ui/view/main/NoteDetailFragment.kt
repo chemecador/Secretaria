@@ -181,7 +181,7 @@ class NoteDetailFragment : Fragment() {
                     binding.pb.isVisible = false
                     Toast.makeText(
                         context,
-                        getString(R.string.error, status.message),
+                        getString(R.string.error_deleting_note, status.message),
                         Toast.LENGTH_LONG
                     ).show()
                 }
