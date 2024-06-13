@@ -222,20 +222,47 @@ class FirestoreRepository @Inject constructor(
             result.postValue(Resource.Error(res.getString(R.string.error_unknown)))
             return result
         }
-        firestore.collection(USERS).document(userId).collection(NOTES_LIST).document(listId)
-            .delete()
-            .addOnSuccessListener {
-                result.postValue(Resource.Success(null))
-            }
-            .addOnFailureListener { e ->
+
+        val listRef =
+            firestore.collection(USERS).document(userId).collection(NOTES_LIST).document(listId)
+        val notesRef = listRef.collection(NOTES)
+
+        notesRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val batch = firestore.batch()
+                for (document in task.result!!) {
+                    batch.delete(document.reference)
+                }
+
+                batch.commit().addOnSuccessListener {
+                    listRef.delete().addOnSuccessListener {
+                        result.postValue(Resource.Success(null))
+                    }.addOnFailureListener { e ->
+                        result.postValue(
+                            Resource.Error(
+                                e.localizedMessage ?: res.getString(R.string.error_unknown)
+                            )
+                        )
+                    }
+                }.addOnFailureListener { e ->
+                    result.postValue(
+                        Resource.Error(
+                            e.localizedMessage ?: res.getString(R.string.error_unknown)
+                        )
+                    )
+                }
+            } else {
                 result.postValue(
                     Resource.Error(
-                        e.localizedMessage ?: res.getString(R.string.error_unknown)
+                        task.exception?.localizedMessage ?: res.getString(R.string.error_unknown)
                     )
                 )
             }
+        }
+
         return result
     }
+
 
     override fun editList(updatedList: NotesList): Task<Void> {
         val userId = getUserId()
