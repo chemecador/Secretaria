@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:autofillHints="@string/label_password"
             android:hint="@string/label_password"
-            android:imeActionLabel="@string/action_sign_in"
+            android:imeActionLabel="@string/label_login"
             android:imeOptions="actionDone"
             android:inputType="textPassword"
             android:selectAllOnFocus="true"
@@ -86,7 +86,7 @@
         android:layout_gravity="start"
         android:layout_marginTop="@dimen/margin_xlarge"
         android:layout_marginEnd="@dimen/margin_xsmall"
-        android:text="@string/action_sign_in"
+        android:text="@string/label_login"
         app:layout_constraintEnd_toStartOf="@id/btn_signup"
         app:layout_constraintStart_toStartOf="@+id/til_user"
         app:layout_constraintTop_toBottomOf="@id/til_password" />
@@ -96,7 +96,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_xsmall"
-        android:text="@string/action_signup"
+        android:text="@string/label_sign_up"
         app:layout_constraintEnd_toEndOf="@id/til_user"
         app:layout_constraintStart_toEndOf="@+id/btn_login"
         app:layout_constraintTop_toTopOf="@id/btn_login" />

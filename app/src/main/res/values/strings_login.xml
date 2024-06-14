@@ -5,8 +5,9 @@
     <string name="label_email">Email</string>
     <string name="label_password">Password</string>
 
-    <string name="action_sign_in">Iniciar sesión</string>
-    <string name="action_signup">Registrarse</string>
+    <string name="label_login">Iniciar sesión</string>
+    <string name="label_sign_in">Iniciar sesión</string>
+    <string name="label_sign_up">Registrarse</string>
 
     <string name="label_login_other">Otras formas de iniciar sesión</string>
     <string name="label_login_google">Iniciar sesión con Google</string>
@@ -22,6 +23,7 @@
     <string name="error_email_invalid">El email no es válido</string>
     <string name="error_password_invalid">La contraseña debe tener al menos 6 caracteres</string>
     <string name="error_password_wrong">La contraseña es incorrecta</string>
+    <string name="error_sms_wrong">El código de verificación no es correcto</string>
 
 
     <!-- Welcome dialog -->
