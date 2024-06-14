@@ -55,4 +55,8 @@
         <item name="android:maxLines">1</item>
     </style>
 
+    <style name="Theme.Secretaria.EditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:maxLines">1</item>
+    </style>
+
 </resources>

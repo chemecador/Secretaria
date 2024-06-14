@@ -1,13 +1,14 @@
 [versions]
-agp = "8.4.1"
+agp = "8.4.2"
+ccp = "2.7.0"
 circleimageview = "3.1.0"
 datastorePreferences = "1.1.1"
 crashlytics = "3.0.1"
 crashlyticsKtx = "19.0.1"
 firebaseBom = "33.1.0"
 firebaseFirestoreKtx = "25.0.0"
-fragmentKtx = "1.7.1"
-glide = "3.7.0"
+fragmentKtx = "1.8.0"
+glide = "4.15.0"
 hiltAndroid = "2.48"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
@@ -24,8 +25,8 @@ playServicesAuth = "21.2.0"
 retrofit = "2.9.0"
 timber = "4.7.1"
 annotation = "1.8.0"
-lifecycleLivedataKtx = "2.8.1"
-lifecycleViewmodelKtx = "2.8.1"
+lifecycleLivedataKtx = "2.8.2"
+lifecycleViewmodelKtx = "2.8.2"
 services = "4.4.2"
 preferenceKtx = "1.2.1"
 
@@ -34,6 +35,7 @@ androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
+ccp = { module = "com.hbb20:ccp", version.ref = "ccp" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }

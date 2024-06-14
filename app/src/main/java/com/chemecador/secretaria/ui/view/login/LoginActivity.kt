@@ -34,6 +34,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -115,12 +116,20 @@ class LoginActivity : AppCompatActivity() {
 
     private fun handlePhoneSignIn() {
         val phoneBinding = DialogLoginPhoneBinding.inflate(layoutInflater)
-        val alertDialog = AlertDialog.Builder(this).apply { setView(phoneBinding.root) }.create()
+        val alertDialog = AlertDialog.Builder(this)
+            .setView(phoneBinding.root)
+            .create()
 
+        phoneBinding.ccp.registerCarrierNumberEditText(phoneBinding.etPhone)
         phoneBinding.btnPhone.setOnClickListener {
-            loginViewModel.loginWithPhone(phoneBinding.etPhone.text.toString(),
+            phoneBinding.pb.isVisible = true
+            phoneBinding.btnPhone.setText(R.string.label_sign_in)
+            loginViewModel.loginWithPhone(
+                phoneBinding.ccp.fullNumberWithPlus,
                 this,
                 onCodeSent = {
+                    phoneBinding.pb.isVisible = false
+                    phoneBinding.tvError.isVisible = false
                     phoneBinding.etPhone.isEnabled = false
                     phoneBinding.btnPhone.isEnabled = false
                     phoneBinding.pinView.isVisible = true
@@ -128,8 +137,13 @@ class LoginActivity : AppCompatActivity() {
                     val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.showSoftInput(phoneBinding.pinView, InputMethodManager.SHOW_IMPLICIT)
                 },
-                onVerificationComplete = { initApp() },
+                onVerificationComplete = {
+                    phoneBinding.tvError.isVisible = false
+                    phoneBinding.pb.isVisible = false
+                    initApp()
+                },
                 onVerificationFailed = {
+                    phoneBinding.pb.isVisible = false
                     Toast.makeText(
                         this,
                         getString(R.string.error, it),
@@ -139,13 +153,37 @@ class LoginActivity : AppCompatActivity() {
         }
 
         phoneBinding.pinView.doOnTextChanged { text, _, _, _ ->
+            phoneBinding.tvError.isVisible = false
             if (text?.length == 6) {
-                loginViewModel.verifyCode(text.toString()) { initApp() }
+                phoneBinding.pb.isVisible = true
+                loginViewModel.verifyCode(text.toString(),
+                    onSuccessVerification = {
+                        phoneBinding.pb.isVisible = false
+                        initApp()
+                    },
+                    onError = { exception ->
+                        phoneBinding.pb.isVisible = false
+                        phoneBinding.tvError.isVisible = true
+                        if (exception is FirebaseAuthInvalidCredentialsException) {
+                            Toast.makeText(
+                                this,
+                                getString(R.string.error_sms_wrong),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            Toast.makeText(
+                                this,
+                                getString(R.string.error_unknown),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    })
             }
         }
 
         alertDialog.show()
     }
+
 
     private fun handleGoogleSignIn() {
         val signInIntent = googleSignInClient.signInIntent

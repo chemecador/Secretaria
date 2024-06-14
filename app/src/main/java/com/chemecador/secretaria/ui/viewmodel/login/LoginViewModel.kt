@@ -92,7 +92,7 @@ class LoginViewModel @Inject constructor(
                     _loginError.emit(null)
                 }
             } else {
-                val errorMessage = result.exceptionOrNull()?.message ?: "Unknown error"
+                val errorMessage = result.exceptionOrNull()?.message ?: "Error"
                 _loginError.emit(errorMessage)
                 Timber.e(errorMessage)
                 _loginError.emit(null)
@@ -164,14 +164,22 @@ class LoginViewModel @Inject constructor(
     }
 
 
-    fun verifyCode(phoneCode: String, onSuccessVerification: () -> Unit) {
+    fun verifyCode(
+        phoneCode: String,
+        onSuccessVerification: () -> Unit,
+        onError: (Throwable) -> Unit
+    ) {
         viewModelScope.launch {
             _isLoading.value = true
             if (verificationCode.isEmpty())
                 return@launch
 
             val result = withContext(Dispatchers.IO) {
-                authService.verifyCode(verificationCode, phoneCode)
+                try {
+                    authService.verifyCode(verificationCode, phoneCode)
+                } catch (ex: Exception) {
+                    Result.failure(ex)
+                }
             }
 
             if (result.isSuccess) {
@@ -186,6 +194,7 @@ class LoginViewModel @Inject constructor(
                 }
             } else {
                 _loginError.emit(result.exceptionOrNull()?.message)
+                onError(result.exceptionOrNull() ?: Exception("Error"))
                 Timber.e(result.exceptionOrNull())
             }
 

@@ -109,7 +109,13 @@ dependencies {
     // Images
     implementation(libs.circleimageview)
     implementation(libs.glide)
+
+    // PhoneNumber
     implementation(libs.pinview)
+
+    // CountryCodePicker
+    implementation(libs.ccp)
+
 
 
     // Testing
