@@ -8,5 +8,8 @@ class ResourceProviderImpl @Inject constructor(private val context: Context) : R
     override fun getString(@StringRes id: Int): String {
         return context.getString(id)
     }
+    override fun getStringArray(id: Int): Array<String> {
+        return context.resources.getStringArray(id)
+    }
 }
 

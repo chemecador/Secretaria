@@ -6,6 +6,7 @@ import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -39,6 +40,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        lifecycleScope.launch {
+            mainViewModel.themeMode.collect { mode ->
+                applyTheme(mode)
+            }
+        }
+
         // Listen for fragment results to update the title
         supportFragmentManager.setFragmentResultListener(TITLE_REQUEST_KEY, this) { _, bundle ->
             val title = bundle.getString(TITLE_KEY)
@@ -55,6 +62,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun applyTheme(mode: String) {
+        val themeValues = resources.getStringArray(R.array.theme_values)
+        when (mode) {
+            themeValues[0] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) // "system"
+            themeValues[1] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO) // "light"
+            themeValues[2] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) // "dark"
+        }
+    }
     private fun handleOnBackPressed() {
 
         val callback = object : OnBackPressedCallback(true) {
