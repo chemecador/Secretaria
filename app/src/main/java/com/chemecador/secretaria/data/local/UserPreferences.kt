@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.chemecador.secretaria.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -18,6 +19,7 @@ class UserPreferences @Inject constructor(@ApplicationContext private val contex
         val USER_ID_KEY = stringPreferencesKey("user_id")
         val USER_EMAIL_KEY = stringPreferencesKey("user_email")
         val SHOW_WELCOME_MESSAGE_KEY = booleanPreferencesKey("show_welcome_message")
+        val THEME_KEY = stringPreferencesKey("theme_mode")
     }
 
     val userId: Flow<String?> = context.dataStore.data
@@ -56,5 +58,16 @@ class UserPreferences @Inject constructor(@ApplicationContext private val contex
             .map { preferences ->
                 preferences[SHOW_WELCOME_MESSAGE_KEY] ?: true
             }
+    }
+
+    val themeMode: Flow<String> = context.dataStore.data
+        .map { preferences ->
+            preferences[THEME_KEY] ?: context.resources.getStringArray(R.array.theme_options)[0]
+        }
+
+    suspend fun setThemeMode(mode: String) {
+        context.dataStore.edit { preferences ->
+            preferences[THEME_KEY] = mode
+        }
     }
 }
