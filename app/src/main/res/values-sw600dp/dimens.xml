@@ -11,6 +11,7 @@
     <dimen name="icon_big">128dp</dimen>
 
     <!-- Text size -->
+    <dimen name="text_size_xsmall">12sp</dimen>
     <dimen name="text_size_small">14sp</dimen>
     <dimen name="text_size_medium">18sp</dimen>
     <dimen name="text_size_large">22sp</dimen>
@@ -31,6 +32,9 @@
     <dimen name="padding_xlarge">36dp</dimen>
 
     <!-- Buttons and icons -->
+    <dimen name="button_min_width">80dp</dimen>
+    <dimen name="button_max_width">200dp</dimen>
+    <dimen name="button_icon_size">24dp</dimen>
     <dimen name="button_height">56dp</dimen>
     <dimen name="button_width">180dp</dimen>
     <dimen name="icon_size_small">28dp</dimen>

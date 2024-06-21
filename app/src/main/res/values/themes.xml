@@ -28,6 +28,10 @@
     <style name="Theme.Secretaria.ButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="strokeColor">@color/colorPrimaryDark</item>
         <item name="android:textColor">@color/colorText</item>
+        <item name="android:maxWidth">@dimen/button_max_width</item>
+        <item name="android:minWidth">@dimen/button_min_width</item>
+        <item name="android:textSize">@dimen/text_size_xsmall</item>
+        <item name="iconSize">@dimen/button_icon_size</item>
     </style>
 
     <style name="Theme.Secretaria.FabStyle" parent="Widget.Material3.FloatingActionButton.Primary">
@@ -35,7 +39,7 @@
     </style>
 
     <style name="Theme.Secretaria.TextViewStyle" parent="Widget.AppCompat.TextView">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/colorText</item>
     </style>
