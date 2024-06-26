@@ -12,15 +12,18 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/background_note"
+        android:minHeight="@dimen/cardview_min_height"
         android:padding="@dimen/margin_xsmall">
+
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/cb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -28,8 +31,8 @@
             style="@style/Theme.Secretaria.TitleStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="start|center_vertical"
             android:layout_marginHorizontal="@dimen/margin_medium"
+            android:gravity="center"
             app:layout_constraintBottom_toTopOf="@id/tv_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/cb"
@@ -41,8 +44,9 @@
             android:id="@+id/tv_content"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
             android:ellipsize="end"
-            android:gravity="start|center_vertical"
+            android:gravity="center"
             android:maxLines="2"
             android:paddingHorizontal="@dimen/margin_medium"
             app:layout_constraintBottom_toBottomOf="parent"

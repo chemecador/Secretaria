@@ -7,7 +7,7 @@
     <string name="btn_contact_us">¡Contáctanos!</string>
 
     <string name="label_coming_soon">Próximamente en Secretaria...</string>
-    <string name="content_coming_soon">- Editar y eliminar (notas) ✔️\n- Editar y eliminar (listas) ✔️\n- Elegir modo claro o modo oscuro✔️\n- Agregar amigos🔜\n- Compartir notas con amigos🔜</string>
+    <string name="content_coming_soon">- Agregar amigos🔜\n- Compartir notas con amigos🔜</string>
 
     <string name="label_choose_theme">Seleccionar tema</string>
     <string name="label_version_history">Historial de versiones</string>
