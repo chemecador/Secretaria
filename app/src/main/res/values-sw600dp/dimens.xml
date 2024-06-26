@@ -44,6 +44,7 @@
     <!-- CardView -->
     <dimen name="cardview_default_elevation">8dp</dimen>
     <dimen name="cardview_default_radius">8dp</dimen>
+    <dimen name="cardview_min_height">64dp</dimen>
 
     <dimen name="corner_radius_small">6dp</dimen>
     <dimen name="corner_radius_medium">12dp</dimen>
