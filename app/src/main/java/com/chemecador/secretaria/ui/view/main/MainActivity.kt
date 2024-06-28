@@ -11,6 +11,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.chemecador.secretaria.R
+import com.chemecador.secretaria.ui.view.friends.FriendsActivity
 import com.chemecador.secretaria.databinding.ActivityMainBinding
 import com.chemecador.secretaria.ui.view.settings.SettingsActivity
 import com.chemecador.secretaria.ui.viewmodel.main.MainViewModel
@@ -57,6 +58,9 @@ class MainActivity : AppCompatActivity() {
     private fun initUI() {
         initToolbar()
         handleOnBackPressed()
+        binding.ivFriends.setOnClickListener {
+            startActivity(Intent(this, FriendsActivity::class.java))
+        }
         binding.ivProfile.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }

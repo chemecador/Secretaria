@@ -18,13 +18,25 @@
             app:popupTheme="@style/Theme.Material3.Light">
 
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/iv_profile"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="match_parent"
                 android:layout_gravity="end|center_vertical"
                 android:padding="@dimen/margin_medium"
+                android:contentDescription="@string/title_activity_settings"
                 android:src="@drawable/ic_settings_white" />
+
+
+            <ImageView
+                android:id="@+id/iv_friends"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="match_parent"
+                android:layout_gravity="end|center_vertical"
+                android:contentDescription="@string/label_friends"
+                android:padding="@dimen/margin_medium"
+                android:src="@drawable/ic_people"
+                app:tint="@color/white" />
         </androidx.appcompat.widget.Toolbar>
 
 
