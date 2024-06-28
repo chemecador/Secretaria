@@ -107,7 +107,6 @@ dependencies {
 
 
     // Images
-    implementation(libs.circleimageview)
     implementation(libs.glide)
 
     // PhoneNumber

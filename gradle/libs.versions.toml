@@ -1,20 +1,19 @@
 [versions]
-agp = "8.4.2"
+agp = "8.5.0"
 ccp = "2.7.0"
-circleimageview = "3.1.0"
 datastorePreferences = "1.1.1"
-crashlytics = "3.0.1"
-crashlyticsKtx = "19.0.1"
-firebaseBom = "33.1.0"
+crashlytics = "3.0.2"
+crashlyticsKtx = "19.0.2"
+firebaseBom = "33.1.1"
 firebaseFirestoreKtx = "25.0.0"
-fragmentKtx = "1.8.0"
+fragmentKtx = "1.8.1"
 glide = "4.15.0"
 hiltAndroid = "2.48"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
 appcompat = "1.7.0"
 loggingInterceptor = "4.11.0"
 material = "1.12.0"
@@ -36,7 +35,6 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 ccp = { module = "com.hbb20:ccp", version.ref = "ccp" }
-circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
