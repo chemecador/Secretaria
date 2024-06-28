@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_friends"
+        android:title="@string/label_friends"
+        android:icon="@drawable/ic_list" />
+    <item
+        android:id="@+id/menu_friend_requests"
+        android:icon="@android:drawable/ic_popup_reminder"
+        android:title="@string/label_requests" />
+    <item
+        android:id="@+id/menu_add_friend"
+        android:title="@string/label_add_friend"
+        android:icon="@drawable/ic_add_friend" />
+</menu>
