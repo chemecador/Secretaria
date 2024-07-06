@@ -4,6 +4,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.databinding.ListItemNoteslistBinding
+import com.chemecador.secretaria.utils.DateUtils
 
 
 class NotesListViewHolder(private val binding: ListItemNoteslistBinding) :
@@ -13,6 +14,7 @@ class NotesListViewHolder(private val binding: ListItemNoteslistBinding) :
 
     fun bind(notesList: NotesList, onListClick: (String, String) -> Unit) {
         binding.tvTitle.text = notesList.name
+        binding.tvDate.text = DateUtils.formatFirebaseTimestamp(notesList.date)
         binding.root.setOnClickListener {
             onListClick(notesList.id, notesList.name)
         }

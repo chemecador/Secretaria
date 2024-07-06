@@ -11,6 +11,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.Source
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -27,6 +28,7 @@ class FirestoreRepository @Inject constructor(
 ) : OnlineRepository {
 
     companion object {
+        private const val DATE = "date"
         private const val USERS = "users"
         private const val NOTES_LIST = "noteslist"
         private const val NOTES = "notes"
@@ -50,6 +52,7 @@ class FirestoreRepository @Inject constructor(
                 return liveData
             }
             firestore.collection(USERS).document(userId).collection(NOTES_LIST)
+                .orderBy(DATE, Query.Direction.DESCENDING)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null || snapshot == null) {
                         liveData.postValue(
