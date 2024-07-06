@@ -19,8 +19,6 @@
             android:layout_marginTop="@dimen/margin_large"
             android:gravity="start"
             android:text="@string/label_email"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -29,8 +27,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_small"
             android:gravity="start"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_label_email"
             tools:text="chemecador@gmail.com" />
 
@@ -42,8 +38,6 @@
             android:gravity="start"
             android:text="@string/label_coming_soon"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_email" />
 
         <TextView
@@ -53,8 +47,6 @@
             android:layout_marginTop="@dimen/margin_small"
             android:gravity="start"
             android:text="@string/content_coming_soon"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_label_comingSoon" />
 
         <TextView
@@ -65,8 +57,6 @@
             android:gravity="start"
             android:text="@string/label_choose_theme"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_comingSoon" />
 
         <Spinner
@@ -76,8 +66,6 @@
             android:layout_marginTop="@dimen/margin_small"
             android:gravity="start"
             android:textAlignment="textStart"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_label_theme" />
 
         <TextView
@@ -89,8 +77,6 @@
             android:text="@string/label_contact_us"
             android:textStyle="bold"
             app:backgroundTint="@color/colorLink"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/sp_themeSelector" />
 
         <com.google.android.material.button.MaterialButton
@@ -101,8 +87,6 @@
             android:text="@string/btn_contact_us"
             android:textColor="@color/colorLink"
             app:backgroundTint="@color/colorTextDark"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_contactUs" />
 
         <com.google.android.material.button.MaterialButton
@@ -113,8 +97,6 @@
             android:layout_marginTop="@dimen/margin_large"
             android:text="@string/action_logout"
             app:backgroundTint="@color/red"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_contactUs" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

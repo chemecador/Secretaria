@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Actions -->
+    <string name="action_edit">Editar</string>
+    <string name="action_delete">Eliminar</string>
+
+
     <!-- Lists -->
     <string name="label_name_list">Dale un nombre a la lista</string>
     <string name="label_list_name">Nombre de la lista</string>
