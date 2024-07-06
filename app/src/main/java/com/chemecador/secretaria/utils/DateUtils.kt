@@ -13,7 +13,7 @@ object DateUtils {
     private fun getCurrentDayFormatter(): DateTimeFormatter {
         return DateTimeFormatter.ofPattern("yyyy-MM-dd")
     }
-    
+
     private fun getCurrentDateTimeFormatter(): DateTimeFormatter {
         return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     }
@@ -28,12 +28,15 @@ object DateUtils {
         return currentDateTime.format(getCurrentDayFormatter())
     }
 
-    fun formatFirebaseTimestamp(
-        timestamp: Timestamp,
-        pattern: String = "EEE, d MMM yyyy HH:mm"
-    ): String {
+    fun formatDetailed(timestamp: Timestamp): String {
         val date: Date = timestamp.toDate()
-        val sdf = SimpleDateFormat(pattern, Locale.getDefault())
+        val sdf = SimpleDateFormat("dd/MM/yyyy, HH:mm", Locale.getDefault())
+        return sdf.format(date)
+    }
+
+    fun formatSimple(timestamp: Timestamp): String {
+        val date: Date = timestamp.toDate()
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         return sdf.format(date)
     }
 }

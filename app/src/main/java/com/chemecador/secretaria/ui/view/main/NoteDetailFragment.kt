@@ -16,6 +16,7 @@ import com.chemecador.secretaria.databinding.FragmentNoteDetailBinding
 import com.chemecador.secretaria.ui.view.main.NotesFragment.Companion.NOTE_ID
 import com.chemecador.secretaria.ui.view.main.NotesListFragment.Companion.LIST_ID
 import com.chemecador.secretaria.ui.viewmodel.main.NoteDetailViewModel
+import com.chemecador.secretaria.utils.DateUtils
 import com.chemecador.secretaria.utils.Resource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -212,7 +213,7 @@ class NoteDetailFragment : Fragment() {
         binding.etTitle.setText(note.title)
         binding.tvContent.text = note.content
         binding.etContent.setText(note.content)
-        binding.tvDate.text = note.date?.toDate().toString()
+        binding.tvDate.text = note.date?.let { DateUtils.formatDetailed(it) }
     }
 
     override fun onDestroyView() {
