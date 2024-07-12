@@ -13,6 +13,10 @@
     <string name="label_version_history">Historial de versiones</string>
 
 
+    <!-- Colors -->
+    <string name="label_choose_note_color">Elige el color de las notas</string>
+    <string name="btn_select_color">Modificar color</string>
+
     <!-- Logout -->
     <string name="action_logout">Cerrar sesión</string>
 </resources>

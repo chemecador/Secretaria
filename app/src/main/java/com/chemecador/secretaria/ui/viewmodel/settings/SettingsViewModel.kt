@@ -11,6 +11,7 @@ import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.chemecador.secretaria.data.repositories.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,6 +27,9 @@ class SettingsViewModel @Inject constructor(
     private val _themeMode = MutableLiveData<String>()
     val themeMode: LiveData<String> = _themeMode
 
+    private val _noteColor = MutableLiveData<Int>()
+    val noteColor: LiveData<Int> = _noteColor
+
     init {
         viewModelScope.launch {
             userRepository.userEmail.collect { id ->
@@ -36,6 +40,10 @@ class SettingsViewModel @Inject constructor(
                 _themeMode.postValue(mode)
                 applyTheme(mode)
             }
+
+            userPreferences.noteColor.collect { color ->
+                _noteColor.postValue(color)
+            }
         }
     }
 
@@ -43,6 +51,20 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             userPreferences.setThemeMode(mode)
             _themeMode.postValue(mode)
+        }
+    }
+
+    fun saveNoteColor(color: Int) {
+        viewModelScope.launch {
+            userPreferences.saveNoteColor(color)
+            _noteColor.postValue(color)
+        }
+    }
+
+    fun loadNoteColor() {
+        viewModelScope.launch {
+            val color = userPreferences.noteColor.first()
+            _noteColor.postValue(color)
         }
     }
 

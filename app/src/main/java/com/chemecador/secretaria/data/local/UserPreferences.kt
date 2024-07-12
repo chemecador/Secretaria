@@ -1,8 +1,10 @@
 package com.chemecador.secretaria.data.local
 
 import android.content.Context
+import android.graphics.Color
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.chemecador.secretaria.R
@@ -20,6 +22,7 @@ class UserPreferences @Inject constructor(@ApplicationContext private val contex
         val USER_EMAIL_KEY = stringPreferencesKey("user_email")
         val SHOW_WELCOME_MESSAGE_KEY = booleanPreferencesKey("show_welcome_message")
         val THEME_KEY = stringPreferencesKey("theme_mode")
+        val NOTE_COLOR_KEY = intPreferencesKey("note_color")
     }
 
     val userId: Flow<String?> = context.dataStore.data
@@ -68,6 +71,17 @@ class UserPreferences @Inject constructor(@ApplicationContext private val contex
     suspend fun setThemeMode(mode: String) {
         context.dataStore.edit { preferences ->
             preferences[THEME_KEY] = mode
+        }
+    }
+
+    val noteColor: Flow<Int> = context.dataStore.data
+        .map { preferences ->
+            preferences[NOTE_COLOR_KEY] ?: Color.MAGENTA // Color por defecto
+        }
+
+    suspend fun saveNoteColor(color: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[NOTE_COLOR_KEY] = color
         }
     }
 }
