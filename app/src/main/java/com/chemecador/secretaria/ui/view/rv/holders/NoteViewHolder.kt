@@ -8,9 +8,15 @@ import com.chemecador.secretaria.databinding.ListItemNoteBinding
 
 class NoteViewHolder(private val binding: ListItemNoteBinding) :
     RecyclerView.ViewHolder(binding.root) {
-    fun bind(note: Note) {
+
+
+    fun bind(note: Note, color: Int) {
         binding.tvTitle.text = note.title
         binding.tvContent.text = note.content
         binding.tvContent.isVisible = note.content.isNotBlank()
+        if (color != 0) {
+            binding.cv.setBackgroundColor(color)
+        }
     }
+
 }

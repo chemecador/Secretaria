@@ -10,9 +10,9 @@
     app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/background_note"
         android:minHeight="@dimen/cardview_min_height"
         android:padding="@dimen/margin_xsmall">
 

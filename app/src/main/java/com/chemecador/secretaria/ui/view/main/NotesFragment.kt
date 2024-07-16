@@ -58,7 +58,6 @@ class NotesFragment : Fragment() {
 
         initUI()
         observeViewModel()
-
     }
 
     private fun initUI() {
@@ -70,10 +69,11 @@ class NotesFragment : Fragment() {
     }
 
     private fun initRV() {
-
-        adapter = NotesAdapter { noteId ->
-            navigateToNoteDetail(noteId)
-        }
+        adapter = NotesAdapter(
+            onNoteClicked = { noteId ->
+                navigateToNoteDetail(noteId)
+            }
+        )
         binding.rv.layoutManager = LinearLayoutManager(context)
         binding.rv.adapter = adapter
 
@@ -81,7 +81,6 @@ class NotesFragment : Fragment() {
             binding.tvError.isVisible = true
             return
         }
-
     }
 
     private fun navigateToNoteDetail(noteId: String) {
@@ -98,7 +97,6 @@ class NotesFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-
         if (listId.isEmpty()) {
             return
         }
@@ -129,13 +127,13 @@ class NotesFragment : Fragment() {
                 }
             }
         }
-
-
+        viewModel.noteColor.observe(viewLifecycleOwner) { color ->
+            adapter.updateNoteColor(color)
+        }
         viewModel.error.observe(viewLifecycleOwner) { error ->
             Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG).show()
         }
     }
-
 
     private fun showCreateNoteDialog() {
         val dialogBinding = DialogCreateNoteBinding.inflate(layoutInflater)
@@ -170,12 +168,10 @@ class NotesFragment : Fragment() {
         dialog.show()
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
 
     companion object {
         const val NOTE_ID = "noteId"

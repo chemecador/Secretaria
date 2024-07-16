@@ -10,7 +10,8 @@ import com.chemecador.secretaria.utils.NoteDiffCallback
 import timber.log.Timber
 
 class NotesAdapter(
-    private val onNoteClicked: (String) -> Unit
+    private val onNoteClicked: (String) -> Unit,
+    private var noteColor: Int = 0
 ) : ListAdapter<Note, NoteViewHolder>(NoteDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
@@ -21,10 +22,16 @@ class NotesAdapter(
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val note = getItem(position)
-        holder.bind(note)
+        holder.bind(note, noteColor)
         holder.itemView.setOnClickListener {
             onNoteClicked(note.id)
         }
+    }
+
+
+    fun updateNoteColor(color: Int) {
+        this.noteColor = color
+        notifyDataSetChanged()
     }
 
     private fun removeItem(position: Int) {
