@@ -89,6 +89,7 @@ class FirestoreRepository @Inject constructor(
             firestore.collection(USERS).document(userId)
                 .collection(NOTES_LIST).document(listId)
                 .collection(NOTES)
+                .orderBy(DATE, Query.Direction.DESCENDING)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null || snapshot == null) {
                         liveData.postValue(

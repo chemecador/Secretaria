@@ -6,7 +6,7 @@ data class Note(
     val id: String = "",
     val title: String = "",
     val content: String = "",
-    val date: Timestamp? = null,
+    val date: Timestamp = Timestamp.now(),
     val completed: Boolean = false,
     val order: Int = 0
 )
