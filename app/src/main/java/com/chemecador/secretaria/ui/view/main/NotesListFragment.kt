@@ -20,7 +20,7 @@ import com.chemecador.secretaria.databinding.FragmentNotesListBinding
 import com.chemecador.secretaria.ui.view.login.LoginActivity
 import com.chemecador.secretaria.ui.view.main.MainActivity.Companion.TITLE_KEY
 import com.chemecador.secretaria.ui.view.main.MainActivity.Companion.TITLE_REQUEST_KEY
-import com.chemecador.secretaria.ui.view.rv.adapters.NotesListAdapter
+import com.chemecador.secretaria.ui.view.rv.adapters.main.NotesListAdapter
 import com.chemecador.secretaria.ui.viewmodel.main.NotesListViewModel
 import com.chemecador.secretaria.utils.Resource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

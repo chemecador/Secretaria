@@ -1,4 +1,4 @@
-package com.chemecador.secretaria.ui.view.rv.adapters
+package com.chemecador.secretaria.ui.view.rv.adapters.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
