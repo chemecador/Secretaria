@@ -71,6 +71,7 @@ class MainRepositoryImpl @Inject constructor(
                     }
                 }
         } catch (e: Exception) {
+            Timber.e(e)
             liveData.postValue(Resource.Error(e.message ?: res.getString(R.string.error_unknown)))
         }
         return liveData
@@ -108,6 +109,7 @@ class MainRepositoryImpl @Inject constructor(
                     }
                 }
         } catch (e: Exception) {
+            Timber.e(e)
             liveData.postValue(Resource.Error(e.message ?: res.getString(R.string.error_unknown)))
         }
 
@@ -133,6 +135,7 @@ class MainRepositoryImpl @Inject constructor(
                 .document(newList.id).set(newList).await()
             Resource.Success(Unit)
         } catch (e: Exception) {
+            Timber.e(e)
             Resource.Error(e.message ?: res.getString(R.string.error_unknown))
         }
     }
@@ -155,6 +158,7 @@ class MainRepositoryImpl @Inject constructor(
                 .collection(NOTES).document(newNote.id).set(newNote).await()
             Resource.Success(Unit)
         } catch (e: Exception) {
+            Timber.e(e)
             Resource.Error(e.message ?: res.getString(R.string.error_unknown))
         }
     }

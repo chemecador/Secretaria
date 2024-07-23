@@ -31,7 +31,6 @@ class NotesListViewModel @Inject constructor(
             val result = repository.createList(name)
             if (result is Resource.Error) {
                 _error.postValue(result.message ?: "Error")
-                Timber.e(result.message)
             }
         }
     }

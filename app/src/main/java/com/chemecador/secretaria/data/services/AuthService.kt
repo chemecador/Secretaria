@@ -34,8 +34,10 @@ class AuthService @Inject constructor(
             val authResult = firebaseAuth.signInWithEmailAndPassword(user, password).await()
             Result.success(authResult.user!!)
         } catch (e: FirebaseAuthInvalidUserException) {
+            Timber.e(e)
             Result.failure(Exception(res.getString(R.string.error_email_not_found)))
         } catch (e: FirebaseAuthInvalidCredentialsException) {
+            Timber.e(e)
             Result.failure(Exception(res.getString(R.string.error_password_wrong)))
         } catch (e: Exception) {
             Timber.e(e)
@@ -48,10 +50,13 @@ class AuthService @Inject constructor(
             val authResult = firebaseAuth.createUserWithEmailAndPassword(user, password).await()
             Result.success(authResult.user!!)
         } catch (e: FirebaseAuthUserCollisionException) {
+            Timber.e(e)
             Result.failure(Exception(res.getString(R.string.error_email_already_exists)))
         } catch (e: FirebaseAuthWeakPasswordException) {
+            Timber.e(e)
             Result.failure(Exception(res.getString(R.string.error_password_invalid)))
         } catch (e: FirebaseAuthInvalidCredentialsException) {
+            Timber.e(e)
             Result.failure(Exception(res.getString(R.string.error_email_invalid)))
         } catch (e: Exception) {
             Timber.e(e)
@@ -65,6 +70,7 @@ class AuthService @Inject constructor(
             val authResult = firebaseAuth.signInWithCredential(credential).await()
             Result.success(authResult.user!!)
         } catch (e: Exception) {
+            Timber.e(e)
             Result.failure(Exception("${res.getString(R.string.error_login)} + ${e.message}"))
         }
     }
@@ -98,6 +104,7 @@ class AuthService @Inject constructor(
                 cancellableContinuation.resume(Result.success(it.user))
             }.addOnFailureListener {
                 cancellableContinuation.resumeWithException(it)
+                Timber.e(it)
             }
         }
     }

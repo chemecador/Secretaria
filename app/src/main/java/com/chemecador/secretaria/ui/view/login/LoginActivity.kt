@@ -37,6 +37,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
@@ -89,6 +90,7 @@ class LoginActivity : AppCompatActivity() {
                         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                     }
                 } catch (e: ApiException) {
+                    Timber.e(e)
                     Snackbar.make(
                         binding.root,
                         getString(R.string.error_login) + e.message,

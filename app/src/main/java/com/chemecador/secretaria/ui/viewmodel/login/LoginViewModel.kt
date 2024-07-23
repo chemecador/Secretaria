@@ -63,7 +63,6 @@ class LoginViewModel @Inject constructor(
                 }
             } else {
                 _loginError.emit(result.exceptionOrNull()?.message)
-                Timber.e(result.exceptionOrNull())
                 _loginError.emit(null)
             }
 
@@ -94,7 +93,6 @@ class LoginViewModel @Inject constructor(
             } else {
                 val errorMessage = result.exceptionOrNull()?.message ?: "Error"
                 _loginError.emit(errorMessage)
-                Timber.e(errorMessage)
                 _loginError.emit(null)
             }
 
@@ -133,7 +131,6 @@ class LoginViewModel @Inject constructor(
                             }
                         } else {
                             _loginError.emit(result.exceptionOrNull()?.message)
-                            Timber.e(result.exceptionOrNull())
                         }
 
                         _isLoading.value = false
@@ -195,7 +192,6 @@ class LoginViewModel @Inject constructor(
             } else {
                 _loginError.emit(result.exceptionOrNull()?.message)
                 onError(result.exceptionOrNull() ?: Exception("Error"))
-                Timber.e(result.exceptionOrNull())
             }
 
             _isLoading.value = false
