@@ -1,9 +1,11 @@
 package com.chemecador.secretaria.di
 
 import com.chemecador.secretaria.data.provider.ResourceProvider
-import com.chemecador.secretaria.data.repositories.main.MainRepositoryImpl
-import com.chemecador.secretaria.data.repositories.main.MainRepository
 import com.chemecador.secretaria.data.repositories.UserRepository
+import com.chemecador.secretaria.data.repositories.friends.FriendsRepository
+import com.chemecador.secretaria.data.repositories.friends.FriendsRepositoryImpl
+import com.chemecador.secretaria.data.repositories.main.MainRepository
+import com.chemecador.secretaria.data.repositories.main.MainRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -26,10 +28,18 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRepository(
+    fun provideMainRepository(
         firestore: FirebaseFirestore,
         userRepository: UserRepository,
         res: ResourceProvider
     ): MainRepository =
         MainRepositoryImpl(firestore, userRepository, res)
+
+    @Provides
+    @Singleton
+    fun provideFriendsRepository(
+        firestore: FirebaseFirestore,
+        res: ResourceProvider
+    ): FriendsRepository =
+        FriendsRepositoryImpl(firestore, res)
 }

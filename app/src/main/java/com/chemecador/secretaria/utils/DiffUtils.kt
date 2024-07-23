@@ -1,6 +1,7 @@
 package com.chemecador.secretaria.utils
 
 import androidx.recyclerview.widget.DiffUtil
+import com.chemecador.secretaria.data.model.Friendship
 import com.chemecador.secretaria.data.model.Note
 import com.chemecador.secretaria.data.model.NotesList
 
@@ -21,6 +22,15 @@ class NoteDiffCallback : DiffUtil.ItemCallback<Note>() {
     }
 
     override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
+        return oldItem == newItem
+    }
+}
+class FriendshipDiffCallback : DiffUtil.ItemCallback<Friendship>() {
+    override fun areItemsTheSame(oldItem: Friendship, newItem: Friendship): Boolean {
+        return oldItem.receiverId == newItem.receiverId && oldItem.senderId == newItem.senderId
+    }
+
+    override fun areContentsTheSame(oldItem: Friendship, newItem: Friendship): Boolean {
         return oldItem == newItem
     }
 }

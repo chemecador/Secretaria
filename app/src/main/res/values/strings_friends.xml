@@ -4,12 +4,15 @@
     <string name="label_friends">Amigos</string>
     <string name="label_add_friend">Añadir amigo</string>
     <string name="label_requests">Solicitudes</string>
+    <string name="label_friend_name">Nombre del amigo</string>
     <string name="title_insert_friend_name">Escribe el nombre de tu amigo</string>
     <string name="question_friend_name">¿Cómo se llama tu amigo?</string>
     <string name="label_friend_not_found">No hemos encontrado a tu amigo :(</string>
     <string name="label_invitations_sent">Invitaciones enviadas</string>
     <string name="label_no_friends">Todavía no has agregado a ningún amigo</string>
     <string name="label_no_requests">No tienes peticiones de amistad pendientes</string>
+    <string name="label_friend_image">Imagen del amigo</string>
+
 
     <!-- Toasts -->
     <string name="toast_invitation_sent_to">Invitación enviada a %1$s</string>
