@@ -26,12 +26,6 @@
     <dimen name="margin_xlarge">32dp</dimen>
     <dimen name="margin_xxlarge">48dp</dimen>
 
-    <!-- Padding -->
-    <dimen name="padding_small">8dp</dimen>
-    <dimen name="padding_medium">16dp</dimen>
-    <dimen name="padding_large">24dp</dimen>
-    <dimen name="padding_xlarge">32dp</dimen>
-
     <!-- Buttons and icons -->
     <dimen name="button_min_width">64dp</dimen>
     <dimen name="button_max_width">150dp</dimen>
