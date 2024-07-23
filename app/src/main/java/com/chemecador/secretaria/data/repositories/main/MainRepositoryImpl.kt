@@ -1,4 +1,4 @@
-package com.chemecador.secretaria.data.repositories
+package com.chemecador.secretaria.data.repositories.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,6 +6,7 @@ import com.chemecador.secretaria.R
 import com.chemecador.secretaria.data.model.Note
 import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.data.provider.ResourceProvider
+import com.chemecador.secretaria.data.repositories.UserRepository
 import com.chemecador.secretaria.utils.Resource
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
@@ -21,11 +22,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FirestoreRepository @Inject constructor(
+class MainRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val userRepository: UserRepository,
     private val res: ResourceProvider
-) : OnlineRepository {
+) : MainRepository {
 
     companion object {
         private const val DATE = "date"
@@ -266,7 +267,6 @@ class FirestoreRepository @Inject constructor(
 
         return result
     }
-
 
     override fun editList(updatedList: NotesList): Task<Void> {
         val userId = getUserId()

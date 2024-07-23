@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chemecador.secretaria.data.model.NotesList
-import com.chemecador.secretaria.data.repositories.FirestoreRepository
+import com.chemecador.secretaria.data.repositories.main.MainRepository
 import com.chemecador.secretaria.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotesListViewModel @Inject constructor(
-    private val repository: FirestoreRepository
+    private val repository: MainRepository
 ) : ViewModel() {
 
     val notesLists: LiveData<Resource<List<NotesList>>> = repository.getLists()

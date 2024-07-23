@@ -1,8 +1,8 @@
 package com.chemecador.secretaria.di
 
 import com.chemecador.secretaria.data.provider.ResourceProvider
-import com.chemecador.secretaria.data.repositories.FirestoreRepository
-import com.chemecador.secretaria.data.repositories.OnlineRepository
+import com.chemecador.secretaria.data.repositories.main.MainRepositoryImpl
+import com.chemecador.secretaria.data.repositories.main.MainRepository
 import com.chemecador.secretaria.data.repositories.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -30,6 +30,6 @@ object NetworkModule {
         firestore: FirebaseFirestore,
         userRepository: UserRepository,
         res: ResourceProvider
-    ): OnlineRepository =
-        FirestoreRepository(firestore, userRepository, res)
+    ): MainRepository =
+        MainRepositoryImpl(firestore, userRepository, res)
 }

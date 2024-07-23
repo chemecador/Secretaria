@@ -4,14 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.chemecador.secretaria.data.model.Note
-import com.chemecador.secretaria.data.repositories.FirestoreRepository
+import com.chemecador.secretaria.data.repositories.main.MainRepository
 import com.chemecador.secretaria.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class NoteDetailViewModel @Inject constructor(
-    private val repository: FirestoreRepository
+    private val repository: MainRepository
 ) : ViewModel() {
 
     private val _updateStatus = MutableLiveData<Resource<Void>>()

@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chemecador.secretaria.data.local.UserPreferences
 import com.chemecador.secretaria.data.model.Note
-import com.chemecador.secretaria.data.repositories.OnlineRepository
+import com.chemecador.secretaria.data.repositories.main.MainRepository
 import com.chemecador.secretaria.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotesViewModel @Inject constructor(
-    private val repository: OnlineRepository,
+    private val repository: MainRepository,
     private val userPreferences: UserPreferences
 ) : ViewModel() {
 
