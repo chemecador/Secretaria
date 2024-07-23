@@ -1,4 +1,4 @@
-package com.chemecador.secretaria.ui.view.rv.holders
+package com.chemecador.secretaria.ui.view.rv.holders.main
 
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView

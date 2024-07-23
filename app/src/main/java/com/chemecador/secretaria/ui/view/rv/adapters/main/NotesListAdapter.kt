@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.databinding.ListItemNoteslistBinding
-import com.chemecador.secretaria.ui.view.rv.holders.NotesListViewHolder
+import com.chemecador.secretaria.ui.view.rv.holders.main.NotesListViewHolder
 import com.chemecador.secretaria.utils.NotesListDiffCallback
 
 class NotesListAdapter(
