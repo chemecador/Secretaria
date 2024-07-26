@@ -1,7 +1,7 @@
 package com.chemecador.secretaria.ui.viewmodel.login
 
 import androidx.lifecycle.ViewModel
-import com.chemecador.secretaria.data.network.services.AuthService
+import com.chemecador.secretaria.data.services.AuthService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

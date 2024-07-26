@@ -3,7 +3,7 @@ package com.chemecador.secretaria.ui.viewmodel.login
 import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.chemecador.secretaria.data.network.services.AuthService
+import com.chemecador.secretaria.data.services.AuthService
 import com.chemecador.secretaria.data.repositories.UserRepository
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.PhoneAuthCredential
@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
