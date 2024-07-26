@@ -18,11 +18,12 @@ private val Context.dataStore by preferencesDataStore("secretaria")
 class UserPreferences @Inject constructor(@ApplicationContext private val context: Context) {
 
     companion object {
-        val USER_ID_KEY = stringPreferencesKey("user_id")
-        val USER_EMAIL_KEY = stringPreferencesKey("user_email")
-        val SHOW_WELCOME_MESSAGE_KEY = booleanPreferencesKey("show_welcome_message")
-        val THEME_KEY = stringPreferencesKey("theme_mode")
-        val NOTE_COLOR_KEY = intPreferencesKey("note_color")
+        private val USER_ID_KEY = stringPreferencesKey("user_id")
+        private val USER_EMAIL_KEY = stringPreferencesKey("user_email")
+        private val USERCODE_KEY = stringPreferencesKey("user_code")
+        private val SHOW_WELCOME_MESSAGE_KEY = booleanPreferencesKey("show_welcome_message")
+        private val THEME_KEY = stringPreferencesKey("theme_mode")
+        private val NOTE_COLOR_KEY = intPreferencesKey("note_color")
     }
 
     val userId: Flow<String?> = context.dataStore.data
@@ -47,6 +48,7 @@ class UserPreferences @Inject constructor(@ApplicationContext private val contex
         context.dataStore.edit { preferences ->
             preferences.remove(USER_ID_KEY)
             preferences.remove(USER_EMAIL_KEY)
+            preferences.remove(USERCODE_KEY)
         }
     }
 
@@ -82,6 +84,18 @@ class UserPreferences @Inject constructor(@ApplicationContext private val contex
     suspend fun saveNoteColor(color: Int) {
         context.dataStore.edit { preferences ->
             preferences[NOTE_COLOR_KEY] = color
+        }
+    }
+
+
+    val userCodeFlow: Flow<String?> = context.dataStore.data
+        .map { preferences ->
+            preferences[USERCODE_KEY]
+        }
+
+    suspend fun saveUserCode(userCode: String) {
+        context.dataStore.edit { preferences ->
+            preferences[USERCODE_KEY] = userCode
         }
     }
 }

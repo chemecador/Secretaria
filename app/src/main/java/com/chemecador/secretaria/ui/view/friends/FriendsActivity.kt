@@ -2,10 +2,13 @@ package com.chemecador.secretaria.ui.view.friends
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.databinding.ActivityFriendsBinding
+import com.chemecador.secretaria.ui.viewmodel.friends.FriendsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -13,6 +16,7 @@ class FriendsActivity : AppCompatActivity() {
 
     private var _binding: ActivityFriendsBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: FriendsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +25,7 @@ class FriendsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initUI()
+        observeViewModel()
 
     }
 
@@ -37,6 +42,17 @@ class FriendsActivity : AppCompatActivity() {
             setupFragment(item)
             item.isChecked = true
             true
+        }
+    }
+
+    private fun observeViewModel() {
+        viewModel.loadUserCode()
+        viewModel.userCode.observe(this) { userCode ->
+            if (userCode != null) {
+                Toast.makeText(this, "User code: $userCode", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, "Failed to generate user code", Toast.LENGTH_LONG).show()
+            }
         }
     }
 

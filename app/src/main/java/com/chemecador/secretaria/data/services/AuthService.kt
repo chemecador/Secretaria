@@ -1,7 +1,8 @@
-package com.chemecador.secretaria.data.network.services
+package com.chemecador.secretaria.data.services
 
 import android.app.Activity
 import com.chemecador.secretaria.R
+import com.chemecador.secretaria.core.constants.FirestoreConstants
 import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
@@ -14,9 +15,12 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -24,10 +28,71 @@ import kotlin.coroutines.resumeWithException
 
 class AuthService @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
+    private val firestore: FirebaseFirestore,
     private val res: ResourceProvider,
 ) {
 
     fun getUser() = firebaseAuth.currentUser
+
+    suspend fun getUserCode(): String? {
+        val user = firebaseAuth.currentUser ?: return null
+        val userId = user.uid
+        val userDocRef = firestore.collection(FirestoreConstants.USERS).document(userId)
+
+        return try {
+            firestore.runTransaction { transaction ->
+                val snapshot = transaction.get(userDocRef)
+                val userCode = snapshot.getString(FirestoreConstants.USERCODE)
+                if (userCode.isNullOrEmpty()) {
+                    runBlocking {
+                        val newUserCode =
+                            generateUserCode() ?: throw NullPointerException("User code is null")
+                        if (!snapshot.exists()) {
+                            transaction.set(
+                                userDocRef,
+                                mapOf(FirestoreConstants.USERCODE to newUserCode)
+                            )
+                        } else {
+                            transaction.update(userDocRef, FirestoreConstants.USERCODE, newUserCode)
+                        }
+                        newUserCode
+                    }
+                } else {
+                    userCode
+                }
+            }.await()
+        } catch (e: Exception) {
+            Timber.e(e)
+            null
+        }
+    }
+
+
+    private suspend fun generateUserCode(): String? {
+        val calendar = Calendar.getInstance()
+        val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
+        val yearLastTwoDigits = calendar.get(Calendar.YEAR) % 100
+        val dateKey = "$yearLastTwoDigits$dayOfYear"
+
+        val docRef = firestore.collection(FirestoreConstants.USERCODES).document(dateKey)
+
+        return try {
+            firestore.runTransaction { transaction ->
+                val snapshot = transaction.get(docRef)
+                val newCounter = if (snapshot.exists()) {
+                    val currentCounter = snapshot.getLong(FirestoreConstants.COUNTER) ?: 0
+                    currentCounter + 1
+                } else {
+                    1
+                }
+                transaction.set(docRef, mapOf(FirestoreConstants.COUNTER to newCounter))
+                "$yearLastTwoDigits$dayOfYear$newCounter"
+            }.await()
+        } catch (e: Exception) {
+            Timber.e(e)
+            null
+        }
+    }
 
     suspend fun login(user: String, password: String): Result<FirebaseUser> {
         return try {
