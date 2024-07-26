@@ -106,7 +106,7 @@ class LoginActivity : AppCompatActivity() {
             handleLogin()
         }
         binding.btnSignup.setOnClickListener {
-            handleSingup()
+            handleSignup()
         }
         binding.btnGoogle.setOnClickListener {
             handleGoogleSignIn()
@@ -192,7 +192,7 @@ class LoginActivity : AppCompatActivity() {
         googleSignInLauncher.launch(signInIntent)
     }
 
-    private fun handleSingup() {
+    private fun handleSignup() {
         if (!isEmailValid()) {
             binding.etUsername.requestFocus()
             binding.etUsername.error = getString(R.string.error_email_invalid)
