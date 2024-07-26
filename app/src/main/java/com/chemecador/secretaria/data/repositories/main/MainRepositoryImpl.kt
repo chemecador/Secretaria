@@ -3,6 +3,10 @@ package com.chemecador.secretaria.data.repositories.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.chemecador.secretaria.R
+import com.chemecador.secretaria.core.constants.FirestoreConstants.DATE
+import com.chemecador.secretaria.core.constants.FirestoreConstants.NOTES
+import com.chemecador.secretaria.core.constants.FirestoreConstants.NOTES_LIST
+import com.chemecador.secretaria.core.constants.FirestoreConstants.USERS
 import com.chemecador.secretaria.data.model.Note
 import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.data.provider.ResourceProvider
@@ -27,14 +31,6 @@ class MainRepositoryImpl @Inject constructor(
     private val userRepository: UserRepository,
     private val res: ResourceProvider
 ) : MainRepository {
-
-    companion object {
-        private const val DATE = "date"
-        private const val USERS = "users"
-        private const val NOTES_LIST = "noteslist"
-        private const val NOTES = "notes"
-    }
-
     private fun getUserId(): String? {
         return runBlocking {
             userRepository.userId.first()

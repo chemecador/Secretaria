@@ -3,6 +3,10 @@ package com.chemecador.secretaria.data.repositories.friends
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.chemecador.secretaria.R
+import com.chemecador.secretaria.core.constants.FirestoreConstants.ACCEPTANCE_DATE
+import com.chemecador.secretaria.core.constants.FirestoreConstants.FRIENDSHIPS
+import com.chemecador.secretaria.core.constants.FirestoreConstants.RECEIVER_ID
+import com.chemecador.secretaria.core.constants.FirestoreConstants.SENDER_ID
 import com.chemecador.secretaria.data.model.Friendship
 import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.chemecador.secretaria.utils.Resource
@@ -16,13 +20,6 @@ class FriendsRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val res: ResourceProvider
 ) : FriendsRepository {
-
-    companion object {
-        private const val FRIENDSHIPS = "friendships"
-        private const val SENDER_ID = "senderId"
-        private const val RECEIVER_ID = "receiverId"
-        private const val ACCEPTANCE_DATE = "acceptanceDate"
-    }
 
     override fun getFriends(userId: String): LiveData<Resource<List<Friendship>>> {
         val liveData = MutableLiveData<Resource<List<Friendship>>>()
