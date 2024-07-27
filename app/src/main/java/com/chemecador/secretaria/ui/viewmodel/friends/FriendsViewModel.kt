@@ -28,6 +28,12 @@ class FriendsViewModel @Inject constructor(
     private val _userCode = MutableLiveData<String?>()
     val userCode: LiveData<String?> get() = _userCode
 
+    private val _addFriendStatus = MutableLiveData<Resource<Void>>()
+    val addFriendStatus: LiveData<Resource<Void>> get() = _addFriendStatus
+
+    private val _pendingFriendRequests = MutableLiveData<List<Friendship>>()
+    val pendingFriendRequests: LiveData<List<Friendship>> = _pendingFriendRequests
+
     fun loadFriends(userId: String) {
         _friends.postValue(Resource.Loading())
         repository.getFriends(userId).observeForever { resource ->
@@ -54,6 +60,15 @@ class FriendsViewModel @Inject constructor(
                     _userCode.postValue(null)
                 }
             }
+        }
+    }
+
+
+    fun sendFriendRequest(friendCode: String) {
+        viewModelScope.launch {
+            _addFriendStatus.postValue(Resource.Loading())
+            val result = repository.sendFriendRequest(friendCode)
+            _addFriendStatus.postValue(result)
         }
     }
 

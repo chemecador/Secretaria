@@ -17,7 +17,7 @@
     <string name="label_name_note">Dale un nombre a la nota</string>
     <string name="label_note_name">Nombre de la nota</string>
     <string name="label_add_content">Añadir contenido</string>
-    <string name="label_type_content">Escribe aquí el contenido...</string>
+    <string name="label_type_content">Escribe aquí el contenido…</string>
     <string name="label_note_updated">Nota actualizada correctamente</string>
     <string name="label_note_deleted">Nota eliminada correctamente</string>
     <string name="label_note_not_found">Nota no encontrada</string>

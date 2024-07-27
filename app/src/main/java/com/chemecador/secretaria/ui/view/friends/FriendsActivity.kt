@@ -2,7 +2,6 @@ package com.chemecador.secretaria.ui.view.friends
 
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -25,7 +24,6 @@ class FriendsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initUI()
-        observeViewModel()
 
     }
 
@@ -45,17 +43,6 @@ class FriendsActivity : AppCompatActivity() {
         }
     }
 
-    private fun observeViewModel() {
-        viewModel.loadUserCode()
-        viewModel.userCode.observe(this) { userCode ->
-            if (userCode != null) {
-                Toast.makeText(this, "User code: $userCode", Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(this, "Failed to generate user code", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
     private fun setupFragment(item: MenuItem) {
         var fragment: Fragment? = null
         when (item.itemId) {
@@ -68,7 +55,7 @@ class FriendsActivity : AppCompatActivity() {
             }
 
             R.id.menu_add_friend -> {
-                //fragment = AddFriendFragment()
+                fragment = AddFriendFragment()
             }
         }
         if (fragment != null) {

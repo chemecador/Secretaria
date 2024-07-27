@@ -10,9 +10,21 @@
     <string name="label_friend_not_found">No hemos encontrado a tu amigo :(</string>
     <string name="label_invitations_sent">Invitaciones enviadas</string>
     <string name="label_no_friends">Todavía no has agregado a ningún amigo</string>
-    <string name="label_no_requests">No tienes peticiones de amistad pendientes</string>
     <string name="label_friend_image">Imagen del amigo</string>
 
+
+    <!-- Requests -->
+    <string name="label_friend_requests">Solicitudes de amistad</string>
+    <string name="label_friend_request_sent">Petición de amistad enviada</string>
+    <string name="label_send_request">Enviar petición de amistad</string>
+    <string name="label_no_requests">No tienes peticiones de amistad pendientes</string>
+    <string name="error_sending_request">Se ha producido un error al enviar la petición de amistad</string>
+
+    <!-- User codes -->
+    <string name="label_your_code">Tu código de usuario</string>
+    <string name="label_friend_code">Escribe el código de tu amigo</string>
+    <string name="error_usercode_not_found">Ese código de amigo no existe</string>
+    <string name="error_invalid_friendcode">El código de amigo no es válido</string>
 
     <!-- Toasts -->
     <string name="toast_invitation_sent_to">Invitación enviada a %1$s</string>
