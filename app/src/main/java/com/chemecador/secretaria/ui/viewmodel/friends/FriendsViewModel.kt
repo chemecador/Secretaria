@@ -25,26 +25,70 @@ class FriendsViewModel @Inject constructor(
     private val _friends = MutableLiveData<Resource<List<Friendship>>>()
     val friends: LiveData<Resource<List<Friendship>>> = _friends
 
+    private val _deleteFriendStatus = MutableLiveData<Resource<Void>>()
+    val deleteFriendStatus: LiveData<Resource<Void>> get() = _deleteFriendStatus
+
+    private val _friendRequests = MutableLiveData<Resource<List<Friendship>>>()
+    val friendRequests: LiveData<Resource<List<Friendship>>> = _friendRequests
+
+    private val _acceptRequestStatus = MutableLiveData<Resource<Void>>()
+    val acceptRequestStatus: LiveData<Resource<Void>> = _acceptRequestStatus
+
+    private val _rejectRequestStatus = MutableLiveData<Resource<Void>>()
+    val rejectRequestStatus: LiveData<Resource<Void>> = _rejectRequestStatus
+
+
+    private val _addFriendStatus = MutableLiveData<Resource<Void>>()
+    val addFriendStatus: LiveData<Resource<Void>> = _addFriendStatus
+
     private val _userCode = MutableLiveData<String?>()
     val userCode: LiveData<String?> get() = _userCode
 
-    private val _addFriendStatus = MutableLiveData<Resource<Void>>()
-    val addFriendStatus: LiveData<Resource<Void>> get() = _addFriendStatus
-
-    private val _pendingFriendRequests = MutableLiveData<List<Friendship>>()
-    val pendingFriendRequests: LiveData<List<Friendship>> = _pendingFriendRequests
+    fun getCurrentUserId() = FirebaseAuth.getInstance().currentUser?.uid
 
     fun loadFriends(userId: String) {
-        _friends.postValue(Resource.Loading())
-        repository.getFriends(userId).observeForever { resource ->
-            _friends.postValue(resource)
+        viewModelScope.launch {
+            repository.getFriends(userId).collect { resource ->
+                _friends.postValue(resource)
+            }
         }
     }
 
-    fun getCurrentUserId(): String? {
-        return FirebaseAuth.getInstance().currentUser?.uid
+
+    fun deleteFriend(friendshipId: String) {
+        viewModelScope.launch {
+            _deleteFriendStatus.value = repository.deleteFriend(friendshipId)
+        }
     }
 
+    fun loadFriendRequests(userId: String) {
+        viewModelScope.launch {
+            repository.getPendingFriendRequests(userId).collect { resource ->
+                _friendRequests.postValue(resource)
+            }
+        }
+    }
+
+    fun acceptFriendRequest(requestId: String) {
+        viewModelScope.launch {
+            val result = repository.acceptFriendRequest(requestId)
+            _acceptRequestStatus.postValue(result)
+        }
+    }
+
+    fun rejectFriendRequest(requestId: String) {
+        viewModelScope.launch {
+            val result = repository.rejectFriendRequest(requestId)
+            _rejectRequestStatus.postValue(result)
+        }
+    }
+
+    fun sendFriendRequest(friendCode: String) {
+        viewModelScope.launch {
+            val result = repository.sendFriendRequest(friendCode)
+            _addFriendStatus.postValue(result)
+        }
+    }
 
     fun loadUserCode() {
         viewModelScope.launch {
@@ -62,14 +106,5 @@ class FriendsViewModel @Inject constructor(
             }
         }
     }
-
-
-    fun sendFriendRequest(friendCode: String) {
-        viewModelScope.launch {
-            _addFriendStatus.postValue(Resource.Loading())
-            val result = repository.sendFriendRequest(friendCode)
-            _addFriendStatus.postValue(result)
-        }
-    }
-
 }
+

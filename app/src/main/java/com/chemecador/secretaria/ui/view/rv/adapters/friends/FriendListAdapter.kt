@@ -9,6 +9,7 @@ import com.chemecador.secretaria.ui.view.rv.holders.friends.FriendViewHolder
 import com.chemecador.secretaria.utils.FriendshipDiffCallback
 
 class FriendListAdapter(
+    private val currentUserId: String,
     private val onDeleteFriend: (Friendship) -> Unit
 ) : ListAdapter<Friendship, FriendViewHolder>(FriendshipDiffCallback()) {
 
@@ -20,8 +21,7 @@ class FriendListAdapter(
 
     override fun onBindViewHolder(holder: FriendViewHolder, position: Int) {
         val friend = getItem(position)
-        holder.bind(friend, onDeleteFriend)
+        holder.bind(friend, currentUserId, onDeleteFriend)
     }
 }
-
 

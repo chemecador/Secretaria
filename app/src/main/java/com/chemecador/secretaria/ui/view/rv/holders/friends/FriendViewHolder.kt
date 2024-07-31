@@ -6,12 +6,18 @@ import com.chemecador.secretaria.databinding.ListItemFriendBinding
 
 class FriendViewHolder(private val binding: ListItemFriendBinding) :
     RecyclerView.ViewHolder(binding.root) {
-    fun bind(friend: Friendship, onDeleteFriend: (Friendship) -> Unit) {
+    fun bind(friend: Friendship, currentUserId: String, onDeleteFriend: (Friendship) -> Unit) {
+        val friendName = if (friend.receiverId == currentUserId) {
+            friend.senderName
+        } else {
+            friend.receiverName
+        }
 
-        binding.tvFriendName.text = friend.receiverName
+        binding.tvFriendName.text = friendName
 
         binding.btnDelete.setOnClickListener {
             onDeleteFriend(friend)
         }
     }
 }
+

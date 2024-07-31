@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.chemecador.secretaria.R
 import com.chemecador.secretaria.databinding.FragmentFriendListBinding
 import com.chemecador.secretaria.ui.view.rv.adapters.friends.FriendListAdapter
 import com.chemecador.secretaria.ui.viewmodel.friends.FriendsViewModel
@@ -21,6 +22,7 @@ class FriendListFragment : Fragment() {
     private val viewModel: FriendsViewModel by viewModels()
     private lateinit var binding: FragmentFriendListBinding
     private lateinit var adapter: FriendListAdapter
+    private lateinit var userId: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,31 +35,27 @@ class FriendListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        userId = viewModel.getCurrentUserId() ?: return
+
         initUI()
         observeViewModel()
     }
 
     private fun initUI() {
+
         adapter = FriendListAdapter(
+            currentUserId = userId,
             onDeleteFriend = { friend ->
-                Toast.makeText(context, "Friend deleted: ${friend.receiverName}", Toast.LENGTH_LONG)
-                    .show()
+                viewModel.deleteFriend(friend.id)
             }
         )
-
         binding.rv.layoutManager = LinearLayoutManager(context)
         binding.rv.adapter = adapter
 
-        val userId = viewModel.getCurrentUserId()
-
-        if (userId != null) {
-            viewModel.loadFriends(userId)
-        } else {
-            Toast.makeText(context, "User not logged in", Toast.LENGTH_LONG).show()
-        }
     }
 
     private fun observeViewModel() {
+        viewModel.loadFriends(userId)
         viewModel.friends.observe(viewLifecycleOwner) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -68,6 +66,29 @@ class FriendListFragment : Fragment() {
                     binding.pb.visibility = View.GONE
                     binding.tvNoFriends.isVisible = resource.data.isNullOrEmpty()
                     adapter.submitList(resource.data)
+                }
+
+                is Resource.Error -> {
+                    binding.pb.visibility = View.GONE
+                    Toast.makeText(context, resource.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        viewModel.deleteFriendStatus.observe(viewLifecycleOwner) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    binding.pb.visibility = View.VISIBLE
+                }
+
+                is Resource.Success -> {
+                    binding.pb.visibility = View.GONE
+                    Toast.makeText(
+                        context,
+                        getString(R.string.label_friend_deleted),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    viewModel.loadFriends(userId)
                 }
 
                 is Resource.Error -> {

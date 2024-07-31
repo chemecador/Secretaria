@@ -3,6 +3,7 @@ package com.chemecador.secretaria.data.model
 import com.google.firebase.Timestamp
 
 data class Friendship(
+    val id: String = "",
     val senderId: String = "",
     val receiverId: String = "",
     val senderName: String = "",
