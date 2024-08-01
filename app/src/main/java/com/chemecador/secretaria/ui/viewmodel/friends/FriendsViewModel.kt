@@ -11,6 +11,7 @@ import com.chemecador.secretaria.data.services.AuthService
 import com.chemecador.secretaria.utils.Resource
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,12 +38,17 @@ class FriendsViewModel @Inject constructor(
     private val _rejectRequestStatus = MutableLiveData<Resource<Void>>()
     val rejectRequestStatus: LiveData<Resource<Void>> = _rejectRequestStatus
 
-
     private val _addFriendStatus = MutableLiveData<Resource<Void>>()
     val addFriendStatus: LiveData<Resource<Void>> = _addFriendStatus
 
     private val _userCode = MutableLiveData<String?>()
     val userCode: LiveData<String?> get() = _userCode
+
+    private val _friendRequestsSent = MutableLiveData<Resource<List<Friendship>>>()
+    val friendRequestSent: LiveData<Resource<List<Friendship>>> = _friendRequestsSent
+
+    private val _cancelRequestStatus = MutableLiveData<Resource<Void>>()
+    val cancelRequestStatus: LiveData<Resource<Void>> = _cancelRequestStatus
 
     fun getCurrentUserId() = FirebaseAuth.getInstance().currentUser?.uid
 
@@ -85,8 +91,13 @@ class FriendsViewModel @Inject constructor(
 
     fun sendFriendRequest(friendCode: String) {
         viewModelScope.launch {
+            _addFriendStatus.value = Resource.Loading()
             val result = repository.sendFriendRequest(friendCode)
-            _addFriendStatus.postValue(result)
+            _addFriendStatus.value = result
+            if (result is Resource.Success) {
+                val userId = getCurrentUserId() ?: return@launch
+                loadFriendRequestsSent(userId)
+            }
         }
     }
 
@@ -104,6 +115,25 @@ class FriendsViewModel @Inject constructor(
                     _userCode.postValue(null)
                 }
             }
+        }
+    }
+
+    fun loadFriendRequestsSent(userId: String) {
+        viewModelScope.launch {
+            _friendRequestsSent.value = Resource.Loading()
+            try {
+                val requests = repository.getFriendRequestsSent(userId).first()
+                _friendRequestsSent.value = Resource.Success(requests)
+            } catch (e: Exception) {
+                _friendRequestsSent.value = Resource.Error("Error loading pending requests")
+            }
+        }
+    }
+
+    fun cancelFriendRequest(requestId: String) {
+        viewModelScope.launch {
+            val result = repository.cancelFriendRequest(requestId)
+            _cancelRequestStatus.postValue(result)
         }
     }
 }

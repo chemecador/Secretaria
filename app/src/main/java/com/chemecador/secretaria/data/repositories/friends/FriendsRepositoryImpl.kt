@@ -4,6 +4,7 @@ import com.chemecador.secretaria.R
 import com.chemecador.secretaria.core.constants.FirestoreConstants
 import com.chemecador.secretaria.core.constants.FirestoreConstants.ACCEPTANCE_DATE
 import com.chemecador.secretaria.core.constants.FirestoreConstants.FRIENDSHIPS
+import com.chemecador.secretaria.core.constants.FirestoreConstants.RECEIVER_CODE
 import com.chemecador.secretaria.core.constants.FirestoreConstants.RECEIVER_ID
 import com.chemecador.secretaria.core.constants.FirestoreConstants.RECEIVER_NAME
 import com.chemecador.secretaria.core.constants.FirestoreConstants.REQUEST_DATE
@@ -16,8 +17,12 @@ import com.chemecador.secretaria.data.services.AuthService
 import com.chemecador.secretaria.utils.Resource
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
@@ -125,6 +130,28 @@ class FriendsRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun cancelFriendRequest(requestId: String): Resource<Void> {
+        return try {
+            val currentUser =
+                authService.getUser()
+                    ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
+
+            val docRef = firestore.collection(FRIENDSHIPS).document(requestId)
+            val document = docRef.get().await()
+            val senderId = document.getString(SENDER_ID)
+
+            if (currentUser.uid != senderId)
+                return Resource.Error(res.getString(R.string.error_rejecting_friend_request))
+
+            docRef.delete().await()
+            Resource.Success(null)
+
+        } catch (e: Exception) {
+            Timber.e(e)
+            Resource.Error(res.getString(R.string.error_rejecting_friend_request))
+        }
+    }
+
 
     override suspend fun sendFriendRequest(friendCode: String): Resource<Void> {
         return try {
@@ -151,6 +178,7 @@ class FriendsRepositoryImpl @Inject constructor(
                 SENDER_ID to userId,
                 SENDER_NAME to senderName,
                 RECEIVER_ID to friendId,
+                RECEIVER_CODE to friendCode,
                 REQUEST_DATE to FieldValue.serverTimestamp(),
                 ACCEPTANCE_DATE to null
             )
@@ -168,5 +196,24 @@ class FriendsRepositoryImpl @Inject constructor(
             Timber.e(e)
             Resource.Error(res.getString(R.string.error_sending_request))
         }
+    }
+
+    override suspend fun getFriendRequestsSent(userId: String): Flow<List<Friendship>> {
+        return callbackFlow {
+            val subscription = firestore.collection(FRIENDSHIPS)
+                .whereEqualTo(SENDER_ID, userId)
+                .whereEqualTo(ACCEPTANCE_DATE, null)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        close(error)
+                        return@addSnapshotListener
+                    }
+                    val requests = snapshot?.documents?.mapNotNull { document ->
+                        document.toObject(Friendship::class.java)?.copy(id = document.id)
+                    }.orEmpty()
+                    trySend(requests).isSuccess
+                }
+            awaitClose { subscription.remove() }
+        }.flowOn(Dispatchers.IO)
     }
 }

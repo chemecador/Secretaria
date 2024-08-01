@@ -12,6 +12,7 @@ object FirestoreConstants {
     const val FRIENDSHIPS = "friendships"
     const val SENDER_ID = "senderId"
     const val RECEIVER_ID = "receiverId"
+    const val RECEIVER_CODE = "receiverCode"
     const val SENDER_NAME = "senderName"
     const val RECEIVER_NAME = "receiverName"
     const val ACCEPTANCE_DATE = "acceptanceDate"

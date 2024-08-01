@@ -11,4 +11,6 @@ interface FriendsRepository {
     suspend fun sendFriendRequest(friendCode: String): Resource<Void>
     suspend fun acceptFriendRequest(requestId: String): Resource<Void>
     suspend fun rejectFriendRequest(requestId: String): Resource<Void>
+    suspend fun getFriendRequestsSent(userId: String): Flow<List<Friendship>>
+    suspend fun cancelFriendRequest(requestId: String): Resource<Void>
 }

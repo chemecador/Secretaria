@@ -17,10 +17,14 @@
     <!-- Requests -->
     <string name="label_friend_requests">Solicitudes de amistad</string>
     <string name="label_friend_request_sent">Petición de amistad enviada</string>
+    <string name="label_friend_requests_sent">Peticiones enviadas</string>
     <string name="label_friend_request_accepted">Petición de amistad aceptada</string>
     <string name="label_friend_request_rejected">Petición de amistad rechazada</string>
+    <string name="label_friend_request_cancelled">Petición de amistad rechazada</string>
     <string name="label_send_request">Enviar petición de amistad</string>
     <string name="label_no_requests">No tienes peticiones de amistad pendientes</string>
+    <string name="label_empty_requests_sent">No hay peticiones de amistad enviadas</string>
+
 
     <!-- User codes -->
     <string name="label_your_code">Tu código de usuario</string>
@@ -34,6 +38,7 @@
     <string name="error_sending_request">Se ha producido un error al enviar la petición de amistad</string>
     <string name="error_usercode_not_found">Ese código de amigo no existe</string>
     <string name="error_invalid_friendcode">El código de amigo no es válido</string>
+    <string name="error_friend_request_already_sent">Ya has enviado una petición de amistad a este usuario</string>
     <string name="error_deleting_friend">Error al eliminar el amigo</string>
     <string name="error_fetching_friend_requests">Error al obtener las peticiones de amistad</string>
     <string name="error_accepting_friend_request">Error al aceptar la petición de amistad</string>

@@ -8,6 +8,7 @@ data class Friendship(
     val receiverId: String = "",
     val senderName: String = "",
     val receiverName: String = "",
+    val receiverCode: String = "",
     val requestDate: Timestamp = Timestamp.now(),
     val acceptanceDate: Timestamp? = null
 )
