@@ -10,7 +10,7 @@ class FriendRequestSentViewHolder(
     private val onRequestCancelled: (Friendship) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(request: Friendship) {
-        binding.tvFriendName.text = request.senderName
+        binding.tvFriendName.text = request.receiverCode
         binding.tvRequestDate.text = DateUtils.formatSimple(request.requestDate)
         binding.btnCancel.setOnClickListener {
             onRequestCancelled(request)
