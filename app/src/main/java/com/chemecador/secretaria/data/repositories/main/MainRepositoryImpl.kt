@@ -1,25 +1,20 @@
 package com.chemecador.secretaria.data.repositories.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.chemecador.secretaria.R
-import com.chemecador.secretaria.core.constants.FirestoreConstants.DATE
-import com.chemecador.secretaria.core.constants.FirestoreConstants.NOTES
-import com.chemecador.secretaria.core.constants.FirestoreConstants.NOTES_LIST
-import com.chemecador.secretaria.core.constants.FirestoreConstants.USERS
+import com.chemecador.secretaria.core.constants.Constants.CONTRIBUTORS
+import com.chemecador.secretaria.core.constants.Constants.DATE
+import com.chemecador.secretaria.core.constants.Constants.NOTES
+import com.chemecador.secretaria.core.constants.Constants.NOTES_LIST
+import com.chemecador.secretaria.core.constants.Constants.USERS
 import com.chemecador.secretaria.data.model.Note
 import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.chemecador.secretaria.data.repositories.UserRepository
 import com.chemecador.secretaria.utils.Resource
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.Source
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
@@ -31,86 +26,59 @@ class MainRepositoryImpl @Inject constructor(
     private val userRepository: UserRepository,
     private val res: ResourceProvider
 ) : MainRepository {
-    private fun getUserId(): String? {
-        return runBlocking {
-            userRepository.userId.first()
-        }
+
+    private suspend fun getUserId(): String? {
+        return userRepository.userId.firstOrNull()
     }
 
-    override fun getLists(): LiveData<Resource<List<NotesList>>> {
-        val liveData = MutableLiveData<Resource<List<NotesList>>>()
-        liveData.postValue(Resource.Loading())
-
-        try {
+    override suspend fun getLists(): Resource<List<NotesList>> {
+        return try {
             val userId = getUserId()
             if (userId == null) {
                 Timber.e("UserID is null ??")
-                liveData.postValue(Resource.Error(res.getString(R.string.error_unknown)))
-                return liveData
+                return Resource.Error(res.getString(R.string.error_unknown))
             }
-            firestore.collection(USERS).document(userId).collection(NOTES_LIST)
+            val snapshot = firestore.collection(USERS).document(userId).collection(NOTES_LIST)
                 .orderBy(DATE, Query.Direction.DESCENDING)
-                .addSnapshotListener { snapshot, error ->
-                    if (error != null || snapshot == null) {
-                        liveData.postValue(
-                            Resource.Error(
-                                error?.message ?: res.getString(R.string.error_unknown)
-                            )
-                        )
-                    } else {
-                        val lists = snapshot.documents.mapNotNull { documentSnapshot ->
-                            documentSnapshot.toObject(NotesList::class.java)?.copy(
-                                id = documentSnapshot.id
-                            )
-                        }
-                        liveData.postValue(Resource.Success(lists))
-                    }
-                }
+                .get()
+                .await()
+
+            val lists = snapshot.documents.mapNotNull { documentSnapshot ->
+                documentSnapshot.toObject(NotesList::class.java)?.copy(
+                    id = documentSnapshot.id
+                )
+            }
+            Resource.Success(lists)
         } catch (e: Exception) {
             Timber.e(e)
-            liveData.postValue(Resource.Error(e.message ?: res.getString(R.string.error_unknown)))
+            Resource.Error(res.getString(R.string.error_unknown))
         }
-        return liveData
     }
 
-    override fun getNotes(listId: String): LiveData<Resource<List<Note>>> {
-        val liveData = MutableLiveData<Resource<List<Note>>>()
-        liveData.postValue(Resource.Loading())
-
-        try {
+    override suspend fun getNotes(listId: String): Resource<List<Note>> {
+        return try {
             val userId = getUserId()
             if (userId == null) {
                 Timber.e("UserID is null ??")
-                liveData.postValue(Resource.Error(res.getString(R.string.error_unknown)))
-                return liveData
+                return Resource.Error(res.getString(R.string.error_unknown))
             }
-            firestore.collection(USERS).document(userId)
+            val snapshot = firestore.collection(USERS).document(userId)
                 .collection(NOTES_LIST).document(listId)
                 .collection(NOTES)
                 .orderBy(DATE, Query.Direction.DESCENDING)
-                .addSnapshotListener { snapshot, error ->
-                    if (error != null || snapshot == null) {
-                        liveData.postValue(
-                            Resource.Error(
-                                error?.message ?: res.getString(R.string.error_unknown)
-                            )
-                        )
-                    } else {
-                        val notes = snapshot.documents.mapNotNull { documentSnapshot ->
-                            documentSnapshot.toObject(Note::class.java)?.copy(
-                                id = documentSnapshot.id
-                            )
-                        }
-                        liveData.postValue(Resource.Success(notes))
-                    }
-                }
+                .get()
+                .await()
+
+            val notes = snapshot.documents.mapNotNull { documentSnapshot ->
+                documentSnapshot.toObject(Note::class.java)?.copy(id = documentSnapshot.id)
+            }
+            Resource.Success(notes)
         } catch (e: Exception) {
             Timber.e(e)
-            liveData.postValue(Resource.Error(e.message ?: res.getString(R.string.error_unknown)))
+            Resource.Error(res.getString(R.string.error_unknown))
         }
-
-        return liveData
     }
+
 
     override suspend fun createList(name: String): Resource<Unit> {
         return try {
@@ -132,7 +100,7 @@ class MainRepositoryImpl @Inject constructor(
             Resource.Success(Unit)
         } catch (e: Exception) {
             Timber.e(e)
-            Resource.Error(e.message ?: res.getString(R.string.error_unknown))
+            Resource.Error(res.getString(R.string.error_unknown))
         }
     }
 
@@ -142,7 +110,7 @@ class MainRepositoryImpl @Inject constructor(
             val userId = getUserId()
             if (userId == null) {
                 Timber.e("UserID is null ??")
-                return Resource.Error(res.getString(R.string.error_unknown))
+                return Resource.Error(res.getString(R.string.error_user_not_auth))
             }
             val newNote = note.copy(
                 id = firestore.collection(USERS).document(userId)
@@ -155,129 +123,135 @@ class MainRepositoryImpl @Inject constructor(
             Resource.Success(Unit)
         } catch (e: Exception) {
             Timber.e(e)
-            Resource.Error(e.message ?: res.getString(R.string.error_unknown))
+            Resource.Error(res.getString(R.string.error_unknown))
         }
     }
 
-    override fun getNote(listId: String, noteId: String): MutableLiveData<Resource<Note>> {
-        val result = MutableLiveData<Resource<Note>>()
-        result.postValue(Resource.Loading())
+    override suspend fun getNote(listId: String, noteId: String): Resource<Note> {
+        return try {
+            val userId =
+                getUserId() ?: return Resource.Error(res.getString(R.string.error_invalid_userid))
 
-        val userId = getUserId()
-        if (userId == null) {
-            Timber.e("UserID is null ??")
-            result.postValue(Resource.Error(res.getString(R.string.error_unknown)))
-            return result
-        }
-        firestore.collection(USERS).document(userId).collection(NOTES_LIST).document(listId)
-            .collection(
-                NOTES
-            ).document(noteId)
-            .get(Source.CACHE)
-            .addOnSuccessListener { document ->
-                val note = document.toObject(Note::class.java)
-                if (note != null) {
-                    result.postValue(Resource.Success(note))
-                } else {
-                    result.postValue(Resource.Error(res.getString(R.string.label_note_not_found)))
-                }
-            }
-            .addOnFailureListener { exception ->
-                result.postValue(
-                    Resource.Error(
-                        exception.message ?: res.getString(R.string.error_unknown)
-                    )
-                )
-            }
+            val snapshot = firestore.collection(USERS).document(userId)
+                .collection(NOTES_LIST).document(listId)
+                .collection(NOTES).document(noteId)
+                .get().await()
 
-        return result
-    }
-
-    override fun deleteNote(listId: String, noteId: String): Task<Void> {
-        val userId = getUserId()
-        if (userId == null) {
-            Timber.e("UserID is null ??")
-            return Tasks.forException(IllegalStateException(""))
-        }
-
-        return firestore.collection(USERS).document(userId)
-            .collection(NOTES_LIST).document(listId)
-            .collection(NOTES).document(noteId).delete()
-    }
-
-    override fun editNote(listId: String, note: Note): Task<Void> {
-        val userId = getUserId()
-        if (userId == null) {
-            Timber.e("UserID is null ??")
-            return Tasks.forException(IllegalStateException(res.getString(R.string.error_invalid_userid)))
-        }
-
-        return firestore.collection(USERS).document(userId)
-            .collection(NOTES_LIST).document(listId)
-            .collection(NOTES).document(note.id)
-            .set(note)
-    }
-
-    override fun deleteList(listId: String): LiveData<Resource<Void>> {
-        val result = MutableLiveData<Resource<Void>>()
-
-        val userId = getUserId()
-        if (userId == null) {
-            Timber.e("UserID is null ??")
-            result.postValue(Resource.Error(res.getString(R.string.error_unknown)))
-            return result
-        }
-
-        val listRef =
-            firestore.collection(USERS).document(userId).collection(NOTES_LIST).document(listId)
-        val notesRef = listRef.collection(NOTES)
-
-        notesRef.get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val batch = firestore.batch()
-                for (document in task.result!!) {
-                    batch.delete(document.reference)
-                }
-
-                batch.commit().addOnSuccessListener {
-                    listRef.delete().addOnSuccessListener {
-                        result.postValue(Resource.Success(null))
-                    }.addOnFailureListener { e ->
-                        result.postValue(
-                            Resource.Error(
-                                e.localizedMessage ?: res.getString(R.string.error_unknown)
-                            )
-                        )
-                    }
-                }.addOnFailureListener { e ->
-                    result.postValue(
-                        Resource.Error(
-                            e.localizedMessage ?: res.getString(R.string.error_unknown)
-                        )
-                    )
-                }
+            val note = snapshot.toObject(Note::class.java)
+            if (note != null) {
+                Resource.Success(note)
             } else {
-                result.postValue(
-                    Resource.Error(
-                        task.exception?.localizedMessage ?: res.getString(R.string.error_unknown)
-                    )
-                )
+                Resource.Error(res.getString(R.string.error_note_not_found))
             }
+        } catch (e: Exception) {
+            Timber.e(e)
+            Resource.Error(res.getString(R.string.error_unknown))
         }
-
-        return result
     }
 
-    override fun editList(updatedList: NotesList): Task<Void> {
-        val userId = getUserId()
 
-        if (userId == null) {
-            Timber.e("UserID is null ??")
-            return Tasks.forException(IllegalStateException(res.getString(R.string.error_invalid_userid)))
+    override suspend fun deleteNote(listId: String, noteId: String): Resource<Unit> {
+        return try {
+            val userId =
+                getUserId() ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
+
+            firestore.collection(USERS).document(userId)
+                .collection(NOTES_LIST).document(listId)
+                .collection(NOTES).document(noteId).delete().await()
+
+            Resource.Success(Unit)
+        } catch (e: Exception) {
+            Timber.e(e)
+            Resource.Error(res.getString(R.string.error_deleting_note))
         }
+    }
 
-        return firestore.collection(USERS).document(userId)
-            .collection(NOTES_LIST).document(updatedList.id)
-            .set(updatedList)
+
+    override suspend fun editNote(listId: String, note: Note): Resource<Unit> {
+        return try {
+            val userId =
+                getUserId() ?: return Resource.Error(res.getString(R.string.error_invalid_userid))
+
+            firestore.collection(USERS).document(userId)
+                .collection(NOTES_LIST).document(listId)
+                .collection(NOTES).document(note.id)
+                .set(note).await()
+
+            Resource.Success(Unit)
+        } catch (e: Exception) {
+            Timber.e(e)
+            Resource.Error(res.getString(R.string.error_unknown))
+        }
+    }
+
+
+    override suspend fun deleteList(listId: String): Resource<Unit> {
+        return try {
+            val userId = getUserId()
+                ?: throw IllegalStateException(res.getString(R.string.error_invalid_userid))
+
+            val listRef =
+                firestore.collection(USERS).document(userId).collection(NOTES_LIST).document(listId)
+            val notesRef = listRef.collection(NOTES)
+
+            val taskResult = notesRef.get().await()
+
+            val batch = firestore.batch()
+            for (document in taskResult.documents) {
+                batch.delete(document.reference)
+            }
+
+            batch.commit().await()
+
+            listRef.delete().await()
+
+            Resource.Success(Unit)
+        } catch (e: Exception) {
+            Timber.e(e)
+            Resource.Error(res.getString(R.string.error_unknown))
+        }
+    }
+
+
+    override suspend fun editList(updatedList: NotesList): Resource<Unit> {
+        return try {
+            val userId = getUserId() ?: return Resource.Error("UserID is null ??")
+
+            firestore.collection(USERS).document(userId)
+                .collection(NOTES_LIST).document(updatedList.id)
+                .set(updatedList)
+                .await()
+
+            Resource.Success(null)
+        } catch (e: Exception) {
+            Timber.e(e)
+            Resource.Error(res.getString(R.string.error_updating_list))
+        }
+    }
+
+
+    @Suppress("UNCHECKED_CAST")
+    override suspend fun addContributorToList(listId: String, friendId: String): Resource<Unit> {
+        return try {
+            val userId = getUserId() ?: return Resource.Error("User ID is null")
+
+            val listRef = firestore.collection(USERS).document(userId)
+                .collection(NOTES_LIST).document(listId)
+
+            firestore.runTransaction { transaction ->
+                val snapshot = transaction.get(listRef)
+                val contributors =
+                    snapshot.get(CONTRIBUTORS) as? MutableList<String> ?: mutableListOf()
+                if (!contributors.contains(friendId)) {
+                    contributors.add(friendId)
+                    transaction.update(listRef, CONTRIBUTORS, contributors)
+                }
+            }.await()
+
+            Resource.Success(Unit)
+        } catch (e: Exception) {
+            Timber.e(e)
+            Resource.Error(res.getString(R.string.error_adding_contributor))
+        }
     }
 }

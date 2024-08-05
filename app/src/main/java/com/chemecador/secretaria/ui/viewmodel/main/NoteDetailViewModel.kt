@@ -3,10 +3,12 @@ package com.chemecador.secretaria.ui.viewmodel.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.chemecador.secretaria.data.model.Note
 import com.chemecador.secretaria.data.repositories.main.MainRepository
 import com.chemecador.secretaria.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -14,33 +16,36 @@ class NoteDetailViewModel @Inject constructor(
     private val repository: MainRepository
 ) : ViewModel() {
 
-    private val _updateStatus = MutableLiveData<Resource<Void>>()
-    val updateStatus: LiveData<Resource<Void>> = _updateStatus
+    private val _note = MutableLiveData<Resource<Note>>()
+    val note: LiveData<Resource<Note>> get() = _note
 
-    private val _deleteStatus = MutableLiveData<Resource<Void>>()
-    val deleteStatus: LiveData<Resource<Void>> = _deleteStatus
+    private val _updateStatus = MutableLiveData<Resource<Unit>>()
+    val updateStatus: LiveData<Resource<Unit>> = _updateStatus
 
-    fun getNote(listId: String, noteId: String): LiveData<Resource<Note>> {
-        return repository.getNote(listId, noteId)
+    private val _deleteStatus = MutableLiveData<Resource<Unit>>()
+    val deleteStatus: LiveData<Resource<Unit>> = _deleteStatus
+
+    fun getNote(listId: String, noteId: String) {
+        viewModelScope.launch {
+            _note.postValue(Resource.Loading())
+            val result = repository.getNote(listId, noteId)
+            _note.postValue(result)
+        }
     }
 
     fun deleteNote(listId: String, noteId: String) {
-        _deleteStatus.postValue(Resource.Loading())
-        repository.deleteNote(listId, noteId).addOnSuccessListener {
-            _deleteStatus.postValue(Resource.Success())
-        }.addOnFailureListener { e ->
-            _deleteStatus.postValue(Resource.Error(e.localizedMessage ?: "Error"))
+        viewModelScope.launch {
+            _deleteStatus.postValue(Resource.Loading())
+            val result = repository.deleteNote(listId, noteId)
+            _deleteStatus.postValue(result)
         }
     }
 
     fun editNote(listId: String, note: Note) {
-        _updateStatus.postValue(Resource.Loading())
-        repository.editNote(listId, note)
-            .addOnSuccessListener {
-                _updateStatus.postValue(Resource.Success(null))
-            }
-            .addOnFailureListener { e ->
-                _updateStatus.postValue(Resource.Error(e.localizedMessage ?: "Error"))
-            }
+        viewModelScope.launch {
+            _updateStatus.postValue(Resource.Loading())
+            val result = repository.editNote(listId, note)
+            _updateStatus.postValue(result)
+        }
     }
 }

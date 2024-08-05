@@ -13,6 +13,7 @@ import com.chemecador.secretaria.utils.NotesListDiffCallback
 
 class NotesListAdapter(
     private val onListClick: (String, String) -> Unit,
+    private val onShareList: (NotesList) -> Unit,
     private val onEditList: (NotesList) -> Unit,
     private val onDeleteList: (String) -> Unit
 ) : ListAdapter<NotesList, NotesListViewHolder>(NotesListDiffCallback()) {
@@ -33,15 +34,18 @@ class NotesListAdapter(
 
     private fun showPopupMenu(view: View, position: Int) {
         val popup = PopupMenu(view.context, view)
-        popup.inflate(R.menu.menu_edit_delete)
+        popup.inflate(R.menu.options_list)
         popup.setOnMenuItemClickListener { item ->
             val notesList = getItem(position)
             when (item.itemId) {
+                R.id.option_share -> {
+                    onShareList(notesList)
+                    true
+                }
                 R.id.option_edit -> {
                     onEditList(notesList)
                     true
                 }
-
                 R.id.option_delete -> {
                     onDeleteList(notesList.id)
                     true

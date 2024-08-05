@@ -55,8 +55,8 @@ class FriendListFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.loadFriends(userId)
-        viewModel.friends.observe(viewLifecycleOwner) { resource ->
+        viewModel.loadFriendships()
+        viewModel.friendships.observe(viewLifecycleOwner) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     binding.pb.visibility = View.VISIBLE
@@ -88,7 +88,7 @@ class FriendListFragment : Fragment() {
                         getString(R.string.label_friend_deleted),
                         Toast.LENGTH_LONG
                     ).show()
-                    viewModel.loadFriends(userId)
+                    viewModel.loadFriendships()
                 }
 
                 is Resource.Error -> {

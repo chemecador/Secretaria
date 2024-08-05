@@ -18,36 +18,14 @@ private val Context.dataStore by preferencesDataStore("secretaria")
 class UserPreferences @Inject constructor(@ApplicationContext private val context: Context) {
 
     companion object {
-        private val USER_ID_KEY = stringPreferencesKey("user_id")
-        private val USER_EMAIL_KEY = stringPreferencesKey("user_email")
         private val USERCODE_KEY = stringPreferencesKey("user_code")
         private val SHOW_WELCOME_MESSAGE_KEY = booleanPreferencesKey("show_welcome_message")
         private val THEME_KEY = stringPreferencesKey("theme_mode")
         private val NOTE_COLOR_KEY = intPreferencesKey("note_color")
     }
 
-    val userId: Flow<String?> = context.dataStore.data
-        .map { preferences ->
-            preferences[USER_ID_KEY]
-        }
-
-    val userEmail: Flow<String?> = context.dataStore.data
-        .map { preferences ->
-            preferences[USER_EMAIL_KEY]
-        }
-
-
-    suspend fun saveUserDetails(userId: String, email: String?) {
-        context.dataStore.edit { preferences ->
-            preferences[USER_ID_KEY] = userId
-            email?.let { preferences[USER_EMAIL_KEY] = it }
-        }
-    }
-
     suspend fun clearUserDetails() {
         context.dataStore.edit { preferences ->
-            preferences.remove(USER_ID_KEY)
-            preferences.remove(USER_EMAIL_KEY)
             preferences.remove(USERCODE_KEY)
         }
     }
@@ -78,7 +56,7 @@ class UserPreferences @Inject constructor(@ApplicationContext private val contex
 
     val noteColor: Flow<Int> = context.dataStore.data
         .map { preferences ->
-            preferences[NOTE_COLOR_KEY] ?: Color.MAGENTA // Color por defecto
+            preferences[NOTE_COLOR_KEY] ?: Color.GREEN
         }
 
     suspend fun saveNoteColor(color: Int) {

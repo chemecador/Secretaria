@@ -2,7 +2,7 @@ package com.chemecador.secretaria.data.services
 
 import android.app.Activity
 import com.chemecador.secretaria.R
-import com.chemecador.secretaria.core.constants.FirestoreConstants
+import com.chemecador.secretaria.core.constants.Constants
 import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
@@ -37,12 +37,12 @@ class AuthService @Inject constructor(
     suspend fun getUserCode(): String? {
         val user = firebaseAuth.currentUser ?: return null
         val userId = user.uid
-        val userDocRef = firestore.collection(FirestoreConstants.USERS).document(userId)
+        val userDocRef = firestore.collection(Constants.USERS).document(userId)
 
         return try {
             firestore.runTransaction { transaction ->
                 val snapshot = transaction.get(userDocRef)
-                val userCode = snapshot.getString(FirestoreConstants.USERCODE)
+                val userCode = snapshot.getString(Constants.USERCODE)
                 if (userCode.isNullOrEmpty()) {
                     runBlocking {
                         val newUserCode =
@@ -50,10 +50,10 @@ class AuthService @Inject constructor(
                         if (!snapshot.exists()) {
                             transaction.set(
                                 userDocRef,
-                                mapOf(FirestoreConstants.USERCODE to newUserCode)
+                                mapOf(Constants.USERCODE to newUserCode)
                             )
                         } else {
-                            transaction.update(userDocRef, FirestoreConstants.USERCODE, newUserCode)
+                            transaction.update(userDocRef, Constants.USERCODE, newUserCode)
                         }
                         newUserCode
                     }
@@ -74,18 +74,18 @@ class AuthService @Inject constructor(
         val yearLastTwoDigits = calendar.get(Calendar.YEAR) % 100
         val dateKey = "$yearLastTwoDigits$dayOfYear"
 
-        val docRef = firestore.collection(FirestoreConstants.USERCODES).document(dateKey)
+        val docRef = firestore.collection(Constants.USERCODES).document(dateKey)
 
         return try {
             firestore.runTransaction { transaction ->
                 val snapshot = transaction.get(docRef)
                 val newCounter = if (snapshot.exists()) {
-                    val currentCounter = snapshot.getLong(FirestoreConstants.COUNTER) ?: 0
+                    val currentCounter = snapshot.getLong(Constants.COUNTER) ?: 0
                     currentCounter + 1
                 } else {
                     1
                 }
-                transaction.set(docRef, mapOf(FirestoreConstants.COUNTER to newCounter))
+                transaction.set(docRef, mapOf(Constants.COUNTER to newCounter))
                 "$yearLastTwoDigits$dayOfYear$newCounter"
             }.await()
         } catch (e: Exception) {

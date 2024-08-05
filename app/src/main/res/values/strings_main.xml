@@ -2,6 +2,7 @@
 <resources>
 
     <!-- Actions -->
+    <string name="action_share">Compartir</string>
     <string name="action_edit">Editar</string>
     <string name="action_delete">Eliminar</string>
 
@@ -9,9 +10,11 @@
     <!-- Lists -->
     <string name="label_name_list">Dale un nombre a la lista</string>
     <string name="label_list_name">Nombre de la lista</string>
+    <string name="label_list_shared">Lista compartida correctamente</string>
     <string name="label_list_updated">Lista actualizada correctamente</string>
     <string name="label_list_deleted">Lista eliminada correctamente</string>
     <string name="label_checklist">Checklist</string>
+    <string name="label_share_with_friends">Compartir con un amigo</string>
 
     <!-- Notes -->
     <string name="label_name_note">Dale un nombre a la nota</string>
@@ -40,6 +43,8 @@
     <string name="error_deleting_list">Error al eliminar la lista: %1$s</string>
     <string name="error_deleting_note">Error al eliminar la nota: %1$s</string>
     <string name="error_invalid_userid">El usuario no es válido</string>
+    <string name="error_note_not_found">Nota no encontrada</string>
+    <string name="error_adding_contributor">Error al compartir la lista con tu amigo</string>
 
 
 </resources>

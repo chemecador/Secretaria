@@ -25,6 +25,10 @@ class NotesViewModel @Inject constructor(
     private val _noteColor = MutableLiveData<Int>()
     val noteColor: LiveData<Int> = _noteColor
 
+    private val _notes = MutableLiveData<Resource<List<Note>>>()
+    val notes: LiveData<Resource<List<Note>>> get() = _notes
+
+
     init {
         viewModelScope.launch {
             userPreferences.noteColor.collect { color ->
@@ -33,8 +37,12 @@ class NotesViewModel @Inject constructor(
         }
     }
 
-    fun getNotes(listId: String): LiveData<Resource<List<Note>>> {
-        return repository.getNotes(listId)
+    fun getNotes(listId: String) {
+        viewModelScope.launch {
+            _notes.postValue(Resource.Loading())
+            val result = repository.getNotes(listId)
+            _notes.postValue(result)
+        }
     }
 
     fun createNote(listId: String, note: Note) {

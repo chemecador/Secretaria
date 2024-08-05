@@ -27,7 +27,6 @@ class AddFriendFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: FriendsViewModel by viewModels()
     private lateinit var adapter: FriendRequestSentAdapter
-    private lateinit var userId: String
     private var sentFriendRequests: List<Friendship> = listOf()
 
     override fun onCreateView(
@@ -40,8 +39,6 @@ class AddFriendFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        userId = viewModel.getCurrentUserId() ?: return
         observeViewModel()
         setupUI()
     }
@@ -110,7 +107,7 @@ class AddFriendFragment : Fragment() {
                         R.string.label_friend_request_cancelled,
                         Toast.LENGTH_LONG
                     ).show()
-                    viewModel.loadFriendRequestsSent(userId)
+                    viewModel.loadFriendRequestsSent()
                 }
 
                 is Resource.Error -> {
@@ -139,7 +136,7 @@ class AddFriendFragment : Fragment() {
         }
 
         viewModel.loadUserCode()
-        viewModel.loadFriendRequestsSent(userId)
+        viewModel.loadFriendRequestsSent()
     }
 
     private fun isValidUsercode(friendCode: String) = try {

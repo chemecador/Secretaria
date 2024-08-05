@@ -10,11 +10,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import com.chemecador.secretaria.R
+import com.chemecador.secretaria.core.constants.Constants.LIST_ID
+import com.chemecador.secretaria.core.constants.Constants.NOTE_ID
+import com.chemecador.secretaria.core.constants.Constants.TITLE_KEY
+import com.chemecador.secretaria.core.constants.Constants.TITLE_REQUEST_KEY
 import com.chemecador.secretaria.data.model.Note
 import com.chemecador.secretaria.databinding.DialogConfirmDeleteBinding
 import com.chemecador.secretaria.databinding.FragmentNoteDetailBinding
-import com.chemecador.secretaria.ui.view.main.NotesFragment.Companion.NOTE_ID
-import com.chemecador.secretaria.ui.view.main.NotesListFragment.Companion.LIST_ID
 import com.chemecador.secretaria.ui.viewmodel.main.NoteDetailViewModel
 import com.chemecador.secretaria.utils.DateUtils
 import com.chemecador.secretaria.utils.Resource
@@ -113,10 +115,8 @@ class NoteDetailFragment : Fragment() {
             binding.tvError.isVisible = true
             return
         }
-
-        viewModel.getNote(
-            listId, note.id
-        ).observe(viewLifecycleOwner) { resource ->
+        viewModel.getNote(listId, note.id)
+        viewModel.note.observe(viewLifecycleOwner) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     binding.pb.isVisible = true
@@ -202,18 +202,15 @@ class NoteDetailFragment : Fragment() {
     private fun bindNote() {
 
         // Set the title for this fragment
-        setFragmentResult(MainActivity.TITLE_REQUEST_KEY, Bundle().apply {
-            putString(
-                MainActivity.TITLE_KEY,
-                note.title
-            )
+        setFragmentResult(TITLE_REQUEST_KEY, Bundle().apply {
+            putString(TITLE_KEY, note.title)
         })
 
         binding.tvTitle.text = note.title
         binding.etTitle.setText(note.title)
         binding.tvContent.text = note.content
         binding.etContent.setText(note.content)
-        binding.tvDate.text = note.date?.let { DateUtils.formatDetailed(it) }
+        binding.tvDate.text = DateUtils.formatDetailed(note.date)
     }
 
     override fun onDestroyView() {

@@ -3,8 +3,8 @@ package com.chemecador.secretaria.ui.viewmodel.login
 import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.chemecador.secretaria.data.services.AuthService
 import com.chemecador.secretaria.data.repositories.UserRepository
+import com.chemecador.secretaria.data.services.AuthService
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
@@ -52,11 +52,6 @@ class LoginViewModel @Inject constructor(
             if (result.isSuccess) {
                 val firebaseUser = result.getOrNull()
                 if (firebaseUser != null) {
-                    userRepository.saveUserDetails(
-                        userId = firebaseUser.uid,
-                        email = firebaseUser.email
-                    )
-
                     onLoginSuccess()
                     _loginError.emit(null)
                 }
@@ -81,11 +76,6 @@ class LoginViewModel @Inject constructor(
             if (result.isSuccess) {
                 val firebaseUser = result.getOrNull()
                 if (firebaseUser != null) {
-                    userRepository.saveUserDetails(
-                        userId = firebaseUser.uid,
-                        email = firebaseUser.email,
-                    )
-
                     onLoginSuccess()
                     _loginError.emit(null)
                 }
@@ -120,11 +110,6 @@ class LoginViewModel @Inject constructor(
                         if (result.isSuccess) {
                             val firebaseUser = result.getOrNull()
                             if (firebaseUser != null) {
-                                userRepository.saveUserDetails(
-                                    userId = firebaseUser.uid,
-                                    email = firebaseUser.email.orEmpty()
-                                )
-
                                 onVerificationComplete()
                                 _loginError.emit(null)
                             }
@@ -181,10 +166,6 @@ class LoginViewModel @Inject constructor(
             if (result.isSuccess) {
                 val firebaseUser = result.getOrNull()
                 if (firebaseUser != null) {
-                    userRepository.saveUserDetails(
-                        userId = firebaseUser.uid,
-                        email = firebaseUser.email.orEmpty()
-                    )
                     onSuccessVerification()
                     _loginError.emit(null)
                 }

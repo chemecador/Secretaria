@@ -23,7 +23,6 @@ class FriendRequestsFragment : Fragment() {
     private val viewModel: FriendsViewModel by viewModels()
     private lateinit var binding: FragmentFriendRequestBinding
     private lateinit var adapter: FriendRequestAdapter
-    private lateinit var userId: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,8 +46,7 @@ class FriendRequestsFragment : Fragment() {
         )
         binding.rv.layoutManager = LinearLayoutManager(context)
         binding.rv.adapter = adapter
-        userId = viewModel.getCurrentUserId() ?: return
-        viewModel.loadFriendRequests(userId)
+        viewModel.loadFriendRequests()
     }
 
     private fun observeViewModel() {
@@ -84,7 +82,7 @@ class FriendRequestsFragment : Fragment() {
                         R.string.label_friend_request_accepted,
                         Toast.LENGTH_LONG
                     ).show()
-                    viewModel.loadFriendRequests(userId)
+                    viewModel.loadFriendRequests()
                 }
 
                 is Resource.Error -> {
@@ -107,7 +105,7 @@ class FriendRequestsFragment : Fragment() {
                         R.string.label_friend_request_rejected,
                         Toast.LENGTH_LONG
                     ).show()
-                    viewModel.loadFriendRequests(userId)
+                    viewModel.loadFriendRequests()
                 }
 
                 is Resource.Error -> {

@@ -5,6 +5,7 @@ import com.chemecador.secretaria.data.local.UserPreferences
 import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.chemecador.secretaria.data.provider.ResourceProviderImpl
 import com.chemecador.secretaria.data.repositories.UserRepository
+import com.chemecador.secretaria.data.services.AuthService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,6 +30,7 @@ object LocalModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(userPreferences: UserPreferences) = UserRepository(userPreferences)
+    fun provideUserRepository(userPreferences: UserPreferences, authService: AuthService) =
+        UserRepository(userPreferences, authService)
 
 }

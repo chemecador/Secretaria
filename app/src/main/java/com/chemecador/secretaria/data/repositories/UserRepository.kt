@@ -1,24 +1,39 @@
 package com.chemecador.secretaria.data.repositories
 
 import com.chemecador.secretaria.data.local.UserPreferences
+import com.chemecador.secretaria.data.services.AuthService
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class UserRepository @Inject constructor(
-    private val userPreferences: UserPreferences
+    private val userPreferences: UserPreferences,
+    private val authService: AuthService
 ) {
 
-    val userId: Flow<String?> = userPreferences.userId
-    val userEmail: Flow<String?> = userPreferences.userEmail
+    val userId: Flow<String?> = flow {
+        val user = authService.getUser()
+        if (user != null) {
+            emit(user.uid)
+        } else {
+            emit(null)
+        }
+    }
 
-    suspend fun saveUserDetails(userId: String, email: String?) {
-        userPreferences.saveUserDetails(userId, email)
+    val userEmail: Flow<String?> = flow {
+        val user = authService.getUser()
+        if (user != null) {
+            emit(user.email)
+        } else {
+            emit(null)
+        }
     }
 
     suspend fun clearUserDetails() {
         userPreferences.clearUserDetails()
     }
-
 
     suspend fun dontShowAgain() {
         userPreferences.dontShowAgain()

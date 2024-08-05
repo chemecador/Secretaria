@@ -11,8 +11,10 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.chemecador.secretaria.R
-import com.chemecador.secretaria.ui.view.friends.FriendsActivity
+import com.chemecador.secretaria.core.constants.Constants.TITLE_KEY
+import com.chemecador.secretaria.core.constants.Constants.TITLE_REQUEST_KEY
 import com.chemecador.secretaria.databinding.ActivityMainBinding
+import com.chemecador.secretaria.ui.view.friends.FriendsActivity
 import com.chemecador.secretaria.ui.view.settings.SettingsActivity
 import com.chemecador.secretaria.ui.viewmodel.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -124,10 +126,5 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    companion object {
-        const val TITLE_REQUEST_KEY = "titleRequestKey"
-        const val TITLE_KEY = "titleKey"
     }
 }

@@ -13,13 +13,15 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chemecador.secretaria.R
+import com.chemecador.secretaria.core.constants.Constants.LIST_ID
+import com.chemecador.secretaria.core.constants.Constants.LIST_NAME
+import com.chemecador.secretaria.core.constants.Constants.TITLE_KEY
+import com.chemecador.secretaria.core.constants.Constants.TITLE_REQUEST_KEY
 import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.databinding.DialogConfirmDeleteBinding
 import com.chemecador.secretaria.databinding.DialogCreateListBinding
 import com.chemecador.secretaria.databinding.FragmentNotesListBinding
 import com.chemecador.secretaria.ui.view.login.LoginActivity
-import com.chemecador.secretaria.ui.view.main.MainActivity.Companion.TITLE_KEY
-import com.chemecador.secretaria.ui.view.main.MainActivity.Companion.TITLE_REQUEST_KEY
 import com.chemecador.secretaria.ui.view.rv.adapters.main.NotesListAdapter
 import com.chemecador.secretaria.ui.viewmodel.main.NotesListViewModel
 import com.chemecador.secretaria.utils.Resource
@@ -88,14 +90,21 @@ class NotesListFragment : Fragment() {
     private fun initRV() {
         adapter = NotesListAdapter(
             onListClick = { listId, name -> onListClick(listId, name) },
+            onShareList = { list -> shareList(list) },
             onEditList = { updatedList -> editList(updatedList) },
-            onDeleteList = { listId -> onDeleteList(listId) })
+            onDeleteList = { listId -> deleteList(listId) })
 
         binding.rv.layoutManager = LinearLayoutManager(context)
         binding.rv.adapter = adapter
     }
 
-    private fun onDeleteList(listId: String) {
+    private fun shareList(list: NotesList) {
+        val dialog = ShareListDialogFragment.newInstance(list.id)
+        dialog.setTargetFragment(this, 0)
+        dialog.show(parentFragmentManager, "ShareListDialogFragment")
+    }
+
+    private fun deleteList(listId: String) {
         val dialogBinding = DialogConfirmDeleteBinding.inflate(layoutInflater)
         dialogBinding.tvMsg.text = getString(R.string.label_confirm_delete_list)
         val dialog = MaterialAlertDialogBuilder(requireContext())
@@ -105,29 +114,9 @@ class NotesListFragment : Fragment() {
         dialogBinding.btnCancel.setOnClickListener {
             dialog.dismiss()
         }
+
         dialogBinding.btnConfirm.setOnClickListener {
-            viewModel.deleteList(listId).observe(viewLifecycleOwner) { result ->
-                when (result) {
-                    is Resource.Success -> {
-                        Toast.makeText(context, R.string.label_list_deleted, Toast.LENGTH_SHORT)
-                            .show()
-                        binding.pb.isVisible = false
-                    }
-
-                    is Resource.Error -> {
-                        binding.pb.isVisible = false
-                        Toast.makeText(
-                            context,
-                            getString(R.string.error_deleting_list, result.message),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-
-                    is Resource.Loading -> {
-                        binding.pb.isVisible = true
-                    }
-                }
-            }
+            viewModel.deleteList(listId)
             dialog.dismiss()
         }
     }
@@ -199,6 +188,7 @@ class NotesListFragment : Fragment() {
                 }
             }
         }
+
         viewModel.updateStatus.observe(viewLifecycleOwner) { status ->
             when (status) {
                 is Resource.Loading -> {
@@ -208,6 +198,7 @@ class NotesListFragment : Fragment() {
 
                 is Resource.Success -> {
                     binding.pb.isVisible = false
+                    Toast.makeText(context, R.string.label_list_updated, Toast.LENGTH_SHORT).show()
                 }
 
                 is Resource.Error -> {
@@ -215,6 +206,29 @@ class NotesListFragment : Fragment() {
                     Toast.makeText(
                         context,
                         getString(R.string.error_updating_list, status.message),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+
+        viewModel.deleteStatus.observe(viewLifecycleOwner) { status ->
+            when (status) {
+                is Resource.Loading -> {
+                    binding.pb.isVisible = true
+                    binding.tvEmpty.isVisible = false
+                }
+
+                is Resource.Success -> {
+                    binding.pb.isVisible = false
+                    Toast.makeText(context, R.string.label_list_deleted, Toast.LENGTH_SHORT).show()
+                }
+
+                is Resource.Error -> {
+                    binding.pb.isVisible = false
+                    Toast.makeText(
+                        context,
+                        getString(R.string.error_deleting_list, status.message),
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -236,11 +250,5 @@ class NotesListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-
-    companion object {
-        const val LIST_ID = "listId"
-        const val LIST_NAME = "listName"
     }
 }

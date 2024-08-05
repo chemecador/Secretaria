@@ -12,13 +12,14 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chemecador.secretaria.R
+import com.chemecador.secretaria.core.constants.Constants.LIST_ID
+import com.chemecador.secretaria.core.constants.Constants.LIST_NAME
+import com.chemecador.secretaria.core.constants.Constants.NOTE_ID
+import com.chemecador.secretaria.core.constants.Constants.TITLE_KEY
+import com.chemecador.secretaria.core.constants.Constants.TITLE_REQUEST_KEY
 import com.chemecador.secretaria.data.model.Note
 import com.chemecador.secretaria.databinding.DialogCreateNoteBinding
 import com.chemecador.secretaria.databinding.FragmentNotesBinding
-import com.chemecador.secretaria.ui.view.main.MainActivity.Companion.TITLE_KEY
-import com.chemecador.secretaria.ui.view.main.MainActivity.Companion.TITLE_REQUEST_KEY
-import com.chemecador.secretaria.ui.view.main.NotesListFragment.Companion.LIST_ID
-import com.chemecador.secretaria.ui.view.main.NotesListFragment.Companion.LIST_NAME
 import com.chemecador.secretaria.ui.view.rv.adapters.main.NotesAdapter
 import com.chemecador.secretaria.ui.viewmodel.main.NotesViewModel
 import com.chemecador.secretaria.utils.Resource
@@ -100,7 +101,8 @@ class NotesFragment : Fragment() {
         if (listId.isEmpty()) {
             return
         }
-        viewModel.getNotes(listId).observe(viewLifecycleOwner) { resource ->
+        viewModel.getNotes(listId)
+        viewModel.notes.observe(viewLifecycleOwner) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     binding.pb.isVisible = true
@@ -171,9 +173,5 @@ class NotesFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        const val NOTE_ID = "noteId"
     }
 }
