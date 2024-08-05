@@ -60,6 +60,7 @@ class FriendRequestsFragment : Fragment() {
 
                 is Resource.Success -> {
                     binding.pb.isVisible = false
+                    binding.tvNoRequests.isVisible = resource.data.isNullOrEmpty()
                     adapter.submitList(resource.data)
                 }
 
