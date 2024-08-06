@@ -14,7 +14,7 @@ import com.chemecador.secretaria.core.constants.Constants.USERS
 import com.chemecador.secretaria.data.model.Friend
 import com.chemecador.secretaria.data.model.Friendship
 import com.chemecador.secretaria.data.provider.ResourceProvider
-import com.chemecador.secretaria.data.services.AuthService
+import com.chemecador.secretaria.data.repositories.UserRepository
 import com.chemecador.secretaria.utils.Resource
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -32,26 +32,24 @@ import javax.inject.Singleton
 @Singleton
 class FriendsRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
-    private val authService: AuthService,
+    private val userRepository: UserRepository,
     private val res: ResourceProvider
 ) : FriendsRepository {
 
     override fun getFriends(): Flow<Resource<List<Friend>>> = flow {
         emit(Resource.Loading())
         try {
-            val user =
-                authService.getUser()
-                    ?: throw IllegalArgumentException(res.getString(R.string.error_user_not_auth))
+            val userId = userRepository.getUserId()
             val snapshot = firestore.collection(FRIENDSHIPS)
-                .whereEqualTo(RECEIVER_ID, user.uid)
+                .whereEqualTo(RECEIVER_ID, userId)
                 .whereNotEqualTo(ACCEPTANCE_DATE, null)
                 .get()
                 .await()
             val friends = snapshot.documents.mapNotNull { document ->
                 val friendship = document.toObject(Friendship::class.java)?.copy(id = document.id)
                 friendship?.let {
-                    val friendName = if (user.uid == it.senderId) it.receiverName else it.senderName
-                    val friendId = if (user.uid == it.senderId) it.receiverId else it.senderId
+                    val friendName = if (userId == it.senderId) it.receiverName else it.senderName
+                    val friendId = if (userId == it.senderId) it.receiverId else it.senderId
                     Friend(id = friendId, name = friendName)
                 }
             }
@@ -65,23 +63,33 @@ class FriendsRepositoryImpl @Inject constructor(
     override fun getFriendships(): Flow<Resource<List<Friendship>>> = flow {
         emit(Resource.Loading())
         try {
-            val user =
-                authService.getUser()
-                    ?: throw IllegalArgumentException(res.getString(R.string.error_user_not_auth))
-            val snapshot = firestore.collection(FRIENDSHIPS)
-                .whereEqualTo(RECEIVER_ID, user.uid)
+            val userId = userRepository.getUserId() ?: throw IllegalArgumentException("User ID is null")
+
+            val senderQuery = firestore.collection(FRIENDSHIPS)
+                .whereEqualTo(SENDER_ID, userId)
                 .whereNotEqualTo(ACCEPTANCE_DATE, null)
                 .get()
                 .await()
-            val friends = snapshot.documents.mapNotNull { document ->
+
+            val receiverQuery = firestore.collection(FRIENDSHIPS)
+                .whereEqualTo(RECEIVER_ID, userId)
+                .whereNotEqualTo(ACCEPTANCE_DATE, null)
+                .get()
+                .await()
+
+            val friends = senderQuery.documents.mapNotNull { document ->
+                document.toObject(Friendship::class.java)?.copy(id = document.id)
+            } + receiverQuery.documents.mapNotNull { document ->
                 document.toObject(Friendship::class.java)?.copy(id = document.id)
             }
-            emit(Resource.Success(friends))
+
+            emit(Resource.Success(friends.distinctBy { it.id }))
         } catch (e: Exception) {
             Timber.e(e)
             emit(Resource.Error(res.getString(R.string.error_fetching_friends)))
         }
     }
+
 
 
     override suspend fun deleteFriend(friendshipId: String): Resource<Unit> {
@@ -97,11 +105,9 @@ class FriendsRepositoryImpl @Inject constructor(
     override fun getPendingFriendRequests(): Flow<Resource<List<Friendship>>> = flow {
         emit(Resource.Loading())
         try {
-            val user =
-                authService.getUser()
-                    ?: throw IllegalArgumentException(res.getString(R.string.error_user_not_auth))
+            val userId = userRepository.getUserId()
             val snapshot = firestore.collection(FRIENDSHIPS)
-                .whereEqualTo(RECEIVER_ID, user.uid)
+                .whereEqualTo(RECEIVER_ID, userId)
                 .whereEqualTo(ACCEPTANCE_DATE, null)
                 .get()
                 .await()
@@ -118,10 +124,8 @@ class FriendsRepositoryImpl @Inject constructor(
 
     override suspend fun acceptFriendRequest(requestId: String): Resource<Unit> {
         return try {
-            val user = authService.getUser()
-                ?: throw IllegalArgumentException(res.getString(R.string.error_user_not_auth))
-            val receiverName = user.email ?: user.displayName ?: user.phoneNumber
-            ?: throw IllegalArgumentException(res.getString(R.string.error_user_not_found))
+
+            val receiverName = userRepository.getUsername()
 
             val updates = mapOf(
                 ACCEPTANCE_DATE to FieldValue.serverTimestamp(),
@@ -141,15 +145,13 @@ class FriendsRepositoryImpl @Inject constructor(
 
     override suspend fun rejectFriendRequest(requestId: String): Resource<Unit> {
         return try {
-            val currentUser =
-                authService.getUser()
-                    ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
+            val userId = userRepository.getUserId()
 
             val docRef = firestore.collection(FRIENDSHIPS).document(requestId)
             val document = docRef.get().await()
             val receiverId = document.getString(RECEIVER_ID)
 
-            if (currentUser.uid != receiverId)
+            if (userId != receiverId)
                 return Resource.Error(res.getString(R.string.error_rejecting_friend_request))
 
             docRef.delete().await()
@@ -163,15 +165,13 @@ class FriendsRepositoryImpl @Inject constructor(
 
     override suspend fun cancelFriendRequest(requestId: String): Resource<Unit> {
         return try {
-            val currentUser =
-                authService.getUser()
-                    ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
+            val userId = userRepository.getUserId()
 
             val docRef = firestore.collection(FRIENDSHIPS).document(requestId)
             val document = docRef.get().await()
             val senderId = document.getString(SENDER_ID)
 
-            if (currentUser.uid != senderId)
+            if (userId != senderId)
                 return Resource.Error(res.getString(R.string.error_rejecting_friend_request))
 
             docRef.delete().await()
@@ -186,12 +186,8 @@ class FriendsRepositoryImpl @Inject constructor(
 
     override suspend fun sendFriendRequest(friendCode: String): Resource<Unit> {
         return try {
-            val user =
-                authService.getUser()
-                    ?: throw IllegalArgumentException(res.getString(R.string.error_user_not_auth))
-
-            val senderName = user.email ?: user.displayName ?: user.phoneNumber
-            ?: throw IllegalArgumentException(res.getString(R.string.error_user_not_found))
+            val userId = userRepository.getUserId()
+            val senderName = userRepository.getUsername()
 
             val friendQuerySnapshot = firestore.collection(USERS)
                 .whereEqualTo(Constants.USERCODE, friendCode)
@@ -205,7 +201,7 @@ class FriendsRepositoryImpl @Inject constructor(
             val friendId = friendDoc.id
 
             val friendship = hashMapOf(
-                SENDER_ID to user.uid,
+                SENDER_ID to userId,
                 SENDER_NAME to senderName,
                 RECEIVER_ID to friendId,
                 RECEIVER_CODE to friendCode,
@@ -230,13 +226,10 @@ class FriendsRepositoryImpl @Inject constructor(
 
     override suspend fun getFriendRequestsSent(): Flow<List<Friendship>> {
 
-        val user =
-            authService.getUser()
-                ?: throw IllegalArgumentException(res.getString(R.string.error_user_not_auth))
-
+        val userId = userRepository.getUserId()
         return callbackFlow {
             val subscription = firestore.collection(FRIENDSHIPS)
-                .whereEqualTo(SENDER_ID, user.uid)
+                .whereEqualTo(SENDER_ID, userId)
                 .whereEqualTo(ACCEPTANCE_DATE, null)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) {
