@@ -72,7 +72,9 @@ class NoteDetailFragment : Fragment() {
         }
         note = note.copy(
             title = title,
-            content = binding.etContent.text.toString()
+            content = binding.etContent.text.toString(),
+            date = com.google.firebase.Timestamp.now(),
+            creator = viewModel.getUsername()
         )
         viewModel.editNote(listId, note)
     }

@@ -6,7 +6,6 @@ import com.chemecador.secretaria.data.repositories.friends.FriendsRepository
 import com.chemecador.secretaria.data.repositories.friends.FriendsRepositoryImpl
 import com.chemecador.secretaria.data.repositories.main.MainRepository
 import com.chemecador.secretaria.data.repositories.main.MainRepositoryImpl
-import com.chemecador.secretaria.data.services.AuthService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -40,8 +39,8 @@ object NetworkModule {
     @Singleton
     fun provideFriendsRepository(
         firestore: FirebaseFirestore,
-        authService: AuthService,
+        userRepository: UserRepository,
         res: ResourceProvider
     ): FriendsRepository =
-        FriendsRepositoryImpl(firestore, authService, res)
+        FriendsRepositoryImpl(firestore, userRepository, res)
 }

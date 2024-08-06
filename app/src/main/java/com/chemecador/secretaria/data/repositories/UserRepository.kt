@@ -3,6 +3,7 @@ package com.chemecador.secretaria.data.repositories
 import com.chemecador.secretaria.data.local.UserPreferences
 import com.chemecador.secretaria.data.services.AuthService
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -40,4 +41,17 @@ class UserRepository @Inject constructor(
     }
 
     fun shouldShowWelcomeMessage() = userPreferences.shouldShowWelcomeMessage()
+
+
+    fun getUserId(): String? {
+        return authService.getUser()?.uid
+    }
+    fun getUsername(): String? {
+        val user = authService.getUser()
+        return user?.email ?: user?.displayName ?: user?.phoneNumber
+    }
+
+    suspend fun getColor(): Int? {
+        return userPreferences.noteColor.firstOrNull()
+    }
 }

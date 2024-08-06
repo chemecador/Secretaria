@@ -110,7 +110,9 @@ class MainRepositoryImpl @Inject constructor(
             val newNote = note.copy(
                 id = firestore.collection(USERS).document(userId)
                     .collection(NOTES_LIST).document(listId)
-                    .collection(NOTES).document().id
+                    .collection(NOTES).document().id,
+                creator = note.creator,
+                color = note.color
             )
             firestore.collection(USERS).document(userId)
                 .collection(NOTES_LIST).document(listId)

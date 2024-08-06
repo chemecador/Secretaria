@@ -129,9 +129,7 @@ class NotesFragment : Fragment() {
                 }
             }
         }
-        viewModel.noteColor.observe(viewLifecycleOwner) { color ->
-            adapter.updateNoteColor(color)
-        }
+
         viewModel.error.observe(viewLifecycleOwner) { error ->
             Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG).show()
         }
@@ -154,7 +152,9 @@ class NotesFragment : Fragment() {
                         Note(
                             title = noteTitle,
                             content = noteContent,
-                            date = Timestamp.now()
+                            date = Timestamp.now(),
+                            creator = viewModel.getUsername(),
+                            color = viewModel.getColor()
                         )
                     )
                     dismiss()

@@ -1,10 +1,12 @@
 package com.chemecador.secretaria.ui.viewmodel.main
 
+import android.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chemecador.secretaria.data.model.Note
+import com.chemecador.secretaria.data.repositories.UserRepository
 import com.chemecador.secretaria.data.repositories.main.MainRepository
 import com.chemecador.secretaria.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NoteDetailViewModel @Inject constructor(
-    private val repository: MainRepository
+    private val repository: MainRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _note = MutableLiveData<Resource<Note>>()
@@ -48,4 +51,7 @@ class NoteDetailViewModel @Inject constructor(
             _updateStatus.postValue(result)
         }
     }
+
+
+    fun getUsername() = userRepository.getUsername() ?: ""
 }

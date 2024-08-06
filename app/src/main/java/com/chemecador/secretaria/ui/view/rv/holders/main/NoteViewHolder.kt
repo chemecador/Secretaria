@@ -11,14 +11,13 @@ class NoteViewHolder(private val binding: ListItemNoteBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
 
-    fun bind(note: Note, color: Int) {
+    fun bind(note: Note) {
         binding.tvTitle.text = note.title
         binding.tvContent.text = note.content
         binding.tvContent.isVisible = note.content.isNotBlank()
         binding.tvDate.text = DateUtils.formatSimple(note.date)
-        if (color != 0) {
-            binding.cv.setBackgroundColor(color)
-        }
+        binding.cv.setBackgroundColor(note.color)
+
     }
 
 }
