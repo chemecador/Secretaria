@@ -35,9 +35,9 @@
     <string name="label_empty_notes">No hay notas</string>
 
     <!-- Error -->
-    <string name="error_retrieving_lists">Error al obtener las listas</string>
-    <string name="error_retrieving_notes">No se han podido obtener las notas</string>
-    <string name="error_retrieving_note">Error al obtener la información de la nota</string>
+    <string name="error_fetching_lists">Error al obtener las listas</string>
+    <string name="error_fetching_notes">No se han podido obtener las notas</string>
+    <string name="error_fetching_note">Error al obtener la información de la nota</string>
     <string name="error_updating_list">Error al actualizar la lista: %1$s</string>
     <string name="error_updating_note">Error al actualizar la nota: %1$s</string>
     <string name="error_deleting_list">Error al eliminar la lista: %1$s</string>
