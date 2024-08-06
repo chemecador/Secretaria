@@ -33,27 +33,22 @@ class MainRepositoryImpl @Inject constructor(
 
     override suspend fun getLists(): Resource<List<NotesList>> {
         return try {
-            val userId = getUserId()
-            if (userId == null) {
-                Timber.e("UserID is null ??")
-                return Resource.Error(res.getString(R.string.error_unknown))
-            }
-            val snapshot = firestore.collection(USERS).document(userId).collection(NOTES_LIST)
-                .orderBy(DATE, Query.Direction.DESCENDING)
+            val userId = getUserId() ?: throw IllegalArgumentException("User ID is null")
+            val snapshot = firestore.collectionGroup(NOTES_LIST)
+                .whereArrayContains(CONTRIBUTORS, userId)
                 .get()
                 .await()
-
             val lists = snapshot.documents.mapNotNull { documentSnapshot ->
-                documentSnapshot.toObject(NotesList::class.java)?.copy(
-                    id = documentSnapshot.id
-                )
+                documentSnapshot.toObject(NotesList::class.java)?.copy(id = documentSnapshot.id)
             }
             Resource.Success(lists)
         } catch (e: Exception) {
             Timber.e(e)
-            Resource.Error(res.getString(R.string.error_unknown))
+            Resource.Error(res.getString(R.string.error_fetching_lists))
         }
     }
+
+
 
     override suspend fun getNotes(listId: String): Resource<List<Note>> {
         return try {
@@ -92,7 +87,7 @@ class MainRepositoryImpl @Inject constructor(
                 id = firestore.collection(USERS).document(userId).collection(NOTES_LIST)
                     .document().id,
                 name = name,
-                observers = listOf(),
+                contributors = listOf(userId),
                 date = Timestamp.now()
             )
             firestore.collection(USERS).document(userId).collection(NOTES_LIST)

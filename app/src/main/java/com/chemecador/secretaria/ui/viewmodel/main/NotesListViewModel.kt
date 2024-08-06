@@ -30,9 +30,14 @@ class NotesListViewModel @Inject constructor(
     private val _shareListStatus = MutableLiveData<Resource<Unit>>()
     val shareListStatus: LiveData<Resource<Unit>> get() = _shareListStatus
 
-    val notesLists: LiveData<Resource<List<NotesList>>> = liveData {
-        emit(Resource.Loading())
-        emit(repository.getLists())
+    private val _notesLists = MutableLiveData<Resource<List<NotesList>>>()
+    val notesLists: LiveData<Resource<List<NotesList>>> get() = _notesLists
+
+    init {
+        viewModelScope.launch {
+            _notesLists.postValue(Resource.Loading())
+            _notesLists.postValue(repository.getLists())
+        }
     }
 
     fun createList(name: String) {
@@ -40,9 +45,12 @@ class NotesListViewModel @Inject constructor(
             val result = repository.createList(name)
             if (result is Resource.Error) {
                 _error.postValue(result.message ?: "Error")
+            } else {
+                _notesLists.postValue(repository.getLists())
             }
         }
     }
+
 
     fun shareListWithFriend(listId: String, friendId: String) {
         viewModelScope.launch {
@@ -64,7 +72,11 @@ class NotesListViewModel @Inject constructor(
         viewModelScope.launch {
             _deleteStatus.postValue(Resource.Loading())
             val result = repository.deleteList(listId)
-            _updateStatus.postValue(result)
+            _deleteStatus.postValue(result)
+            if (result is Resource.Success) {
+                _notesLists.postValue(repository.getLists())
+            }
         }
     }
+
 }

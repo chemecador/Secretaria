@@ -50,6 +50,8 @@ class NotesViewModel @Inject constructor(
             val result = repository.createNote(listId, note)
             if (result is Resource.Error) {
                 _error.postValue(result.message ?: "Error")
+            } else {
+                _notes.postValue(repository.getNotes(listId))
             }
         }
     }

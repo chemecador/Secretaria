@@ -5,7 +5,7 @@ import com.google.firebase.Timestamp
 data class NotesList(
     val id: String = "",
     val name: String = "",
-    val observers: List<String> = emptyList(),
+    val contributors: List<String> = emptyList(),
     val date: Timestamp = Timestamp.now(),
     val type: String = "",
     val notes: List<Note> = emptyList()
