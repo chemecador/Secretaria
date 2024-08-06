@@ -14,7 +14,7 @@
     <string name="label_list_updated">Lista actualizada correctamente</string>
     <string name="label_list_deleted">Lista eliminada correctamente</string>
     <string name="label_checklist">Checklist</string>
-    <string name="label_share_with_friends">Compartir con un amigo</string>
+    <string name="label_share_with_friends">¿Con quién quieres compartir esta lista?</string>
 
     <!-- Notes -->
     <string name="label_name_note">Dale un nombre a la nota</string>

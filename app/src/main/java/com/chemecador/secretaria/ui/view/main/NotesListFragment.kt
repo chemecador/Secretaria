@@ -54,11 +54,10 @@ class NotesListFragment : Fragment() {
         setFragmentResult(TITLE_REQUEST_KEY, Bundle().apply {
             putString(TITLE_KEY, getString(R.string.title_noteslist))
         })
-
     }
 
     private fun initUI() {
-        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         initRV()
         binding.fab.setOnClickListener {
             showCreateListDialog()
@@ -100,8 +99,7 @@ class NotesListFragment : Fragment() {
 
     private fun shareList(list: NotesList) {
         val dialog = ShareListDialogFragment.newInstance(list.id)
-        dialog.setTargetFragment(this, 0)
-        dialog.show(parentFragmentManager, "ShareListDialogFragment")
+        dialog.show(parentFragmentManager, ShareListDialogFragment::class.java.simpleName)
     }
 
     private fun deleteList(listId: String) {
