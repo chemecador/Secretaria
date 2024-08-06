@@ -10,6 +10,7 @@ import com.chemecador.secretaria.core.constants.Constants.RECEIVER_NAME
 import com.chemecador.secretaria.core.constants.Constants.REQUEST_DATE
 import com.chemecador.secretaria.core.constants.Constants.SENDER_ID
 import com.chemecador.secretaria.core.constants.Constants.SENDER_NAME
+import com.chemecador.secretaria.core.constants.Constants.USERCODE
 import com.chemecador.secretaria.core.constants.Constants.USERS
 import com.chemecador.secretaria.data.model.Friend
 import com.chemecador.secretaria.data.model.Friendship
@@ -183,6 +184,26 @@ class FriendsRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun checkIfAlreadyFriends(friendId: String): Boolean {
+        val userId = userRepository.getUserId()
+        val snapshot = firestore.collection(FRIENDSHIPS)
+            .whereIn(SENDER_ID, listOf(userId, friendId))
+            .whereIn(RECEIVER_ID, listOf(userId, friendId))
+            .whereNotEqualTo(ACCEPTANCE_DATE, null)
+            .get()
+            .await()
+        return !snapshot.isEmpty
+    }
+
+    override suspend fun getUserIdByUserCode(friendCode: String): String? {
+        val snapshot = firestore.collection(USERS)
+            .whereEqualTo(USERCODE, friendCode)
+            .get()
+            .await()
+        return if (snapshot.isEmpty) null else snapshot.documents.first().id
+    }
+
+
 
     override suspend fun sendFriendRequest(friendCode: String): Resource<Unit> {
         return try {
@@ -190,7 +211,7 @@ class FriendsRepositoryImpl @Inject constructor(
             val senderName = userRepository.getUsername()
 
             val friendQuerySnapshot = firestore.collection(USERS)
-                .whereEqualTo(Constants.USERCODE, friendCode)
+                .whereEqualTo(USERCODE, friendCode)
                 .get()
                 .await()
 

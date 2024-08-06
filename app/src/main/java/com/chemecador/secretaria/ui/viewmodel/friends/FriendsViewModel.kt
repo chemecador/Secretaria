@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chemecador.secretaria.R
 import com.chemecador.secretaria.data.local.UserPreferences
 import com.chemecador.secretaria.data.model.Friend
 import com.chemecador.secretaria.data.model.Friendship
+import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.chemecador.secretaria.data.repositories.friends.FriendsRepository
 import com.chemecador.secretaria.data.services.AuthService
 import com.chemecador.secretaria.utils.Resource
@@ -21,7 +23,8 @@ import javax.inject.Inject
 class FriendsViewModel @Inject constructor(
     private val repository: FriendsRepository,
     private val userPreferences: UserPreferences,
-    private val authService: AuthService
+    private val authService: AuthService,
+    private val res: ResourceProvider
 ) : ViewModel() {
 
     private val _friendships = MutableLiveData<Resource<List<Friendship>>>()
@@ -104,11 +107,21 @@ class FriendsViewModel @Inject constructor(
     fun sendFriendRequest(friendCode: String) {
         viewModelScope.launch {
             _addFriendStatus.value = Resource.Loading()
-            val result = repository.sendFriendRequest(friendCode)
-            _addFriendStatus.value = result
-            if (result is Resource.Success) {
-                loadFriendRequestsSent()
+            val friendId = repository.getUserIdByUserCode(friendCode) ?: run {
+                _addFriendStatus.value =
+                    Resource.Error(res.getString(R.string.error_user_not_found))
+                return@launch
             }
+
+            val alreadyFriends = repository.checkIfAlreadyFriends(friendId)
+            if (alreadyFriends) {
+                _addFriendStatus.value =
+                    Resource.Error(res.getString(R.string.error_already_friends))
+                return@launch
+            }
+
+            val result = repository.sendFriendRequest(friendId)
+            _addFriendStatus.value = result
         }
     }
 

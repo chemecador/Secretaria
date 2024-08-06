@@ -39,6 +39,7 @@
     <string name="error_usercode_not_found">Ese código de amigo no existe</string>
     <string name="error_invalid_friendcode">El código de amigo no es válido</string>
     <string name="error_friend_request_already_sent">Ya has enviado una petición de amistad a este usuario</string>
+    <string name="error_already_friends">¡Ya sois amigos!</string>
     <string name="error_deleting_friend">Error al eliminar el amigo</string>
     <string name="error_fetching_friend_requests">Error al obtener las peticiones de amistad</string>
     <string name="error_accepting_friend_request">Error al aceptar la petición de amistad</string>
