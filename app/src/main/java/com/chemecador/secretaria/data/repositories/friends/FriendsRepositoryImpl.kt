@@ -1,7 +1,6 @@
 package com.chemecador.secretaria.data.repositories.friends
 
 import com.chemecador.secretaria.R
-import com.chemecador.secretaria.core.constants.Constants
 import com.chemecador.secretaria.core.constants.Constants.ACCEPTANCE_DATE
 import com.chemecador.secretaria.core.constants.Constants.FRIENDSHIPS
 import com.chemecador.secretaria.core.constants.Constants.RECEIVER_CODE
@@ -19,12 +18,8 @@ import com.chemecador.secretaria.data.repositories.UserRepository
 import com.chemecador.secretaria.utils.Resource
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
@@ -40,31 +35,50 @@ class FriendsRepositoryImpl @Inject constructor(
     override fun getFriends(): Flow<Resource<List<Friend>>> = flow {
         emit(Resource.Loading())
         try {
-            val userId = userRepository.getUserId()
-            val snapshot = firestore.collection(FRIENDSHIPS)
+            val userId =
+                userRepository.getUserId() ?: throw IllegalArgumentException("User ID is null")
+
+            val senderQuery = firestore.collection(FRIENDSHIPS)
+                .whereEqualTo(SENDER_ID, userId)
+                .whereNotEqualTo(ACCEPTANCE_DATE, null)
+                .get()
+                .await()
+
+            val receiverQuery = firestore.collection(FRIENDSHIPS)
                 .whereEqualTo(RECEIVER_ID, userId)
                 .whereNotEqualTo(ACCEPTANCE_DATE, null)
                 .get()
                 .await()
-            val friends = snapshot.documents.mapNotNull { document ->
+
+            val friends = senderQuery.documents.mapNotNull { document ->
                 val friendship = document.toObject(Friendship::class.java)?.copy(id = document.id)
                 friendship?.let {
-                    val friendName = if (userId == it.senderId) it.receiverName else it.senderName
-                    val friendId = if (userId == it.senderId) it.receiverId else it.senderId
+                    val friendName = it.receiverName
+                    val friendId = it.receiverId
+                    Friend(id = friendId, name = friendName)
+                }
+            } + receiverQuery.documents.mapNotNull { document ->
+                val friendship = document.toObject(Friendship::class.java)?.copy(id = document.id)
+                friendship?.let {
+                    val friendName = it.senderName
+                    val friendId = it.senderId
                     Friend(id = friendId, name = friendName)
                 }
             }
-            emit(Resource.Success(friends))
+
+            emit(Resource.Success(friends.distinctBy { it.id }))
         } catch (e: Exception) {
             Timber.e(e)
             emit(Resource.Error(res.getString(R.string.error_fetching_friends)))
         }
     }
 
+
     override fun getFriendships(): Flow<Resource<List<Friendship>>> = flow {
         emit(Resource.Loading())
         try {
-            val userId = userRepository.getUserId() ?: throw IllegalArgumentException("User ID is null")
+            val userId =
+                userRepository.getUserId() ?: throw IllegalArgumentException("User ID is null")
 
             val senderQuery = firestore.collection(FRIENDSHIPS)
                 .whereEqualTo(SENDER_ID, userId)
@@ -90,7 +104,6 @@ class FriendsRepositoryImpl @Inject constructor(
             emit(Resource.Error(res.getString(R.string.error_fetching_friends)))
         }
     }
-
 
 
     override suspend fun deleteFriend(friendshipId: String): Resource<Unit> {
@@ -221,7 +234,6 @@ class FriendsRepositoryImpl @Inject constructor(
             .await()
         return if (snapshot.isEmpty) null else snapshot.documents.first().id
     }
-
 
 
     override suspend fun sendFriendRequest(friendCode: String): Resource<Unit> {
