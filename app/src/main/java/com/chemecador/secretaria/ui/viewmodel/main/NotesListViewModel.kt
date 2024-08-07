@@ -3,7 +3,6 @@ package com.chemecador.secretaria.ui.viewmodel.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.data.repositories.main.MainRepository
@@ -65,6 +64,9 @@ class NotesListViewModel @Inject constructor(
         viewModelScope.launch {
             val result = repository.editList(updatedList)
             _updateStatus.postValue(result)
+            if (result is Resource.Success) {
+                _notesLists.postValue(repository.getLists())
+            }
         }
     }
 
