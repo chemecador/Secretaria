@@ -25,11 +25,4 @@
     <string name="error_password_wrong">La contraseña es incorrecta</string>
     <string name="error_sms_wrong">El código de verificación no es correcto</string>
 
-
-    <!-- Welcome dialog -->
-    <string name="welcome_title">¡Bienvenido a Secretaria!</string>
-    <string name="welcome_msg">Todavía estoy en desarrollo, así que es posible que encuentres algunos errores.\nGracias por tu comprensión :)</string>
-    <string name="label_last_update">Última actualización: junio, 2024</string>
-    <string name="contact_mail">chemecador@gmail.com</string>
-
 </resources>

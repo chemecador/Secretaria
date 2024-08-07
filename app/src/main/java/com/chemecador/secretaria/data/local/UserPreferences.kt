@@ -2,7 +2,6 @@ package com.chemecador.secretaria.data.local
 
 import android.content.Context
 import android.graphics.Color
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -19,7 +18,6 @@ class UserPreferences @Inject constructor(@ApplicationContext private val contex
 
     companion object {
         private val USERCODE_KEY = stringPreferencesKey("user_code")
-        private val SHOW_WELCOME_MESSAGE_KEY = booleanPreferencesKey("show_welcome_message")
         private val THEME_KEY = stringPreferencesKey("theme_mode")
         private val NOTE_COLOR_KEY = intPreferencesKey("note_color")
     }
@@ -28,19 +26,6 @@ class UserPreferences @Inject constructor(@ApplicationContext private val contex
         context.dataStore.edit { preferences ->
             preferences.remove(USERCODE_KEY)
         }
-    }
-
-    suspend fun dontShowAgain() {
-        context.dataStore.edit { preferences ->
-            preferences[SHOW_WELCOME_MESSAGE_KEY] = false
-        }
-    }
-
-    fun shouldShowWelcomeMessage(): Flow<Boolean> {
-        return context.dataStore.data
-            .map { preferences ->
-                preferences[SHOW_WELCOME_MESSAGE_KEY] ?: true
-            }
     }
 
     val themeMode: Flow<String> = context.dataStore.data
