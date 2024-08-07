@@ -3,6 +3,7 @@
     <string name="title_activity_login">Iniciar sesión</string>
     <string name="title_activity_main">Secretaria</string>
     <string name="title_activity_settings">Configuración</string>
+    <string name="title_activity_about_us">Acerca de nosotros</string>
     <string name="title_noteslist">Tus listas</string>
     <string name="title_notes">Notas de \'%1$s\'</string>
 
@@ -31,4 +32,6 @@
     <!-- Accesibility -->
     <string name="image">Imagen</string>
     <string name="fab">Pulsa para añadir</string>
+    <string name="github">Github</string>
+    <string name="info">Más información</string>
 </resources>

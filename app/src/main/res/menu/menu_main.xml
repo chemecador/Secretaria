@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_about_us"
+        android:icon="@drawable/logo_chemecador"
+        android:orderInCategory="100"
+        android:title="@string/menu_about_us"
+        app:actionViewClass="androidx.appcompat.widget.AppCompatTextView"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings_white"
+        android:orderInCategory="100"
+        android:theme="@style/MenuTextStyle"
+        android:title="@string/menu_settings"
+        app:actionViewClass="androidx.appcompat.widget.AppCompatTextView"
+        app:showAsAction="never" />
+</menu>

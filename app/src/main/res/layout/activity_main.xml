@@ -19,14 +19,14 @@
 
 
             <ImageView
-                android:id="@+id/iv_profile"
+                android:id="@+id/iv_more"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="match_parent"
                 android:layout_gravity="end|center_vertical"
-                android:padding="@dimen/margin_medium"
                 android:contentDescription="@string/title_activity_settings"
-                android:src="@drawable/ic_settings_white" />
-
+                android:padding="@dimen/margin_medium"
+                android:src="@drawable/ic_more_vert"
+                app:tint="@color/white" />
 
             <ImageView
                 android:id="@+id/iv_friends"

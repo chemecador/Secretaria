@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Secretaria"
         tools:targetApi="34">
         <activity
+            android:name=".ui.view.settings.AboutUsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.view.friends.FriendsActivity"
             android:exported="false" />
         <activity

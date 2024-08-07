@@ -1,20 +1,25 @@
 package com.chemecador.secretaria.ui.view.main
 
 import android.content.Intent
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
-import android.view.MenuItem
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.view.View
+import android.widget.PopupMenu
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.Glide
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.core.constants.Constants.TITLE_KEY
 import com.chemecador.secretaria.core.constants.Constants.TITLE_REQUEST_KEY
 import com.chemecador.secretaria.databinding.ActivityMainBinding
 import com.chemecador.secretaria.ui.view.friends.FriendsActivity
+import com.chemecador.secretaria.ui.view.settings.AboutUsActivity
 import com.chemecador.secretaria.ui.view.settings.SettingsActivity
 import com.chemecador.secretaria.ui.viewmodel.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +27,6 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
@@ -34,7 +38,6 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initUI()
-
 
         // Init fragment
         if (savedInstanceState == null) {
@@ -56,16 +59,51 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private fun initUI() {
         initToolbar()
         handleOnBackPressed()
         binding.ivFriends.setOnClickListener {
             startActivity(Intent(this, FriendsActivity::class.java))
         }
-        binding.ivProfile.setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
+        binding.ivMore.setOnClickListener {
+            showPopupMenu(it)
         }
+    }
+
+    private fun showPopupMenu(view: View) {
+        val popupMenu = PopupMenu(this, view)
+        popupMenu.menuInflater.inflate(R.menu.menu_main, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_about_us -> {
+                    startActivity(Intent(this, AboutUsActivity::class.java))
+                    true
+                }
+
+                R.id.action_settings -> {
+                    startActivity(Intent(this, SettingsActivity::class.java))
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        popupMenu.setOnDismissListener {
+            val menuItems = arrayOf(R.id.action_about_us, R.id.action_settings)
+            val isDarkMode = resources.configuration.uiMode and
+                    Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+            val textColor = if (isDarkMode) Color.WHITE else Color.BLACK
+
+            for (menuItemId in menuItems) {
+                val menuItem = popupMenu.menu.findItem(menuItemId)
+                val spannableTitle = SpannableString(menuItem.title)
+                spannableTitle.setSpan(ForegroundColorSpan(textColor), 0, spannableTitle.length, 0)
+                menuItem.title = spannableTitle
+            }
+        }
+
+        popupMenu.show()
     }
 
     private fun applyTheme(mode: String) {
@@ -76,8 +114,8 @@ class MainActivity : AppCompatActivity() {
             themeValues[2] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) // "dark"
         }
     }
-    private fun handleOnBackPressed() {
 
+    private fun handleOnBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (supportFragmentManager.backStackEntryCount > 0) {
@@ -87,40 +125,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
         onBackPressedDispatcher.addCallback(this, callback)
     }
 
     private fun initToolbar() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
-
-        lifecycleScope.launch {
-            mainViewModel.pfpUri.collect { uri ->
-                if (uri == null) {
-                    Glide.with(this@MainActivity)
-                        .load(R.drawable.ic_settings_white)
-                        .placeholder(R.drawable.ic_settings_white)
-                        .error(R.drawable.ic_settings_white)
-                        .into(binding.ivProfile)
-                } else {
-                    Glide.with(this@MainActivity)
-                        .load(uri)
-                        .into(binding.ivProfile)
-                }
-            }
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressedDispatcher.onBackPressed()
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     override fun onDestroy() {

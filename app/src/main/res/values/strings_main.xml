@@ -6,6 +6,8 @@
     <string name="action_edit">Editar</string>
     <string name="action_delete">Eliminar</string>
 
+    <string name="menu_about_us">Sobre nosotros…</string>
+    <string name="menu_settings">Configuración</string>
 
     <!-- Lists -->
     <string name="label_name_list">Dale un nombre a la lista</string>
@@ -24,7 +26,6 @@
     <string name="label_note_updated">Nota actualizada correctamente</string>
     <string name="label_note_deleted">Nota eliminada correctamente</string>
     <string name="label_note_not_found">Nota no encontrada</string>
-
 
     <!-- Confirmation -->
     <string name="label_confirm_delete">¿Estás seguro?\nEsta acción no se puede deshacer.</string>

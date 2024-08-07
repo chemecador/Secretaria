@@ -1,9 +1,7 @@
 package com.chemecador.secretaria.ui.view.settings
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,8 +68,6 @@ class SettingsFragment : Fragment() {
 
     private fun setupListeners() {
         binding.btnLogout.setOnClickListener { logout() }
-        binding.btnContactUs.movementMethod = LinkMovementMethod.getInstance()
-        binding.btnContactUs.setOnClickListener { sendEmail() }
     }
 
     private fun observeViewModel() {
@@ -121,16 +117,6 @@ class SettingsFragment : Fragment() {
                     override fun onNothingSelected(parent: AdapterView<*>) {}
                 }
         }
-    }
-
-    private fun sendEmail() {
-        val recipients = arrayOf(getString(R.string.contact_mail))
-        val subject = getString(R.string.label_mail_subject)
-        val intent = Intent(Intent.ACTION_SENDTO)
-        intent.data = Uri.parse("mailto:")
-        intent.putExtra(Intent.EXTRA_EMAIL, recipients)
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject)
-        startActivity(intent)
     }
 
     private fun logout() {

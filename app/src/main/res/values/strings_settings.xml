@@ -5,10 +5,6 @@
     <string name="label_mail_subject">Contacto desde Secretaria</string>
     <string name="label_contact_us">¿Quieres ponerte en contacto con nosotros?</string>
     <string name="btn_contact_us">¡Contáctanos!</string>
-
-    <string name="label_coming_soon">Próximamente en Secretaria...</string>
-    <string name="content_coming_soon">- Agregar amigos🔜\n- Compartir notas con amigos🔜</string>
-
     <string name="label_choose_theme">Seleccionar tema</string>
     <string name="label_version_history">Historial de versiones</string>
 
@@ -17,6 +13,13 @@
     <string name="label_choose_note_color">Elige el color de las notas</string>
     <string name="btn_select_color">Modificar color</string>
 
-    <!-- Logout -->
+    <!-- GitHub -->
+    <string name="label_source_code">Código fuente</string>
+    <string name="github_link">https://github.com/chemecador/Secretaria</string>
+
+    <!-- Others -->
+    <string name="what_is_secretaria_title">Secretaria es un proyecto con fines educativos, gratuito y de código abierto.</string>
+    <string name="what_is_secretaria_description">¿Quieres colaborar, o simplemente ver cómo está programada?</string>
     <string name="action_logout">Cerrar sesión</string>
+
 </resources>

@@ -63,4 +63,8 @@
         <item name="android:maxLines">1</item>
     </style>
 
+    <style name="MenuTextStyle">
+        <item name="android:textColor">@color/colorTextDark</item>
+    </style>
+
 </resources>
