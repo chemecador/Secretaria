@@ -14,7 +14,6 @@ import com.chemecador.secretaria.data.services.AuthService
 import com.chemecador.secretaria.utils.Resource
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -84,7 +83,7 @@ class FriendsViewModel @Inject constructor(
 
     fun loadFriendRequests() {
         viewModelScope.launch {
-            repository.getPendingFriendRequests().collect { resource ->
+            repository.getFriendRequests().collect { resource ->
                 _friendRequests.postValue(resource)
             }
         }
@@ -146,8 +145,9 @@ class FriendsViewModel @Inject constructor(
         viewModelScope.launch {
             _friendRequestsSent.value = Resource.Loading()
             try {
-                val requests = repository.getFriendRequestsSent().first()
-                _friendRequestsSent.value = Resource.Success(requests)
+                repository.getFriendRequestsSent().collect {
+                    _friendRequestsSent.postValue(it)
+                }
             } catch (e: Exception) {
                 _friendRequestsSent.value = Resource.Error(e.localizedMessage ?: "Error")
             }

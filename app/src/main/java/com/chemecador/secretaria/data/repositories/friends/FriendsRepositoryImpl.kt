@@ -103,12 +103,31 @@ class FriendsRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getPendingFriendRequests(): Flow<Resource<List<Friendship>>> = flow {
+    override fun getFriendRequests(): Flow<Resource<List<Friendship>>> = flow {
         emit(Resource.Loading())
         try {
             val userId = userRepository.getUserId()
             val snapshot = firestore.collection(FRIENDSHIPS)
                 .whereEqualTo(RECEIVER_ID, userId)
+                .whereEqualTo(ACCEPTANCE_DATE, null)
+                .get()
+                .await()
+            val friendRequests = snapshot.documents.mapNotNull { document ->
+                document.toObject(Friendship::class.java)?.copy(id = document.id)
+            }
+            emit(Resource.Success(friendRequests))
+        } catch (e: Exception) {
+            Timber.e(e)
+            emit(Resource.Error(res.getString(R.string.error_fetching_friend_requests)))
+        }
+    }
+
+    override fun getFriendRequestsSent(): Flow<Resource<List<Friendship>>> = flow {
+        emit(Resource.Loading())
+        try {
+            val userId = userRepository.getUserId()
+            val snapshot = firestore.collection(FRIENDSHIPS)
+                .whereEqualTo(SENDER_ID, userId)
                 .whereEqualTo(ACCEPTANCE_DATE, null)
                 .get()
                 .await()
@@ -243,26 +262,5 @@ class FriendsRepositoryImpl @Inject constructor(
             Timber.e(e)
             Resource.Error(res.getString(R.string.error_sending_request))
         }
-    }
-
-    override suspend fun getFriendRequestsSent(): Flow<List<Friendship>> {
-
-        val userId = userRepository.getUserId()
-        return callbackFlow {
-            val subscription = firestore.collection(FRIENDSHIPS)
-                .whereEqualTo(SENDER_ID, userId)
-                .whereEqualTo(ACCEPTANCE_DATE, null)
-                .addSnapshotListener { snapshot, error ->
-                    if (error != null) {
-                        close(error)
-                        return@addSnapshotListener
-                    }
-                    val requests = snapshot?.documents?.mapNotNull { document ->
-                        document.toObject(Friendship::class.java)?.copy(id = document.id)
-                    }.orEmpty()
-                    trySend(requests).isSuccess
-                }
-            awaitClose { subscription.remove() }
-        }.flowOn(Dispatchers.IO)
     }
 }

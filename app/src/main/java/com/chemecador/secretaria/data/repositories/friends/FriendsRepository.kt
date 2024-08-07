@@ -9,12 +9,12 @@ interface FriendsRepository {
     fun getFriends(): Flow<Resource<List<Friend>>>
     fun getFriendships(): Flow<Resource<List<Friendship>>>
     suspend fun deleteFriend(friendshipId: String): Resource<Unit>
-    fun getPendingFriendRequests(): Flow<Resource<List<Friendship>>>
+    fun getFriendRequests(): Flow<Resource<List<Friendship>>>
     suspend fun getUserIdByUserCode(friendCode: String): String?
     suspend fun checkIfAlreadyFriends(friendId: String): Boolean
     suspend fun sendFriendRequest(friendCode: String): Resource<Unit>
     suspend fun acceptFriendRequest(requestId: String): Resource<Unit>
     suspend fun rejectFriendRequest(requestId: String): Resource<Unit>
-    suspend fun getFriendRequestsSent(): Flow<List<Friendship>>
+    fun getFriendRequestsSent(): Flow<Resource<List<Friendship>>>
     suspend fun cancelFriendRequest(requestId: String): Resource<Unit>
 }
