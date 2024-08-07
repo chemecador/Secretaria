@@ -36,16 +36,19 @@ class NotesListAdapter(
         val popup = PopupMenu(view.context, view)
         popup.inflate(R.menu.options_list)
         popup.setOnMenuItemClickListener { item ->
+            if (position >= itemCount) return@setOnMenuItemClickListener false
             val notesList = getItem(position)
             when (item.itemId) {
                 R.id.option_share -> {
                     onShareList(notesList)
                     true
                 }
+
                 R.id.option_edit -> {
                     onEditList(notesList)
                     true
                 }
+
                 R.id.option_delete -> {
                     onDeleteList(notesList.id)
                     true
