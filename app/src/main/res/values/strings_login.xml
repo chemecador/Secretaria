@@ -6,10 +6,12 @@
     <string name="label_password">Password</string>
 
     <string name="label_login">Iniciar sesión</string>
+    <string name="btn_login_guest">Iniciar sesión como invitado</string>
     <string name="label_sign_in">Iniciar sesión</string>
     <string name="label_sign_up">Registrarse</string>
 
     <string name="label_login_other">Otras formas de iniciar sesión</string>
+    <string name="label_login_guest">¿No quieres registrarte todavía? Puedes acceder como invitado, pero no podrás agregar amigos ni compartir listas.</string>
     <string name="label_login_google">Iniciar sesión con Google</string>
     <string name="label_login_phone">Iniciar sesión con número de teléfono</string>
     <string name="label_phone_number">Número de teléfono</string>

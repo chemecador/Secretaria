@@ -31,7 +31,12 @@
     <string name="error_session_expired">Su sesión ha expirado. Por favor, inicie sesión de nuevo.</string>
     <string name="error_insuficient_permissions">No tienes permisos suficientes</string>
 
+    <!-- Dialog -->
+    <string name="dialog_login_required_title">¡Atención!</string>
+    <string name="dialog_login_required_msg">Para poder agregar amigos y compartir listas, debes crear una cuenta (¡es gratis!).\n¿Quieres crear una ahora?</string>
+
     <!-- Accesibility -->
+    <string name="logo">Logo</string>
     <string name="image">Imagen</string>
     <string name="fab">Pulsa para añadir</string>
     <string name="github">Github</string>

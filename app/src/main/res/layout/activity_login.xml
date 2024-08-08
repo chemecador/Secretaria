@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginVertical="@dimen/margin_xlarge">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -142,6 +141,27 @@
             app:layout_constraintStart_toEndOf="@id/btn_google"
             app:layout_constraintTop_toBottomOf="@id/tv_otherLogin"
             app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/tv_loginGuest"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:text="@string/label_login_guest"
+            android:textSize="@dimen/text_size_small"
+            app:layout_constraintEnd_toEndOf="@id/til_user"
+            app:layout_constraintStart_toStartOf="@id/til_user"
+            app:layout_constraintTop_toBottomOf="@id/btn_google" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_loginGuest"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_login_guest"
+            app:layout_constraintEnd_toEndOf="@id/til_user"
+            app:layout_constraintStart_toStartOf="@id/til_user"
+            app:layout_constraintTop_toBottomOf="@id/tv_loginGuest" />
 
         <ProgressBar
             android:id="@+id/pb"

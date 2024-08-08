@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
@@ -19,10 +20,13 @@ import com.chemecador.secretaria.R
 import com.chemecador.secretaria.core.constants.Constants.TITLE_KEY
 import com.chemecador.secretaria.core.constants.Constants.TITLE_REQUEST_KEY
 import com.chemecador.secretaria.databinding.ActivityMainBinding
+import com.chemecador.secretaria.databinding.DialogLoginRequiredBinding
 import com.chemecador.secretaria.ui.view.friends.FriendsActivity
+import com.chemecador.secretaria.ui.view.login.LoginActivity
 import com.chemecador.secretaria.ui.view.settings.AboutUsActivity
 import com.chemecador.secretaria.ui.view.settings.SettingsActivity
 import com.chemecador.secretaria.ui.viewmodel.main.MainViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -64,10 +68,31 @@ class MainActivity : AppCompatActivity() {
         initToolbar()
         handleOnBackPressed()
         binding.ivFriends.setOnClickListener {
-            startActivity(Intent(this, FriendsActivity::class.java))
+            handleIvFriendsPressed()
         }
         binding.ivMore.setOnClickListener {
             showPopupMenu(it)
+        }
+    }
+
+    private fun handleIvFriendsPressed() {
+        if (mainViewModel.isAnonymousUser()) {
+            val dialogBinding = DialogLoginRequiredBinding.inflate(LayoutInflater.from(this))
+
+            val dialog = MaterialAlertDialogBuilder(this)
+                .setView(dialogBinding.root)
+                .setCancelable(false)
+                .create()
+            dialogBinding.btnOk.setOnClickListener {
+                startActivity(Intent(this, LoginActivity::class.java))
+                dialog.dismiss()
+            }
+            dialogBinding.btnCancel.setOnClickListener {
+                dialog.dismiss()
+            }
+            dialog.show()
+        } else {
+            startActivity(Intent(this, FriendsActivity::class.java))
         }
     }
 

@@ -1,11 +1,15 @@
 package com.chemecador.secretaria.ui.viewmodel.login
 
 import android.app.Activity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chemecador.secretaria.data.repositories.UserRepository
 import com.chemecador.secretaria.data.services.AuthService
+import com.chemecador.secretaria.utils.Resource
 import com.google.firebase.FirebaseException
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +32,9 @@ class LoginViewModel @Inject constructor(
 
     private var _loginError = MutableStateFlow<String?>(null)
     val loginError: StateFlow<String?> = _loginError
+
+    private val _authState = MutableLiveData<Resource<FirebaseUser>>()
+    val authState: LiveData<Resource<FirebaseUser>> get() = _authState
 
 
     fun login(user: String, password: String, onLoginSuccess: () -> Unit) {
@@ -52,7 +59,6 @@ class LoginViewModel @Inject constructor(
             _isLoading.value = false
         }
     }
-
 
     fun signInWithGoogle(idToken: String, onLoginSuccess: () -> Unit) {
         viewModelScope.launch {
@@ -133,7 +139,6 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-
     fun verifyCode(
         phoneCode: String,
         onSuccessVerification: () -> Unit,
@@ -165,6 +170,18 @@ class LoginViewModel @Inject constructor(
             }
 
             _isLoading.value = false
+        }
+    }
+
+    fun signInAnonymously() {
+        viewModelScope.launch {
+            _authState.value = Resource.Loading()
+            val user = userRepository.signInAnonymously()
+            if (user != null) {
+                _authState.value = Resource.Success(user)
+            } else {
+                _authState.value = Resource.Error("Error")
+            }
         }
     }
 }

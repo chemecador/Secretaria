@@ -173,4 +173,14 @@ class AuthService @Inject constructor(
             }
         }
     }
+
+    suspend fun signInAnonymously(): FirebaseUser? {
+        return try {
+            val authResult = firebaseAuth.signInAnonymously().await()
+            authResult.user
+        } catch (e: Exception) {
+            Timber.e(e)
+            null
+        }
+    }
 }

@@ -27,6 +27,7 @@ import com.chemecador.secretaria.ui.view.main.MainActivity
 import com.chemecador.secretaria.ui.viewmodel.login.LoginViewModel
 import com.chemecador.secretaria.ui.viewmodel.login.SignupViewmodel
 import com.chemecador.secretaria.utils.DeviceUtils
+import com.chemecador.secretaria.utils.Resource
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -112,6 +113,63 @@ class LoginActivity : AppCompatActivity() {
         binding.btnPhone.setOnClickListener {
             handlePhoneSignIn()
         }
+        binding.btnLoginGuest.setOnClickListener {
+            loginViewModel.signInAnonymously()
+        }
+    }
+
+    private fun initUIState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    loginViewModel.isLoading.collect {
+                        binding.pb.isVisible = it
+                    }
+                }
+                launch {
+                    signupViewmodel.isLoading.collect {
+                        binding.pb.isVisible = it
+                    }
+                }
+                launch {
+                    loginViewModel.loginError.collect { error ->
+                        error?.let {
+                            Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                launch {
+                    signupViewmodel.signupError.collect { error ->
+                        error?.let {
+                            Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+        loginViewModel.authState.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    binding.pb.isVisible = true
+                }
+
+                is Resource.Success -> {
+                    binding.pb.isVisible = false
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                }
+
+                is Resource.Error -> {
+                    binding.pb.isVisible = false
+                    Toast.makeText(this, resource.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun initApp() {
+        finish()
+        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
     }
 
     private fun handlePhoneSignIn() {
@@ -184,7 +242,6 @@ class LoginActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-
     private fun handleGoogleSignIn() {
         val signInIntent = googleSignInClient.signInIntent
         googleSignInLauncher.launch(signInIntent)
@@ -228,42 +285,6 @@ class LoginActivity : AppCompatActivity() {
         ) {
             initApp()
         }
-    }
-
-    private fun initUIState() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    loginViewModel.isLoading.collect {
-                        binding.pb.isVisible = it
-                    }
-                }
-                launch {
-                    signupViewmodel.isLoading.collect {
-                        binding.pb.isVisible = it
-                    }
-                }
-                launch {
-                    loginViewModel.loginError.collect { error ->
-                        error?.let {
-                            Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-                launch {
-                    signupViewmodel.signupError.collect { error ->
-                        error?.let {
-                            Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun initApp() {
-        finish()
-        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
     }
 
     private fun isEmailValid() = binding.etUsername.text.toString().isValidEmail()
