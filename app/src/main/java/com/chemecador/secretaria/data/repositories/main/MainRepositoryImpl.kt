@@ -192,22 +192,23 @@ class MainRepositoryImpl @Inject constructor(
 
     override suspend fun createNote(listId: String, note: Note): Resource<Unit> {
         return try {
-
             val userId = userRepository.getUserId()
-            if (userId == null) {
-                Timber.e(res.getString(R.string.error_user_not_auth))
-                return Resource.Error(res.getString(R.string.error_user_not_auth))
-            }
+                ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
+
+            val listSnapshot = firestore.collectionGroup(NOTES_LIST)
+                .whereArrayContains(CONTRIBUTORS, userId)
+                .get()
+                .await()
+
+            val listDocument = listSnapshot.documents.firstOrNull { it.id == listId }
+                ?: return Resource.Error(res.getString(R.string.error_fetching_lists))
+
             val newNote = note.copy(
-                id = firestore.collection(USERS).document(userId)
-                    .collection(NOTES_LIST).document(listId)
-                    .collection(NOTES).document().id,
+                id = listDocument.reference.collection(NOTES).document().id,
                 creator = note.creator,
                 color = note.color
             )
-            firestore.collection(USERS).document(userId)
-                .collection(NOTES_LIST).document(listId)
-                .collection(NOTES).document(newNote.id).set(newNote).await()
+            listDocument.reference.collection(NOTES).document(newNote.id).set(newNote).await()
             Resource.Success(Unit)
         } catch (e: Exception) {
             Timber.e(e)
@@ -217,15 +218,18 @@ class MainRepositoryImpl @Inject constructor(
 
     override suspend fun editNote(listId: String, note: Note): Resource<Unit> {
         return try {
-            val userId =
-                userRepository.getUserId()
-                    ?: return Resource.Error(res.getString(R.string.error_invalid_userid))
+            val userId = userRepository.getUserId()
+                ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
 
-            firestore.collection(USERS).document(userId)
-                .collection(NOTES_LIST).document(listId)
-                .collection(NOTES).document(note.id)
-                .set(note).await()
+            val listSnapshot = firestore.collectionGroup(NOTES_LIST)
+                .whereArrayContains(CONTRIBUTORS, userId)
+                .get()
+                .await()
 
+            val listDocument = listSnapshot.documents.firstOrNull { it.id == listId }
+                ?: return Resource.Error(res.getString(R.string.error_fetching_lists))
+
+            listDocument.reference.collection(NOTES).document(note.id).set(note).await()
             Resource.Success(Unit)
         } catch (e: Exception) {
             Timber.e(e)
@@ -235,14 +239,18 @@ class MainRepositoryImpl @Inject constructor(
 
     override suspend fun deleteNote(listId: String, noteId: String): Resource<Unit> {
         return try {
-            val userId =
-                userRepository.getUserId()
-                    ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
+            val userId = userRepository.getUserId()
+                ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
 
-            firestore.collection(USERS).document(userId)
-                .collection(NOTES_LIST).document(listId)
-                .collection(NOTES).document(noteId).delete().await()
+            val listSnapshot = firestore.collectionGroup(NOTES_LIST)
+                .whereArrayContains(CONTRIBUTORS, userId)
+                .get()
+                .await()
 
+            val listDocument = listSnapshot.documents.firstOrNull { it.id == listId }
+                ?: return Resource.Error(res.getString(R.string.error_fetching_lists))
+
+            listDocument.reference.collection(NOTES).document(noteId).delete().await()
             Resource.Success(Unit)
         } catch (e: Exception) {
             Timber.e(e)
