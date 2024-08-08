@@ -55,7 +55,7 @@
             android:layout_marginEnd="@dimen/margin_medium"
             android:textSize="@dimen/text_size_small"
             app:layout_constraintEnd_toStartOf="@id/iv_more"
-            app:layout_constraintTop_toTopOf="@id/tv_contributors"
+            app:layout_constraintTop_toTopOf="@id/tv_creator"
             tools:text="06/06/2024" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
