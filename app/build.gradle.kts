@@ -18,8 +18,8 @@ android {
         applicationId = "com.chemecador.secretaria"
         minSdk = 26
         targetSdk = 34
-        versionCode = 12
-        versionName = "1.5.0"
+        versionCode = 13
+        versionName = "1.6.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -65,7 +65,6 @@ android {
 }
 
 dependencies {
-
     // Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -80,8 +79,6 @@ dependencies {
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.datastore.preferences)
 
-
-
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
@@ -89,22 +86,17 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.crashlytics.ktx)
 
-
-
     // Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
 
-
     // Dagger Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
-
     // Logs
     implementation(libs.timber)
-
 
     // PhoneNumber
     implementation(libs.pinview)
@@ -114,7 +106,6 @@ dependencies {
 
     // Color Picker
     implementation(libs.colorpickerview)
-
 
     // Testing
     testImplementation(libs.junit)
