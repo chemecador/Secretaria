@@ -15,6 +15,7 @@ class NotesListViewHolder(private val binding: ListItemNoteslistBinding) :
     fun bind(notesList: NotesList, onListClick: (String, String) -> Unit) {
         binding.tvTitle.text = notesList.name
         binding.tvDate.text = DateUtils.formatSimple(notesList.date)
+        binding.tvCreator.text = notesList.creator
         binding.root.setOnClickListener {
             onListClick(notesList.id, notesList.name)
         }

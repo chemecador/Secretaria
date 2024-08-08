@@ -44,8 +44,8 @@
             android:id="@+id/tv_content"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
             android:layout_marginHorizontal="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_small"
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="2"
@@ -55,16 +55,27 @@
             app:layout_constraintTop_toBottomOf="@id/tv_title"
             tools:text="@tools:sample/lorem/random" />
 
+        <TextView
+            android:id="@+id/tv_creator"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:ellipsize="end"
+            android:paddingHorizontal="@dimen/margin_small"
+            app:layout_constraintEnd_toStartOf="@id/tv_date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_content"
+            tools:text="chemecador" />
+
 
         <TextView
             android:id="@+id/tv_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
             android:layout_marginEnd="@dimen/margin_medium"
             android:textSize="@dimen/text_size_small"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_content"
+            app:layout_constraintTop_toTopOf="@id/tv_creator"
             tools:text="06/06/2024" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

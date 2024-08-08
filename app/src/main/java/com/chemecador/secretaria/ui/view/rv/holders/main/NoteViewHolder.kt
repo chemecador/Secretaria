@@ -15,6 +15,7 @@ class NoteViewHolder(private val binding: ListItemNoteBinding) :
         binding.tvTitle.text = note.title
         binding.tvContent.text = note.content
         binding.tvContent.isVisible = note.content.isNotBlank()
+        binding.tvCreator.text = note.creator
         binding.tvDate.text = DateUtils.formatSimple(note.date)
         binding.cv.setBackgroundColor(note.color)
 

@@ -196,7 +196,6 @@ class NotesListFragment : Fragment() {
 
                 is Resource.Success -> {
                     binding.pb.isVisible = false
-                    Toast.makeText(context, R.string.label_list_updated, Toast.LENGTH_SHORT).show()
                 }
 
                 is Resource.Error -> {

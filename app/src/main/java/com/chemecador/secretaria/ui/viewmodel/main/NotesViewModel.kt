@@ -26,7 +26,6 @@ class NotesViewModel @Inject constructor(
     val error: LiveData<String> get() = _error
 
     private val _noteColor = MutableLiveData<Int>()
-    val noteColor: LiveData<Int> = _noteColor
 
     private val _notes = MutableLiveData<Resource<List<Note>>>()
     val notes: LiveData<Resource<List<Note>>> get() = _notes
@@ -62,6 +61,5 @@ class NotesViewModel @Inject constructor(
     fun getUsername() = userRepository.getUsername() ?: ""
 
     fun getColor() = _noteColor.value ?: Color.WHITE
-
 
 }

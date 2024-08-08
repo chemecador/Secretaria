@@ -14,7 +14,6 @@ import com.chemecador.secretaria.utils.Resource
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
@@ -27,13 +26,11 @@ class MainRepositoryImpl @Inject constructor(
     private val res: ResourceProvider
 ) : MainRepository {
 
-    private suspend fun getUserId(): String? {
-        return userRepository.userId.firstOrNull()
-    }
-
     override suspend fun getLists(): Resource<List<NotesList>> {
         return try {
-            val userId = getUserId() ?: throw IllegalArgumentException("User ID is null")
+            val userId =
+                userRepository.getUserId()
+                    ?: throw IllegalArgumentException(res.getString(R.string.error_user_not_auth))
             val snapshot = firestore.collectionGroup(NOTES_LIST)
                 .whereArrayContains(CONTRIBUTORS, userId)
                 .get()
@@ -48,18 +45,137 @@ class MainRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun createList(name: String): Resource<Unit> {
+        return try {
 
+            val userId = userRepository.getUserId()
+            if (userId == null) {
+                Timber.e(res.getString(R.string.error_user_not_auth))
+                return Resource.Error(res.getString(R.string.error_unknown))
+            }
+            val username = userRepository.getUsername() ?: res.getString(R.string.label_anonymous)
+            val newList = NotesList(
+                id = firestore.collection(USERS).document(userId).collection(NOTES_LIST)
+                    .document().id,
+                name = name,
+                contributors = listOf(userId),
+                creator = username,
+                date = Timestamp.now()
+            )
+            firestore.collection(USERS).document(userId).collection(NOTES_LIST)
+                .document(newList.id).set(newList).await()
+            Resource.Success(Unit)
+        } catch (e: Exception) {
+            Timber.e(e)
+            Resource.Error(res.getString(R.string.error_unknown))
+        }
+    }
+
+    override suspend fun editList(updatedList: NotesList): Resource<Unit> {
+        return try {
+            val userId = userRepository.getUserId()
+                ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
+
+            val snapshot = firestore.collectionGroup(NOTES_LIST)
+                .whereArrayContains(CONTRIBUTORS, userId)
+                .get()
+                .await()
+
+            val listDocument = snapshot.documents.firstOrNull { it.id == updatedList.id }
+                ?: return Resource.Error(res.getString(R.string.error_fetching_lists))
+
+            val list = listDocument.toObject(NotesList::class.java)
+            if (list?.contributors?.contains(userId) != true) {
+                return Resource.Error(res.getString(R.string.error_insuficient_permissions))
+            }
+
+            listDocument.reference.set(updatedList).await()
+            Resource.Success(null)
+        } catch (e: Exception) {
+            Timber.e(e)
+            Resource.Error(res.getString(R.string.error_updating_list))
+        }
+    }
+
+    override suspend fun deleteList(listId: String): Resource<Unit> {
+        return try {
+            val userId = userRepository.getUserId()
+                ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
+
+            val snapshot = firestore.collectionGroup(NOTES_LIST)
+                .whereArrayContains(CONTRIBUTORS, userId)
+                .get()
+                .await()
+
+            val listDocument = snapshot.documents.firstOrNull { it.id == listId }
+                ?: return Resource.Error(res.getString(R.string.error_fetching_lists))
+
+            val list = listDocument.toObject(NotesList::class.java)
+            if (list?.contributors?.contains(userId) != true) {
+                return Resource.Error(res.getString(R.string.error_insuficient_permissions))
+            }
+
+            val batch = firestore.batch()
+            val notesRef = listDocument.reference.collection(NOTES)
+            val notesSnapshot = notesRef.get().await()
+
+            for (document in notesSnapshot.documents) {
+                batch.delete(document.reference)
+            }
+
+            batch.delete(listDocument.reference)
+            batch.commit().await()
+
+            Resource.Success(null)
+        } catch (e: Exception) {
+            Timber.e(e)
+            Resource.Error(res.getString(R.string.error_deleting_list))
+        }
+    }
+
+    override suspend fun getNote(listId: String, noteId: String): Resource<Note> {
+        return try {
+            val userId = userRepository.getUserId()
+                ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
+
+            val listSnapshot = firestore.collectionGroup(NOTES_LIST)
+                .whereArrayContains(CONTRIBUTORS, userId)
+                .get()
+                .await()
+
+            val listDocument = listSnapshot.documents.firstOrNull { it.id == listId }
+                ?: return Resource.Error(res.getString(R.string.error_fetching_lists))
+
+            val snapshot = listDocument.reference.collection(NOTES).document(noteId)
+                .get()
+                .await()
+
+            val note = snapshot.toObject(Note::class.java)
+            if (note != null) {
+                Resource.Success(note)
+            } else {
+                Resource.Error(res.getString(R.string.error_note_not_found))
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+            Resource.Error(res.getString(R.string.error_unknown))
+        }
+    }
 
     override suspend fun getNotes(listId: String): Resource<List<Note>> {
         return try {
-            val userId = getUserId()
-            if (userId == null) {
-                Timber.e("UserID is null ??")
-                return Resource.Error(res.getString(R.string.error_unknown))
-            }
-            val snapshot = firestore.collection(USERS).document(userId)
-                .collection(NOTES_LIST).document(listId)
-                .collection(NOTES)
+            val userId = userRepository.getUserId()
+                ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
+
+            val listSnapshot = firestore.collectionGroup(NOTES_LIST)
+                .whereArrayContains(CONTRIBUTORS, userId)
+                .get()
+                .await()
+
+            val listDocument = listSnapshot.documents.firstOrNull { it.id == listId }
+                ?: return Resource.Error(res.getString(R.string.error_fetching_lists))
+
+            val snapshot = listDocument.reference.collection(NOTES)
                 .orderBy(DATE, Query.Direction.DESCENDING)
                 .get()
                 .await()
@@ -74,37 +190,12 @@ class MainRepositoryImpl @Inject constructor(
         }
     }
 
-
-    override suspend fun createList(name: String): Resource<Unit> {
-        return try {
-
-            val userId = getUserId()
-            if (userId == null) {
-                Timber.e("UserID is null ??")
-                return Resource.Error(res.getString(R.string.error_unknown))
-            }
-            val newList = NotesList(
-                id = firestore.collection(USERS).document(userId).collection(NOTES_LIST)
-                    .document().id,
-                name = name,
-                contributors = listOf(userId),
-                date = Timestamp.now()
-            )
-            firestore.collection(USERS).document(userId).collection(NOTES_LIST)
-                .document(newList.id).set(newList).await()
-            Resource.Success(Unit)
-        } catch (e: Exception) {
-            Timber.e(e)
-            Resource.Error(res.getString(R.string.error_unknown))
-        }
-    }
-
     override suspend fun createNote(listId: String, note: Note): Resource<Unit> {
         return try {
 
-            val userId = getUserId()
+            val userId = userRepository.getUserId()
             if (userId == null) {
-                Timber.e("UserID is null ??")
+                Timber.e(res.getString(R.string.error_user_not_auth))
                 return Resource.Error(res.getString(R.string.error_user_not_auth))
             }
             val newNote = note.copy(
@@ -124,50 +215,11 @@ class MainRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getNote(listId: String, noteId: String): Resource<Note> {
-        return try {
-            val userId =
-                getUserId() ?: return Resource.Error(res.getString(R.string.error_invalid_userid))
-
-            val snapshot = firestore.collection(USERS).document(userId)
-                .collection(NOTES_LIST).document(listId)
-                .collection(NOTES).document(noteId)
-                .get().await()
-
-            val note = snapshot.toObject(Note::class.java)
-            if (note != null) {
-                Resource.Success(note)
-            } else {
-                Resource.Error(res.getString(R.string.error_note_not_found))
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
-            Resource.Error(res.getString(R.string.error_unknown))
-        }
-    }
-
-
-    override suspend fun deleteNote(listId: String, noteId: String): Resource<Unit> {
-        return try {
-            val userId =
-                getUserId() ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
-
-            firestore.collection(USERS).document(userId)
-                .collection(NOTES_LIST).document(listId)
-                .collection(NOTES).document(noteId).delete().await()
-
-            Resource.Success(Unit)
-        } catch (e: Exception) {
-            Timber.e(e)
-            Resource.Error(res.getString(R.string.error_deleting_note))
-        }
-    }
-
-
     override suspend fun editNote(listId: String, note: Note): Resource<Unit> {
         return try {
             val userId =
-                getUserId() ?: return Resource.Error(res.getString(R.string.error_invalid_userid))
+                userRepository.getUserId()
+                    ?: return Resource.Error(res.getString(R.string.error_invalid_userid))
 
             firestore.collection(USERS).document(userId)
                 .collection(NOTES_LIST).document(listId)
@@ -181,62 +233,34 @@ class MainRepositoryImpl @Inject constructor(
         }
     }
 
-
-    override suspend fun deleteList(listId: String): Resource<Unit> {
+    override suspend fun deleteNote(listId: String, noteId: String): Resource<Unit> {
         return try {
-            val userId = getUserId()
-                ?: throw IllegalStateException(res.getString(R.string.error_invalid_userid))
+            val userId =
+                userRepository.getUserId()
+                    ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
 
-            val listRef =
-                firestore.collection(USERS).document(userId).collection(NOTES_LIST).document(listId)
-            val notesRef = listRef.collection(NOTES)
-
-            val taskResult = notesRef.get().await()
-
-            val batch = firestore.batch()
-            for (document in taskResult.documents) {
-                batch.delete(document.reference)
-            }
-
-            batch.commit().await()
-
-            listRef.delete().await()
+            firestore.collection(USERS).document(userId)
+                .collection(NOTES_LIST).document(listId)
+                .collection(NOTES).document(noteId).delete().await()
 
             Resource.Success(Unit)
         } catch (e: Exception) {
             Timber.e(e)
-            Resource.Error(res.getString(R.string.error_unknown))
+            Resource.Error(res.getString(R.string.error_deleting_note))
         }
     }
 
-
-    override suspend fun editList(updatedList: NotesList): Resource<Unit> {
-        return try {
-            val userId = getUserId() ?: return Resource.Error("UserID is null ??")
-
-            firestore.collection(USERS).document(userId)
-                .collection(NOTES_LIST).document(updatedList.id)
-                .set(updatedList)
-                .await()
-
-            Resource.Success(null)
-        } catch (e: Exception) {
-            Timber.e(e)
-            Resource.Error(res.getString(R.string.error_updating_list))
-        }
-    }
-
-
-    @Suppress("UNCHECKED_CAST")
     override suspend fun addContributorToList(listId: String, friendId: String): Resource<Unit> {
         return try {
-            val userId = getUserId() ?: return Resource.Error("User ID is null")
-
+            val userId = userRepository.getUserId()
+                ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
             val listRef = firestore.collection(USERS).document(userId)
                 .collection(NOTES_LIST).document(listId)
 
             firestore.runTransaction { transaction ->
                 val snapshot = transaction.get(listRef)
+
+                @Suppress("UNCHECKED_CAST")
                 val contributors =
                     snapshot.get(CONTRIBUTORS) as? MutableList<String> ?: mutableListOf()
                 if (!contributors.contains(friendId)) {

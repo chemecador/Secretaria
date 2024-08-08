@@ -21,6 +21,7 @@
     <string name="label_undefined">Sin definir</string>
     <string name="label_more">Más…</string>
     <string name="label_ellipsis">…</string>
+    <string name="label_anonymous">Anónimo</string>
 
     <!-- Errors -->
     <string name="error">Error: %1$s</string>
@@ -28,6 +29,7 @@
     <string name="error_empty_field">El campo no puede estar vacío</string>
     <string name="error_retrieving_data">Error al obtener los datos</string>
     <string name="error_session_expired">Su sesión ha expirado. Por favor, inicie sesión de nuevo.</string>
+    <string name="error_insuficient_permissions">No tienes permisos suficientes</string>
 
     <!-- Accesibility -->
     <string name="image">Imagen</string>

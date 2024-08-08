@@ -6,6 +6,7 @@ data class NotesList(
     val id: String = "",
     val name: String = "",
     val contributors: List<String> = emptyList(),
+    val creator: String = "",
     val date: Timestamp = Timestamp.now(),
     val type: String = "",
     val notes: List<Note> = emptyList()
