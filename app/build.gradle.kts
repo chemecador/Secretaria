@@ -106,9 +106,6 @@ dependencies {
     implementation(libs.timber)
 
 
-    // Images
-    implementation(libs.glide)
-
     // PhoneNumber
     implementation(libs.pinview)
 

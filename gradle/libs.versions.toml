@@ -1,14 +1,13 @@
 [versions]
-agp = "8.5.0"
+agp = "8.5.1"
 ccp = "2.7.0"
 colorpickerview = "2.3.0"
 datastorePreferences = "1.1.1"
 crashlytics = "3.0.2"
-crashlyticsKtx = "19.0.2"
-firebaseBom = "33.1.1"
+crashlyticsKtx = "19.0.3"
+firebaseBom = "33.1.2"
 firebaseFirestoreKtx = "25.0.0"
-fragmentKtx = "1.8.1"
-glide = "4.15.0"
+fragmentKtx = "1.8.2"
 hiltAndroid = "2.48"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
@@ -18,15 +17,15 @@ espressoCore = "3.6.1"
 appcompat = "1.7.0"
 loggingInterceptor = "4.11.0"
 material = "1.12.0"
-activity = "1.9.0"
+activity = "1.9.1"
 constraintlayout = "2.1.4"
 pinview = "1.4.4"
 playServicesAuth = "21.2.0"
 retrofit = "2.9.0"
 timber = "4.7.1"
-annotation = "1.8.0"
-lifecycleLivedataKtx = "2.8.2"
-lifecycleViewmodelKtx = "2.8.2"
+annotation = "1.8.2"
+lifecycleLivedataKtx = "2.8.4"
+lifecycleViewmodelKtx = "2.8.4"
 services = "4.4.2"
 preferenceKtx = "1.2.1"
 
@@ -42,7 +41,6 @@ firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "crashlyticsKtx" }
-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
