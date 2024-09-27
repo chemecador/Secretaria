@@ -1,5 +1,6 @@
 package com.chemecador.secretaria.ui.view.rv.holders.main
 
+import android.graphics.Paint
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.chemecador.secretaria.data.model.Note
@@ -18,7 +19,22 @@ class NoteViewHolder(private val binding: ListItemNoteBinding) :
         binding.tvCreator.text = note.creator
         binding.tvDate.text = DateUtils.formatSimple(note.date)
         binding.cv.setBackgroundColor(note.color)
-
+        binding.cb.isChecked = note.completed
+        binding.cb.setOnCheckedChangeListener { _, isChecked ->
+            setPaintFlags(isChecked)
+        }
+        setPaintFlags(note.completed)
     }
 
+    private fun setPaintFlags(completed: Boolean) {
+
+        val paintFlags = if (completed) {
+            binding.tvTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+        } else {
+            binding.tvTitle.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+        }
+        binding.tvTitle.paintFlags = paintFlags
+        binding.tvContent.paintFlags = paintFlags
+
+    }
 }
