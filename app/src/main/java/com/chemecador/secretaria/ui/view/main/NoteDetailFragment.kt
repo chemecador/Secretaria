@@ -55,6 +55,7 @@ class NoteDetailFragment : Fragment() {
             showDeleteDialog()
         }
         binding.btnCancel.setOnClickListener {
+            binding.cbCompleted.isChecked = note.completed
             setEditionMode(false)
         }
         binding.btnConfirm.setOnClickListener {
@@ -74,7 +75,8 @@ class NoteDetailFragment : Fragment() {
             title = title,
             content = binding.etContent.text.toString(),
             date = com.google.firebase.Timestamp.now(),
-            creator = viewModel.getUsername()
+            creator = viewModel.getUsername(),
+            completed = binding.cbCompleted.isChecked
         )
         viewModel.editNote(listId, note)
     }
@@ -208,11 +210,26 @@ class NoteDetailFragment : Fragment() {
             putString(TITLE_KEY, note.title)
         })
 
+        binding.tvCreator.text = note.creator
         binding.tvTitle.text = note.title
         binding.etTitle.setText(note.title)
         binding.tvContent.text = note.content
         binding.etContent.setText(note.content)
         binding.tvDate.text = DateUtils.formatDetailed(note.date)
+        binding.cbCompleted.isChecked = note.completed
+        setCbCompleted(note.completed)
+        binding.cbCompleted.setOnCheckedChangeListener { _, isChecked ->
+            setCbCompleted(isChecked)
+            setEditionMode(true)
+        }
+    }
+
+    private fun setCbCompleted(isChecked: Boolean) {
+        if (isChecked) {
+            binding.cbCompleted.text = getString(R.string.label_completed)
+        } else {
+            binding.cbCompleted.text = getString(R.string.label_not_completed)
+        }
     }
 
     override fun onDestroyView() {

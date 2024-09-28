@@ -26,6 +26,8 @@
     <string name="label_note_updated">Nota actualizada correctamente</string>
     <string name="label_note_deleted">Nota eliminada correctamente</string>
     <string name="label_note_not_found">Nota no encontrada</string>
+    <string name="label_completed">Completada</string>
+    <string name="label_not_completed">Sin completar</string>
 
     <!-- Confirmation -->
     <string name="label_confirm_delete">¿Estás seguro?\nEsta acción no se puede deshacer.</string>

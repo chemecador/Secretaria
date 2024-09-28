@@ -7,7 +7,6 @@ import com.chemecador.secretaria.data.model.Note
 import com.chemecador.secretaria.databinding.ListItemNoteBinding
 import com.chemecador.secretaria.ui.view.rv.holders.main.NoteViewHolder
 import com.chemecador.secretaria.utils.NoteDiffCallback
-import timber.log.Timber
 
 class NotesAdapter(
     private val onNoteClicked: (String) -> Unit
