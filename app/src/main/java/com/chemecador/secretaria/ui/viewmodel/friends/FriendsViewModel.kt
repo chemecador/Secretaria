@@ -119,7 +119,7 @@ class FriendsViewModel @Inject constructor(
                 return@launch
             }
 
-            val result = repository.sendFriendRequest(friendId)
+            val result = repository.sendFriendRequest(friendCode)
             _addFriendStatus.value = result
         }
     }
