@@ -1,5 +1,5 @@
 [versions]
-agp = "8.6.1"
+agp = "8.8.0"
 ccp = "2.7.0"
 colorpickerview = "2.3.0"
 datastorePreferences = "1.1.1"
