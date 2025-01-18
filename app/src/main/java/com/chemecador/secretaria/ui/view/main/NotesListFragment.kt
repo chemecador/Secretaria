@@ -26,6 +26,7 @@ import com.chemecador.secretaria.ui.view.login.LoginActivity
 import com.chemecador.secretaria.ui.view.rv.adapters.main.NotesListAdapter
 import com.chemecador.secretaria.ui.viewmodel.main.NotesListViewModel
 import com.chemecador.secretaria.utils.Resource
+import com.chemecador.secretaria.utils.SortOption
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -70,15 +71,14 @@ class NotesListFragment : Fragment() {
                 id: Long
             ) {
                 when (position) {
-                    0 -> viewModel.sortNotes(NotesListViewModel.SortOption.BY_NAME_ASC)
-                    1 -> viewModel.sortNotes(NotesListViewModel.SortOption.BY_NAME_ASC)
-                    2 -> viewModel.sortNotes(NotesListViewModel.SortOption.BY_DATE_ASC)
-                    3 -> viewModel.sortNotes(NotesListViewModel.SortOption.BY_DATE_ASC)
+                    0 -> viewModel.sortNotes(SortOption.BY_NAME_ASC)
+                    1 -> viewModel.sortNotes(SortOption.BY_NAME_ASC)
+                    2 -> viewModel.sortNotes(SortOption.BY_DATE_ASC)
+                    3 -> viewModel.sortNotes(SortOption.BY_DATE_ASC)
                 }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                // No hacer nada si no hay selección
             }
         }
 

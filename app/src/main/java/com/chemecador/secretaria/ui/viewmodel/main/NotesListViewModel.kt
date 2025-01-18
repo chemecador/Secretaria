@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.data.repositories.main.MainRepository
 import com.chemecador.secretaria.utils.Resource
+import com.chemecador.secretaria.utils.SortOption
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -91,12 +92,5 @@ class NotesListViewModel @Inject constructor(
                 _notesLists.postValue(repository.getLists())
             }
         }
-    }
-
-    enum class SortOption {
-        BY_NAME_ASC,
-        BY_NAME_DESC,
-        BY_DATE_ASC,
-        BY_DATE_DESC
     }
 }
