@@ -7,10 +7,32 @@
     android:padding="@dimen/margin_small"
     tools:context=".ui.view.main.NotesListFragment">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/margin_medium"
+        android:text="@string/label_order_by"
+        app:layout_constraintBottom_toBottomOf="@id/spinner_sort"
+        app:layout_constraintEnd_toStartOf="@id/spinner_sort"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinner_sort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_medium"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:entries="@array/sort_options"
+        android:spinnerMode="dialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinner_sort"
         tools:listitem="@layout/list_item_note" />
 
     <ProgressBar
@@ -55,10 +77,10 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/fab"
         android:layout_margin="@dimen/margin_medium"
-        app:elevation="@dimen/cardview_default_elevation"
+        android:contentDescription="@string/fab"
         android:src="@drawable/ic_plus"
+        app:elevation="@dimen/cardview_default_elevation"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

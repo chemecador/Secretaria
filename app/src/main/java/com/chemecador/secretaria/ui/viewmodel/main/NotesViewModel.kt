@@ -10,6 +10,7 @@ import com.chemecador.secretaria.data.model.Note
 import com.chemecador.secretaria.data.repositories.UserRepository
 import com.chemecador.secretaria.data.repositories.main.MainRepository
 import com.chemecador.secretaria.utils.Resource
+import com.chemecador.secretaria.utils.SortOption
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,9 +44,15 @@ class NotesViewModel @Inject constructor(
         viewModelScope.launch {
             _notes.postValue(Resource.Loading())
             val result = repository.getNotes(listId)
-            _notes.postValue(result)
+            if (result is Resource.Success) {
+                val sortedNotes = result.data?.sortedByDescending { it.date }
+                _notes.postValue(Resource.Success(sortedNotes ?: emptyList()))
+            } else {
+                _notes.postValue(result)
+            }
         }
     }
+
 
     fun createNote(listId: String, note: Note) {
         viewModelScope.launch {
@@ -57,6 +64,18 @@ class NotesViewModel @Inject constructor(
             }
         }
     }
+
+    fun sortNotes(option: SortOption) {
+        val currentNotes = _notes.value?.data ?: return
+        val sortedNotes = when (option) {
+            SortOption.BY_NAME_ASC -> currentNotes.sortedBy { it.title }
+            SortOption.BY_NAME_DESC -> currentNotes.sortedByDescending { it.title }
+            SortOption.BY_DATE_ASC -> currentNotes.sortedBy { it.date }
+            SortOption.BY_DATE_DESC -> currentNotes.sortedByDescending { it.date }
+        }
+        _notes.postValue(Resource.Success(sortedNotes))
+    }
+
 
     fun getUsername() = userRepository.getUsername() ?: ""
 

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -23,6 +24,7 @@ import com.chemecador.secretaria.databinding.FragmentNotesBinding
 import com.chemecador.secretaria.ui.view.rv.adapters.main.NotesAdapter
 import com.chemecador.secretaria.ui.viewmodel.main.NotesViewModel
 import com.chemecador.secretaria.utils.Resource
+import com.chemecador.secretaria.utils.SortOption
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Timestamp
@@ -64,10 +66,32 @@ class NotesFragment : Fragment() {
     private fun initUI() {
         initRV()
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        binding.spinnerSort.setSelection(3)
+        binding.spinnerSort.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                when (position) {
+                    0 -> viewModel.sortNotes(SortOption.BY_NAME_ASC)
+                    1 -> viewModel.sortNotes(SortOption.BY_NAME_DESC)
+                    2 -> viewModel.sortNotes(SortOption.BY_DATE_ASC)
+                    3 -> viewModel.sortNotes(SortOption.BY_DATE_DESC)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
+
         binding.fab.setOnClickListener {
             showCreateNoteDialog()
         }
     }
+
 
     private fun initRV() {
         adapter = NotesAdapter(
@@ -98,10 +122,10 @@ class NotesFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        if (listId.isEmpty()) {
-            return
-        }
+        if (listId.isEmpty()) return
+
         viewModel.getNotes(listId)
+
         viewModel.notes.observe(viewLifecycleOwner) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -134,6 +158,7 @@ class NotesFragment : Fragment() {
             Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG).show()
         }
     }
+
 
     private fun showCreateNoteDialog() {
         val dialogBinding = DialogCreateNoteBinding.inflate(layoutInflater)
