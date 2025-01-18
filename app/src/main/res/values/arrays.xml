@@ -5,9 +5,18 @@
         <item>Claro</item>
         <item>Oscuro</item>
     </string-array>
+
     <string-array name="theme_values">
         <item>system</item>
         <item>light</item>
         <item>dark</item>
     </string-array>
+
+    <string-array name="sort_options">
+        <item>Nombre (A…Z)</item>
+        <item>Nombre (Z…A)</item>
+        <item>Fecha (↑)</item>
+        <item>Fecha (↓)</item>
+    </string-array>
+
 </resources>

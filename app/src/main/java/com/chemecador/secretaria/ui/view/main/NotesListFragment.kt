@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -59,6 +60,28 @@ class NotesListFragment : Fragment() {
     private fun initUI() {
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         initRV()
+
+        binding.spinnerSort.setSelection(3)
+        binding.spinnerSort.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                when (position) {
+                    0 -> viewModel.sortNotes(NotesListViewModel.SortOption.BY_NAME_ASC)
+                    1 -> viewModel.sortNotes(NotesListViewModel.SortOption.BY_NAME_ASC)
+                    2 -> viewModel.sortNotes(NotesListViewModel.SortOption.BY_DATE_ASC)
+                    3 -> viewModel.sortNotes(NotesListViewModel.SortOption.BY_DATE_ASC)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // No hacer nada si no hay selección
+            }
+        }
+
         binding.fab.setOnClickListener {
             showCreateListDialog()
         }
@@ -145,7 +168,6 @@ class NotesListFragment : Fragment() {
         dialog.show()
     }
 
-
     private fun onListClick(listId: String, name: String) {
         val fragment = NotesFragment().apply {
             arguments = Bundle().apply {
@@ -158,7 +180,6 @@ class NotesListFragment : Fragment() {
             .addToBackStack(null)
             .commit()
     }
-
 
     private fun observeViewModel() {
         viewModel.notesLists.observe(viewLifecycleOwner) { resource ->
@@ -243,9 +264,9 @@ class NotesListFragment : Fragment() {
         startActivity(intent)
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
 }

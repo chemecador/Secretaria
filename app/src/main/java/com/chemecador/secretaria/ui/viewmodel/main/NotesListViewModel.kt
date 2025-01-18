@@ -35,7 +35,9 @@ class NotesListViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _notesLists.postValue(Resource.Loading())
-            _notesLists.postValue(repository.getLists())
+            val lists = repository.getLists()
+            val sortedLists = lists.data?.sortedByDescending { it.date }
+            _notesLists.postValue(Resource.Success(sortedLists ?: emptyList()))
         }
     }
 
@@ -48,6 +50,16 @@ class NotesListViewModel @Inject constructor(
                 _notesLists.postValue(repository.getLists())
             }
         }
+    }
+
+    fun sortNotes(option: SortOption) {
+        val sortedList = when (option) {
+            SortOption.BY_NAME_ASC -> notesLists.value?.data?.sortedBy { it.name }
+            SortOption.BY_NAME_DESC -> notesLists.value?.data?.sortedByDescending { it.name }
+            SortOption.BY_DATE_ASC -> notesLists.value?.data?.sortedBy { it.date }
+            SortOption.BY_DATE_DESC -> notesLists.value?.data?.sortedByDescending { it.date }
+        }
+        _notesLists.value = Resource.Success(sortedList ?: emptyList())
     }
 
 
@@ -81,4 +93,10 @@ class NotesListViewModel @Inject constructor(
         }
     }
 
+    enum class SortOption {
+        BY_NAME_ASC,
+        BY_NAME_DESC,
+        BY_DATE_ASC,
+        BY_DATE_DESC
+    }
 }
