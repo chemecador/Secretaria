@@ -1,8 +1,8 @@
 package com.chemecador.secretaria.utils
 
 enum class SortOption {
-    BY_NAME_ASC,
-    BY_NAME_DESC,
-    BY_DATE_ASC,
-    BY_DATE_DESC
+    NAME_ASC,
+    NAME_DESC,
+    DATE_ASC,
+    DATE_DESC
 }

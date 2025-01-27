@@ -60,21 +60,23 @@ class NotesListFragment : Fragment() {
 
     private fun initUI() {
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        initRV()
 
-        binding.spinnerSort.setSelection(3)
-        binding.spinnerSort.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        initRV()
+        binding.spSort.setSelection(3)
+        binding.spSort.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
                 id: Long
             ) {
+                view?.isSelected = true
+
                 when (position) {
-                    0 -> viewModel.sortNotes(SortOption.BY_NAME_ASC)
-                    1 -> viewModel.sortNotes(SortOption.BY_NAME_ASC)
-                    2 -> viewModel.sortNotes(SortOption.BY_DATE_ASC)
-                    3 -> viewModel.sortNotes(SortOption.BY_DATE_ASC)
+                    0 -> viewModel.sortNotes(SortOption.NAME_ASC)
+                    1 -> viewModel.sortNotes(SortOption.NAME_DESC)
+                    2 -> viewModel.sortNotes(SortOption.DATE_ASC)
+                    3 -> viewModel.sortNotes(SortOption.DATE_DESC)
                 }
             }
 

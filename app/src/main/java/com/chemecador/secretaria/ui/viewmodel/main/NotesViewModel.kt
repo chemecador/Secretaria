@@ -68,10 +68,10 @@ class NotesViewModel @Inject constructor(
     fun sortNotes(option: SortOption) {
         val currentNotes = _notes.value?.data ?: return
         val sortedNotes = when (option) {
-            SortOption.BY_NAME_ASC -> currentNotes.sortedBy { it.title }
-            SortOption.BY_NAME_DESC -> currentNotes.sortedByDescending { it.title }
-            SortOption.BY_DATE_ASC -> currentNotes.sortedBy { it.date }
-            SortOption.BY_DATE_DESC -> currentNotes.sortedByDescending { it.date }
+            SortOption.NAME_ASC -> currentNotes.sortedBy { it.title }
+            SortOption.NAME_DESC -> currentNotes.sortedByDescending { it.title }
+            SortOption.DATE_ASC -> currentNotes.sortedBy { it.date }
+            SortOption.DATE_DESC -> currentNotes.sortedByDescending { it.date }
         }
         _notes.postValue(Resource.Success(sortedNotes))
     }

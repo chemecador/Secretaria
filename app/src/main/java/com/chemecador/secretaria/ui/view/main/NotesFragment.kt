@@ -67,8 +67,8 @@ class NotesFragment : Fragment() {
         initRV()
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        binding.spinnerSort.setSelection(3)
-        binding.spinnerSort.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.spSort.setSelection(3)
+        binding.spSort.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
@@ -76,10 +76,10 @@ class NotesFragment : Fragment() {
                 id: Long
             ) {
                 when (position) {
-                    0 -> viewModel.sortNotes(SortOption.BY_NAME_ASC)
-                    1 -> viewModel.sortNotes(SortOption.BY_NAME_DESC)
-                    2 -> viewModel.sortNotes(SortOption.BY_DATE_ASC)
-                    3 -> viewModel.sortNotes(SortOption.BY_DATE_DESC)
+                    0 -> viewModel.sortNotes(SortOption.NAME_ASC)
+                    1 -> viewModel.sortNotes(SortOption.NAME_DESC)
+                    2 -> viewModel.sortNotes(SortOption.DATE_ASC)
+                    3 -> viewModel.sortNotes(SortOption.DATE_DESC)
                 }
             }
 
@@ -91,7 +91,6 @@ class NotesFragment : Fragment() {
             showCreateNoteDialog()
         }
     }
-
 
     private fun initRV() {
         adapter = NotesAdapter(
@@ -158,7 +157,6 @@ class NotesFragment : Fragment() {
             Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG).show()
         }
     }
-
 
     private fun showCreateNoteDialog() {
         val dialogBinding = DialogCreateNoteBinding.inflate(layoutInflater)
