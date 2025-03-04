@@ -2,9 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
-
     <application
         android:name=".core.Application"
         android:allowBackup="true"
@@ -12,16 +9,13 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.Secretaria"
-        tools:targetApi="34">
+        tools:targetApi="31">
         <activity
-            android:name=".ui.view.settings.AboutUsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.view.friends.FriendsActivity"
-            android:exported="false" />
+            android:name=".ui.view.login.LoginActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Secretaria" />
         <activity
             android:name=".ui.view.login.LauncherActivity"
             android:exported="true">
@@ -32,17 +26,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.view.main.MainActivity"
-            android:exported="false"
-            android:label="@string/title_activity_main" />
-        <activity
-            android:name=".ui.view.login.LoginActivity"
+            android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/title_activity_login" />
-        <activity
-            android:name=".ui.view.settings.SettingsActivity"
-            android:exported="false"
-            android:label="@string/title_activity_settings" />
+            android:theme="@style/Theme.Secretaria">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

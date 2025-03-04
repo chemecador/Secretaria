@@ -1,11 +1,11 @@
 package com.chemecador.secretaria.data.repositories.main
 
 import com.chemecador.secretaria.R
-import com.chemecador.secretaria.core.constants.Constants.CONTRIBUTORS
-import com.chemecador.secretaria.core.constants.Constants.DATE
-import com.chemecador.secretaria.core.constants.Constants.NOTES
-import com.chemecador.secretaria.core.constants.Constants.NOTES_LIST
-import com.chemecador.secretaria.core.constants.Constants.USERS
+import com.chemecador.secretaria.core.Constants.CONTRIBUTORS
+import com.chemecador.secretaria.core.Constants.DATE
+import com.chemecador.secretaria.core.Constants.NOTES
+import com.chemecador.secretaria.core.Constants.NOTES_LIST
+import com.chemecador.secretaria.core.Constants.USERS
 import com.chemecador.secretaria.data.model.Note
 import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.data.provider.ResourceProvider

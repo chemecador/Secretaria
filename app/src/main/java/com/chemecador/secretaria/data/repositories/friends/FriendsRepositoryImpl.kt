@@ -1,16 +1,16 @@
 package com.chemecador.secretaria.data.repositories.friends
 
 import com.chemecador.secretaria.R
-import com.chemecador.secretaria.core.constants.Constants.ACCEPTANCE_DATE
-import com.chemecador.secretaria.core.constants.Constants.FRIENDSHIPS
-import com.chemecador.secretaria.core.constants.Constants.RECEIVER_CODE
-import com.chemecador.secretaria.core.constants.Constants.RECEIVER_ID
-import com.chemecador.secretaria.core.constants.Constants.RECEIVER_NAME
-import com.chemecador.secretaria.core.constants.Constants.REQUEST_DATE
-import com.chemecador.secretaria.core.constants.Constants.SENDER_ID
-import com.chemecador.secretaria.core.constants.Constants.SENDER_NAME
-import com.chemecador.secretaria.core.constants.Constants.USERCODE
-import com.chemecador.secretaria.core.constants.Constants.USERS
+import com.chemecador.secretaria.core.Constants.ACCEPTANCE_DATE
+import com.chemecador.secretaria.core.Constants.FRIENDSHIPS
+import com.chemecador.secretaria.core.Constants.RECEIVER_CODE
+import com.chemecador.secretaria.core.Constants.RECEIVER_ID
+import com.chemecador.secretaria.core.Constants.RECEIVER_NAME
+import com.chemecador.secretaria.core.Constants.REQUEST_DATE
+import com.chemecador.secretaria.core.Constants.SENDER_ID
+import com.chemecador.secretaria.core.Constants.SENDER_NAME
+import com.chemecador.secretaria.core.Constants.USERCODE
+import com.chemecador.secretaria.core.Constants.USERS
 import com.chemecador.secretaria.data.model.Friend
 import com.chemecador.secretaria.data.model.Friendship
 import com.chemecador.secretaria.data.provider.ResourceProvider

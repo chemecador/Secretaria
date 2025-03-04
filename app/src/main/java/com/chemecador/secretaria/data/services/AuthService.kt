@@ -2,7 +2,7 @@ package com.chemecador.secretaria.data.services
 
 import android.app.Activity
 import com.chemecador.secretaria.R
-import com.chemecador.secretaria.core.constants.Constants
+import com.chemecador.secretaria.core.Constants
 import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
