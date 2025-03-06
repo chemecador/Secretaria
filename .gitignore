@@ -42,3 +42,4 @@ replay_pid*
 # To-do file
 **/TO-DO.md
 .DS_Store
+/build
