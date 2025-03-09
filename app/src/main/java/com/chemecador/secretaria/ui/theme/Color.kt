@@ -6,9 +6,9 @@ val Primary = Color(0xFFD9F8DC)
 val OnPrimary = Color(0xFFFFFFFF)
 val PrimaryDark = Color(0xFF12471B)
 
-val Secondary = Color(0xFF558B2F)
+val Secondary = Color(0xFFBFDFFC)
 val OnSecondary = Color(0xFFFFFFFF)
-val SecondaryDark = Color(0xFF33691E)
+val SecondaryDark = Color(0xFF01143B)
 
 val Background = Color(0xFF121212)
 val OnBackground = Color(0xFFE0E0E0)

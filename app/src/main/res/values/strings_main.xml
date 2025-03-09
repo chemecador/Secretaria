@@ -10,6 +10,7 @@
     <string name="menu_settings">Configuración</string>
 
     <!-- Lists -->
+    <string name="label_create_list">Crear una lista</string>
     <string name="label_name_list">Dale un nombre a la lista</string>
     <string name="label_list_name">Nombre de la lista</string>
     <string name="label_list_shared">Lista compartida correctamente</string>
