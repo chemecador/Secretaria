@@ -1,5 +1,6 @@
 package com.chemecador.secretaria.ui.view.login.main.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.ui.theme.ColorScheme
-import com.chemecador.secretaria.ui.theme.Typography
 import com.chemecador.secretaria.ui.viewmodel.main.NotesListViewModel
 import com.chemecador.secretaria.utils.Resource
 import java.text.SimpleDateFormat
@@ -48,7 +48,10 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotesListScreen(viewModel: NotesListViewModel = hiltViewModel()) {
+fun NotesListsScreen(
+    viewModel: NotesListViewModel = hiltViewModel(),
+    onListClick: (listId: String, listName: String) -> Unit = { _, _ -> }
+) {
     val notesLists by viewModel.notesLists.collectAsState()
     Scaffold(
         topBar = {
@@ -109,6 +112,9 @@ fun NotesListScreen(viewModel: NotesListViewModel = hiltViewModel()) {
                                     date = dateString,
                                     onMoreClick = {
                                         /* TODO */
+                                    },
+                                    onItemClick = {
+                                        onListClick(list.id, list.name)
                                     }
                                 )
                             }
@@ -130,23 +136,22 @@ fun NotesListScreen(viewModel: NotesListViewModel = hiltViewModel()) {
     }
 }
 
-
 @Composable
 fun NotesListItem(
     title: String,
     creator: String,
     date: String,
-    onMoreClick: () -> Unit
+    onMoreClick: () -> Unit,
+    onItemClick: () -> Unit
 ) {
     Card(
         shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_small)),
         elevation = CardDefaults.cardElevation(dimensionResource(R.dimen.cardview_default_elevation)),
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onItemClick() }
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp)
-        ) {
+        Column(modifier = Modifier.padding(12.dp)) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
@@ -154,7 +159,7 @@ fun NotesListItem(
             ) {
                 Text(
                     text = title,
-                    style = Typography.titleMedium,
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f)
                 )
                 IconButton(onClick = onMoreClick) {
@@ -164,21 +169,19 @@ fun NotesListItem(
                     )
                 }
             }
-
             Spacer(modifier = Modifier.height(8.dp))
-
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     text = creator,
-                    style = Typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f)
                 )
                 Text(
                     text = date,
-                    style = Typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }
