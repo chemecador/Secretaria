@@ -1,11 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- App Titles -->
     <string name="app_name">Secretaria</string>
     <string name="title_activity_login">Iniciar sesión</string>
     <string name="title_activity_main">Secretaria</string>
     <string name="title_activity_settings">Configuración</string>
     <string name="title_activity_about_us">Acerca de nosotros</string>
     <string name="title_noteslist">Tus listas</string>
-    <string name="title_notes">Notas de \'%1$s\'</string>
+    <string name="title_notes">Notas de ‘%1$s’</string>
+    <string name="title_note_detail">Detalles de la nota</string>
 
     <!-- Actions -->
     <string name="action_ok">OK</string>
@@ -14,8 +18,16 @@
     <string name="action_create">Crear</string>
     <string name="action_confirm">Confirmar</string>
     <string name="action_search">Buscar</string>
+    <string name="action_share">Compartir</string>
+    <string name="action_edit">Editar</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_back">Volver</string>
 
-    <!-- Label -->
+    <!-- Menu -->
+    <string name="menu_about_us">Sobre nosotros…</string>
+    <string name="menu_settings">Configuración</string>
+
+    <!-- Labels & UI Text -->
     <string name="label_order_by">Ordenar por…</string>
     <string name="label_warning">Atención</string>
     <string name="label_data_empty">No hay registros</string>
@@ -25,22 +37,65 @@
     <string name="label_ellipsis">…</string>
     <string name="label_anonymous">Anónimo</string>
 
-    <!-- Errors -->
-    <string name="error">Error: %1$s</string>
-    <string name="error_unknown">Error desconocido</string>
-    <string name="error_empty_field">El campo no puede estar vacío</string>
-    <string name="error_retrieving_data">Error al obtener los datos</string>
-    <string name="error_session_expired">Su sesión ha expirado. Por favor, inicie sesión de nuevo.</string>
-    <string name="error_insuficient_permissions">No tienes permisos suficientes</string>
+    <!-- Lists -->
+    <string name="label_create_list">Crear una lista</string>
+    <string name="label_name_list">Dale un nombre a la lista</string>
+    <string name="label_list_name">Nombre de la lista</string>
+    <string name="label_list_shared">Lista compartida correctamente</string>
+    <string name="label_list_updated">Lista actualizada correctamente</string>
+    <string name="label_list_deleted">Lista eliminada correctamente</string>
+    <string name="label_checklist">Checklist</string>
+    <string name="label_share_with_friends">¿Con quién quieres compartir esta lista?</string>
 
-    <!-- Dialog -->
+    <!-- Notes -->
+    <string name="label_create_note">Crear una nota</string>
+    <string name="label_name_note">Dale un nombre de la nota</string>
+    <string name="label_note_name">Nombre de la nota</string>
+    <string name="label_note_title">Título</string>
+    <string name="label_note_content">Contenido</string>
+    <string name="label_observations_optional">Observaciones (opcional)</string>
+    <string name="label_note_updated">Nota actualizada correctamente</string>
+    <string name="label_note_deleted">Nota eliminada correctamente</string>
+    <string name="label_note_not_found">Nota no encontrada</string>
+    <string name="label_completed">Completada</string>
+    <string name="label_not_completed">Sin completar</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_delete_note_title">Eliminar nota</string>
+    <string name="dialog_delete_note_message">¿Estás seguro de eliminar esta nota?</string>
+    <string name="label_confirm_delete">¿Estás seguro?\nEsta acción no se puede deshacer.</string>
+    <string name="label_confirm_delete_list">Al eliminar esta lista, se eliminarán también todas sus notas.\nEsta acción no se puede deshacer.</string>
     <string name="dialog_login_required_title">¡Atención!</string>
     <string name="dialog_login_required_msg">Para poder agregar amigos y compartir listas, debes crear una cuenta (¡es gratis!).\n¿Quieres crear una ahora?</string>
 
-    <!-- Accesibility -->
-    <string name="logo">Logo</string>
-    <string name="image">Imagen</string>
-    <string name="fab">Pulsa para añadir</string>
-    <string name="github">Github</string>
-    <string name="info">Más información</string>
+    <!-- Empty -->
+    <string name="label_empty_lists">¡Todavía no has añadido ninguna lista!\n\nPara crear una, pulsa en el botón de +</string>
+    <string name="label_empty_notes">No hay notas</string>
+
+    <!-- Errors -->
+    <string name="error">Error: %1$s</string>
+    <string name="error_generic">Error: %1$s</string>
+    <string name="error_unknown">Error desconocido</string>
+    <string name="error_empty_field">El campo no puede estar vacío</string>
+    <string name="error_fetching_lists">Error al obtener las listas</string>
+    <string name="error_fetching_notes">No se han podido obtener las notas</string>
+    <string name="error_fetching_note">Error al obtener la información de la nota</string>
+    <string name="error_updating_list">Error al actualizar la lista: %1$s</string>
+    <string name="error_updating_note">Error al actualizar la nota: %1$s</string>
+    <string name="error_deleting_list">Error al eliminar la lista: %1$s</string>
+    <string name="error_deleting_note">Error al eliminar la nota: %1$s</string>
+    <string name="error_invalid_userid">El usuario no es válido</string>
+    <string name="error_note_not_found">Nota no encontrada</string>
+    <string name="error_adding_contributor">Error al compartir la lista con tu amigo</string>
+    <string name="error_session_expired">Su sesión ha expirado. Por favor, inicie sesión de nuevo.</string>
+    <string name="error_insuficient_permissions">No tienes permisos suficientes</string>
+
+
+    <!-- Accessibility -->
+    <string name="a11y_logo">Logo</string>
+    <string name="a11y_image">Imagen</string>
+    <string name="a11y_fab">Pulsa para añadir</string>
+    <string name="a11y_github">Github</string>
+    <string name="a11y_info">Más información</string>
+
 </resources>
