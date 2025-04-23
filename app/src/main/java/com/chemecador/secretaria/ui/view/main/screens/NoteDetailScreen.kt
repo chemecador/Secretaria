@@ -1,4 +1,4 @@
-package com.chemecador.secretaria.ui.view.login.main.screens
+package com.chemecador.secretaria.ui.view.main.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.chemecador.secretaria.data.model.Note
 import com.chemecador.secretaria.ui.viewmodel.main.NoteDetailViewModel
 import com.chemecador.secretaria.utils.Resource
+import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -246,7 +247,7 @@ fun NoteDetailScreen(
                                             val updatedNote = note.copy(
                                                 title = titleText,
                                                 content = contentText,
-                                                date = com.google.firebase.Timestamp.now(),
+                                                date = Timestamp.now(),
                                                 creator = viewModel.getUsername(),
                                                 completed = checkboxState
                                             )

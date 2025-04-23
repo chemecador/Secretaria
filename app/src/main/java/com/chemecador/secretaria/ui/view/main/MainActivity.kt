@@ -1,4 +1,4 @@
-package com.chemecador.secretaria
+package com.chemecador.secretaria.ui.view.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,9 +12,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.chemecador.secretaria.core.Constants
 import com.chemecador.secretaria.ui.theme.SecretariaTheme
-import com.chemecador.secretaria.ui.view.login.main.screens.NoteDetailScreen
-import com.chemecador.secretaria.ui.view.login.main.screens.NotesListsScreen
-import com.chemecador.secretaria.ui.view.login.main.screens.NotesScreen
+import com.chemecador.secretaria.ui.view.main.screens.NoteDetailScreen
+import com.chemecador.secretaria.ui.view.main.screens.NotesListsScreen
+import com.chemecador.secretaria.ui.view.main.screens.NotesScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,8 +45,8 @@ class MainActivity : ComponentActivity() {
             composable(
                 route = "${Constants.NOTES}/{${Constants.LIST_ID}}/{${Constants.LIST_NAME}}",
                 arguments = listOf(
-                    navArgument(Constants.LIST_ID) { type = NavType.StringType },
-                    navArgument(Constants.LIST_NAME) { type = NavType.StringType }
+                    navArgument(Constants.LIST_ID) { type = NavType.Companion.StringType },
+                    navArgument(Constants.LIST_NAME) { type = NavType.Companion.StringType }
                 )
             ) { backStackEntry ->
                 val listId = backStackEntry.arguments?.getString(Constants.LIST_ID)
@@ -63,8 +63,8 @@ class MainActivity : ComponentActivity() {
             composable(
                 route = "note_detail/{${Constants.LIST_ID}}/{${Constants.NOTE_ID}}",
                 arguments = listOf(
-                    navArgument(Constants.LIST_ID) { type = NavType.StringType },
-                    navArgument(Constants.NOTE_ID) { type = NavType.StringType }
+                    navArgument(Constants.LIST_ID) { type = NavType.Companion.StringType },
+                    navArgument(Constants.NOTE_ID) { type = NavType.Companion.StringType }
                 )
             ) { backStackEntry ->
                 val listId = backStackEntry.arguments?.getString(Constants.LIST_ID)
@@ -79,4 +79,3 @@ class MainActivity : ComponentActivity() {
     }
 
 }
-

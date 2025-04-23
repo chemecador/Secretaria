@@ -1,4 +1,4 @@
-package com.chemecador.secretaria.ui.view.login.main.screens
+package com.chemecador.secretaria.ui.view.main.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -46,6 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.chemecador.secretaria.data.model.Note
+import com.chemecador.secretaria.ui.viewmodel.main.NotesViewModel
 import com.chemecador.secretaria.utils.Resource
 import java.text.SimpleDateFormat
 import java.util.Locale

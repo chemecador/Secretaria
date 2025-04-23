@@ -20,9 +20,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.chemecador.secretaria.MainActivity
+import com.chemecador.secretaria.ui.view.main.MainActivity
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.ui.theme.SecretariaTheme
+import com.chemecador.secretaria.ui.view.login.screens.LoginScreen
 import com.chemecador.secretaria.ui.viewmodel.login.LoginViewModel
 import com.chemecador.secretaria.utils.Resource
 import com.google.android.gms.auth.api.signin.GoogleSignIn

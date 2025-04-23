@@ -1,4 +1,4 @@
-package com.chemecador.secretaria.ui.view.login.main.screens
+package com.chemecador.secretaria.ui.view.main.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
