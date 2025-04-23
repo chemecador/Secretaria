@@ -1,9 +1,7 @@
 package com.chemecador.secretaria.data.local
 
 import android.content.Context
-import android.graphics.Color
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.chemecador.secretaria.R
@@ -19,7 +17,6 @@ class UserPreferences @Inject constructor(@ApplicationContext private val contex
     companion object {
         private val USERCODE_KEY = stringPreferencesKey("user_code")
         private val THEME_KEY = stringPreferencesKey("theme_mode")
-        private val NOTE_COLOR_KEY = intPreferencesKey("note_color")
     }
 
     suspend fun clearUserDetails() {
@@ -38,18 +35,6 @@ class UserPreferences @Inject constructor(@ApplicationContext private val contex
             preferences[THEME_KEY] = mode
         }
     }
-
-    val noteColor: Flow<Int> = context.dataStore.data
-        .map { preferences ->
-            preferences[NOTE_COLOR_KEY] ?: Color.GREEN
-        }
-
-    suspend fun saveNoteColor(color: Int) {
-        context.dataStore.edit { preferences ->
-            preferences[NOTE_COLOR_KEY] = color
-        }
-    }
-
 
     val userCodeFlow: Flow<String?> = context.dataStore.data
         .map { preferences ->

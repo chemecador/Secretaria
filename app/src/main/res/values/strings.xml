@@ -11,6 +11,7 @@
     <string name="action_ok">OK</string>
     <string name="action_accept">Aceptar</string>
     <string name="action_cancel">Cancelar</string>
+    <string name="action_create">Crear</string>
     <string name="action_confirm">Confirmar</string>
     <string name="action_search">Buscar</string>
 

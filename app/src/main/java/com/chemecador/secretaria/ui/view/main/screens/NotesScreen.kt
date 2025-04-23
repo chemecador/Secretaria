@@ -37,17 +37,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.chemecador.secretaria.data.model.Note
+import com.chemecador.secretaria.ui.view.components.CreateNoteDialog
 import com.chemecador.secretaria.ui.viewmodel.main.NotesViewModel
 import com.chemecador.secretaria.utils.Resource
+import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -60,6 +65,8 @@ fun NotesScreen(
     onBack: () -> Unit = {},
     onNoteClick: (noteId: String) -> Unit = {}
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(key1 = listId) {
         viewModel.getNotes(listId)
     }
@@ -82,7 +89,7 @@ fun NotesScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* TODO: crear nota*/ },
+                onClick = { showDialog = true },
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
                 Icon(
@@ -140,6 +147,21 @@ fun NotesScreen(
             }
         }
     }
+
+    CreateNoteDialog(
+        showDialog = showDialog,
+        onDismiss = { showDialog = false },
+        onCreate = { title, observations -> viewModel.createNote(
+            listId,
+            Note(
+                title = title,
+                content = observations,
+                date = Timestamp.now(),
+                creator = viewModel.getUsername(),
+                color = Color.White.toArgb()
+            )
+        )}
+    )
 }
 
 @Composable
@@ -209,4 +231,5 @@ fun NoteItem(
         }
     }
 }
+
 

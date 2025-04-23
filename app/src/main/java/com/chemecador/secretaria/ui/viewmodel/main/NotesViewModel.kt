@@ -1,6 +1,5 @@
 package com.chemecador.secretaria.ui.viewmodel.main
 
-import android.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,19 +25,8 @@ class NotesViewModel @Inject constructor(
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
 
-    private val _noteColor = MutableLiveData<Int>()
-
     private val _notes = MutableLiveData<Resource<List<Note>>>()
     val notes: LiveData<Resource<List<Note>>> get() = _notes
-
-
-    init {
-        viewModelScope.launch {
-            userPreferences.noteColor.collect { color ->
-                _noteColor.postValue(color)
-            }
-        }
-    }
 
     fun getNotes(listId: String) {
         viewModelScope.launch {
@@ -78,7 +66,5 @@ class NotesViewModel @Inject constructor(
 
 
     fun getUsername() = userRepository.getUsername() ?: ""
-
-    fun getColor() = _noteColor.value ?: Color.WHITE
 
 }

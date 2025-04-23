@@ -1,6 +1,7 @@
 package com.chemecador.secretaria.data.model
 
-import android.graphics.Color
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.google.firebase.Timestamp
 
 data class Note(
@@ -11,5 +12,5 @@ data class Note(
     val completed: Boolean = false,
     val order: Int = 0,
     val creator: String = "",
-    val color: Int = Color.WHITE
+    val color: Int = Color.White.toArgb()
 )

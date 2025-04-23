@@ -20,10 +20,10 @@
     <string name="label_share_with_friends">¿Con quién quieres compartir esta lista?</string>
 
     <!-- Notes -->
-    <string name="label_name_note">Dale un nombre a la nota</string>
+    <string name="label_create_note">Crear una nota</string>
+    <string name="label_name_note">Dale un nombre de la nota</string>
     <string name="label_note_name">Nombre de la nota</string>
-    <string name="label_add_content">Añadir contenido</string>
-    <string name="label_type_content">Escribe aquí el contenido…</string>
+    <string name="label_observations_optional">Observaciones (opcional)</string>
     <string name="label_note_updated">Nota actualizada correctamente</string>
     <string name="label_note_deleted">Nota eliminada correctamente</string>
     <string name="label_note_not_found">Nota no encontrada</string>
