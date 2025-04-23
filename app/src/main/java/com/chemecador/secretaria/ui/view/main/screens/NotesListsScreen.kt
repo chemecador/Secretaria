@@ -1,5 +1,6 @@
 package com.chemecador.secretaria.ui.view.main.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,14 +12,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -28,6 +37,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,6 +53,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.chemecador.secretaria.R
+import com.chemecador.secretaria.data.model.NotesList
+import com.chemecador.secretaria.ui.view.components.CascadingDropdownMenu
+import com.chemecador.secretaria.ui.view.components.ConfirmationDialog
 import com.chemecador.secretaria.ui.view.components.CreateListDialog
 import com.chemecador.secretaria.ui.viewmodel.main.NotesListViewModel
 import com.chemecador.secretaria.utils.Resource
@@ -58,6 +72,10 @@ fun NotesListsScreen(
     var showDialog by remember { mutableStateOf(false) }
 
     val notesLists by viewModel.notesLists.collectAsState()
+    var shareDialogListId by remember { mutableStateOf<String?>(null) }
+    var deleteDialogListId by remember { mutableStateOf<String?>(null) }
+    var editDialogData by remember { mutableStateOf<NotesList?>(null) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -115,10 +133,10 @@ fun NotesListsScreen(
                                     title = list.name,
                                     creator = list.creator,
                                     date = dateString,
-                                    onMoreClick = { /* TODO: acciones adicionales */ },
-                                    onItemClick = {
-                                        onListClick(list.id, list.name)
-                                    }
+                                    onItemClick = { onListClick(list.id, list.name) },
+                                    onShare = { shareDialogListId = list.id },
+                                    onEdit = { editDialogData = list },
+                                    onDelete = { deleteDialogListId = list.id }
                                 )
                             }
                         }
@@ -143,6 +161,43 @@ fun NotesListsScreen(
             onCreate = { name -> viewModel.createList(name) }
         )
     }
+
+    val context = LocalContext.current
+    LaunchedEffect(shareDialogListId) {
+        shareDialogListId?.let { listId ->
+            Toast.makeText(context, "Sharing list $listId", Toast.LENGTH_SHORT).show()
+            shareDialogListId = null
+        }
+    }
+
+    deleteDialogListId?.let { listId ->
+        ConfirmationDialog(
+            onDismissRequest = { deleteDialogListId = null },
+            title = stringResource(R.string.label_confirm_delete),
+            text  = stringResource(R.string.label_confirm_delete_list),
+            confirmText = stringResource(R.string.action_confirm),
+            dismissText = stringResource(R.string.action_cancel),
+            confirmIcon = Icons.Default.Check,
+            dismissIcon = Icons.Default.Close,
+            onConfirm = {
+                viewModel.deleteList(listId)
+                deleteDialogListId = null
+            },
+            onDismiss = { deleteDialogListId = null }
+        )
+    }
+
+    editDialogData?.let { currentList ->
+        CreateListDialog(
+            showDialog = true,
+            initialName = currentList.name,
+            onDismiss = { editDialogData = null },
+            onCreate  = { newName ->
+                viewModel.editList(currentList.copy(name = newName))
+                editDialogData = null
+            }
+        )
+    }
 }
 
 @Composable
@@ -150,9 +205,13 @@ fun NotesListItem(
     title: String,
     creator: String,
     date: String,
-    onMoreClick: () -> Unit,
-    onItemClick: () -> Unit
+    onItemClick: () -> Unit,
+    onShare: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
 ) {
+    var expanded by remember { mutableStateOf(false) }
+
     Card(
         shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_small)),
         elevation = CardDefaults.cardElevation(dimensionResource(R.dimen.cardview_default_elevation)),
@@ -160,9 +219,8 @@ fun NotesListItem(
             .fillMaxWidth()
             .clickable { onItemClick() }
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(modifier = Modifier.padding(dimensionResource(R.dimen.margin_medium))) {
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -171,14 +229,23 @@ fun NotesListItem(
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f)
                 )
-                IconButton(onClick = onMoreClick) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_more_vert),
-                        contentDescription = stringResource(R.string.label_more)
+                Box(modifier = Modifier.wrapContentSize(Alignment.TopStart)) {
+                    IconButton(onClick = { expanded = true }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_more_vert),
+                            contentDescription = stringResource(R.string.label_more)
+                        )
+                    }
+                    CascadingDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        onShare = onShare,
+                        onEdit = onEdit,
+                        onDelete = onDelete
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.margin_small)))
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
@@ -196,3 +263,4 @@ fun NotesListItem(
         }
     }
 }
+

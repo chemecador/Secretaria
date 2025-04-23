@@ -21,12 +21,13 @@ import com.chemecador.secretaria.R
 @Composable
 fun CreateListDialog(
     showDialog: Boolean,
+    initialName: String? = null,
     onDismiss: () -> Unit,
     onCreate: (String) -> Unit
 ) {
     if (!showDialog) return
 
-    var listName by remember { mutableStateOf("") }
+    var listName by remember { mutableStateOf(initialName.orEmpty()) }
     var isError by remember { mutableStateOf(false) }
 
     AlertDialog(
