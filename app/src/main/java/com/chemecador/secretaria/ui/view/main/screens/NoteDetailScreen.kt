@@ -17,8 +17,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
@@ -26,6 +24,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -39,9 +38,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.chemecador.secretaria.R
 import com.chemecador.secretaria.data.model.Note
+import com.chemecador.secretaria.ui.view.components.ConfirmationDialog
 import com.chemecador.secretaria.ui.viewmodel.main.NoteDetailViewModel
 import com.chemecador.secretaria.utils.Resource
 import com.google.firebase.Timestamp
@@ -83,10 +85,13 @@ fun NoteDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Detalle de Nota") },
+                title = { Text(stringResource(R.string.title_note_detail)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.action_back)
+                        )
                     }
                 }
             )
@@ -99,14 +104,17 @@ fun NoteDetailScreen(
         ) {
             when (noteResource) {
                 is Resource.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
 
                 is Resource.Error -> {
                     Text(
-                        text = "Error: ${(noteResource as Resource.Error).message}",
+                        text = stringResource(R.string.error_generic, (noteResource as Resource.Error).message.orEmpty()),
                         modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.error
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyLarge
                     )
                 }
 
@@ -114,22 +122,23 @@ fun NoteDetailScreen(
                     val note = (noteResource as Resource.Success<Note>).data
                     if (note == null) {
                         Text(
-                            text = "Nota no encontrada",
-                            modifier = Modifier.align(Alignment.Center)
+                            text = stringResource(R.string.error_note_not_found),
+                            modifier = Modifier.align(Alignment.Center),
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     } else {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(16.dp)
+                                .padding(dimensionResource(R.dimen.margin_medium))
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 val dateString = remember(note.date) {
-                                    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                                    sdf.format(note.date.toDate())
+                                    SimpleDateFormat("dd/MM/yyyy",Locale.getDefault())
+                                        .format(note.date.toDate())
                                 }
                                 Text(
                                     text = dateString,
@@ -143,7 +152,7 @@ fun NoteDetailScreen(
                                 )
                             }
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.margin_large)))
 
                             if (!editMode) {
                                 Text(
@@ -154,13 +163,23 @@ fun NoteDetailScreen(
                                 OutlinedTextField(
                                     value = titleText,
                                     onValueChange = { titleText = it },
-                                    label = { Text("Título") },
+                                    label = { Text(stringResource(R.string.label_note_title)) },
                                     isError = titleText.isBlank(),
                                     modifier = Modifier.fillMaxWidth()
                                 )
+                                if (titleText.isBlank()) {
+                                    Text(
+                                        text = stringResource(R.string.error_empty_field),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.error,
+                                        modifier = Modifier.padding(
+                                            top = dimensionResource(R.dimen.margin_xsmall)
+                                        )
+                                    )
+                                }
                             }
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.margin_large)))
 
                             if (!editMode) {
                                 Text(
@@ -171,14 +190,15 @@ fun NoteDetailScreen(
                                 OutlinedTextField(
                                     value = contentText,
                                     onValueChange = { contentText = it },
-                                    label = { Text("Contenido") },
+                                    label = { Text(stringResource(R.string.label_note_content)) },
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .heightIn(min = 150.dp)
+                                        .heightIn(min = dimensionResource(R.dimen.margin_xxlarge)),
+                                    maxLines = 5
                                 )
                             }
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.margin_large)))
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Checkbox(
@@ -189,34 +209,36 @@ fun NoteDetailScreen(
                                     }
                                 )
                                 Text(
-                                    text = if (checkboxState) "Completada" else "No completada",
-                                    style = MaterialTheme.typography.bodyMedium
+                                    text = if (checkboxState) stringResource(R.string.label_completed) else stringResource(R.string.label_not_completed),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.padding(start = dimensionResource(R.dimen.margin_small))
                                 )
                             }
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.margin_large)))
+
 
                             if (!editMode) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceEvenly
                                 ) {
-                                    Button(
-                                        onClick = { editMode = true }
+                                    OutlinedButton(
+                                        onClick = { editMode = true },
                                     ) {
-                                        Icon(Icons.Default.Edit, contentDescription = "Editar")
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Editar")
+                                        Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.action_edit))
+                                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.margin_xsmall)))
+                                        Text(stringResource(R.string.action_edit))
                                     }
-                                    Button(
+                                    OutlinedButton(
                                         onClick = { showDeleteDialog = true },
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = MaterialTheme.colorScheme.error
+                                        colors = ButtonDefaults.outlinedButtonColors(
+                                            contentColor = MaterialTheme.colorScheme.error
                                         )
                                     ) {
-                                        Icon(Icons.Default.Delete, contentDescription = "Eliminar")
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Eliminar")
+                                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.action_delete))
+                                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.margin_xsmall)))
+                                        Text(stringResource(R.string.action_delete))
                                     }
                                 }
                             } else {
@@ -224,26 +246,23 @@ fun NoteDetailScreen(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceEvenly
                                 ) {
-                                    Button(
+                                    OutlinedButton(
                                         onClick = {
                                             editMode = false
-                                            titleText = note.title
-                                            contentText = note.content
-                                            checkboxState = note.completed
-                                        },
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = MaterialTheme.colorScheme.error
-                                        )
-                                    ) {
-                                        Icon(Icons.Default.Close, contentDescription = "Cancelar")
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Cancelar")
-                                    }
-                                    Button(
-                                        onClick = {
-                                            if (titleText.isBlank()) {
-                                                return@Button
+                                            noteResource.data?.let {
+                                                titleText = it.title
+                                                contentText = it.content
+                                                checkboxState = it.completed
                                             }
+                                        }
+                                    ) {
+                                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.action_cancel))
+                                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.margin_xsmall)))
+                                        Text(stringResource(R.string.action_cancel))
+                                    }
+                                    OutlinedButton(
+                                        onClick = {
+                                            if (titleText.isBlank()) return@OutlinedButton
                                             val updatedNote = note.copy(
                                                 title = titleText,
                                                 content = contentText,
@@ -255,9 +274,9 @@ fun NoteDetailScreen(
                                             editMode = false
                                         }
                                     ) {
-                                        Icon(Icons.Default.Check, contentDescription = "Confirmar")
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Confirmar")
+                                        Icon(Icons.Default.Check, contentDescription = stringResource(R.string.action_confirm))
+                                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.margin_xsmall)))
+                                        Text(stringResource(R.string.action_confirm))
                                     }
                                 }
                             }
@@ -266,29 +285,23 @@ fun NoteDetailScreen(
                 }
             }
         }
-    }
 
-    if (showDeleteDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Eliminar nota") },
-            text = { Text("¿Estás seguro de eliminar esta nota?") },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        viewModel.deleteNote(listId, noteId)
-                        showDeleteDialog = false
-                        onBack()
-                    }
-                ) {
-                    Text("Confirmar")
-                }
-            },
-            dismissButton = {
-                Button(onClick = { showDeleteDialog = false }) {
-                    Text("Cancelar")
-                }
-            }
-        )
+        if (showDeleteDialog) {
+            ConfirmationDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                title = stringResource(R.string.dialog_delete_note_title),
+                text = stringResource(R.string.dialog_delete_note_message),
+                confirmText = stringResource(R.string.action_confirm),
+                dismissText = stringResource(R.string.action_cancel),
+                confirmIcon  = Icons.Default.Check,
+                dismissIcon  = Icons.Default.Close,
+                onConfirm = {
+                    viewModel.deleteNote(listId, noteId)
+                    showDeleteDialog = false
+                    onBack()
+                },
+                onDismiss = { showDeleteDialog = false }
+            )
+        }
     }
 }
