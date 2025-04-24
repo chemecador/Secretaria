@@ -1,23 +1,17 @@
 package com.chemecador.secretaria.ui.view.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -71,52 +65,20 @@ fun ConfirmationDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    OutlinedButton(
+                    SecretariaButton(
                         onClick = onDismiss,
-                        border = BorderStroke(
-                            1.dp,
-                            MaterialTheme.colorScheme.error
-                        ),
-                        contentPadding = PaddingValues(
-                            horizontal = dimensionResource(R.dimen.margin_small),
-                            vertical = dimensionResource(R.dimen.margin_xsmall)
-                        )
-                    ) {
-                        Icon(
-                            imageVector = dismissIcon,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(dimensionResource(R.dimen.icon_size_small))
-                        )
-                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.margin_xsmall)))
-                        Text(
-                            dismissText,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                    OutlinedButton(
+                        icon = dismissIcon,
+                        text = dismissText,
+                        iconTint = MaterialTheme.colorScheme.error,
+                        borderColor = MaterialTheme.colorScheme.error
+                    )
+                    SecretariaButton(
                         onClick = onConfirm,
-                        border = BorderStroke(
-                            1.dp,
-                            MaterialTheme.colorScheme.primary
-                        ),
-                        contentPadding = PaddingValues(
-                            horizontal = dimensionResource(R.dimen.margin_small),
-                            vertical = dimensionResource(R.dimen.margin_xsmall)
-                        )
-                    ) {
-                        Icon(
-                            imageVector = confirmIcon,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(dimensionResource(R.dimen.icon_size_small))
-                        )
-                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.margin_xsmall)))
-                        Text(
-                            confirmText,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
+                        icon = confirmIcon,
+                        text = confirmText,
+                        iconTint = MaterialTheme.colorScheme.primary,
+                        borderColor = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
         }

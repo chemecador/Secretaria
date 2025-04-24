@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Card
@@ -28,11 +27,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -60,9 +57,7 @@ import java.util.Locale
 @Composable
 fun NotesScreen(
     listId: String,
-    listName: String,
     viewModel: NotesViewModel = hiltViewModel(),
-    onBack: () -> Unit = {},
     onNoteClick: (noteId: String) -> Unit = {}
 ) {
     var showDialog by remember { mutableStateOf(false) }
@@ -74,28 +69,15 @@ fun NotesScreen(
     val notesState by viewModel.notes.observeAsState(initial = Resource.Loading())
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(listName) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver"
-                        )
-                    }
-                }
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showDialog = true },
-                containerColor = MaterialTheme.colorScheme.primary
+                containerColor = MaterialTheme.colorScheme.primary,
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Agregar nota",
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.background
                 )
             }
         }
