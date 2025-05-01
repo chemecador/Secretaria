@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -43,6 +44,8 @@ import com.chemecador.secretaria.ui.view.main.screens.NoteDetailScreen
 import com.chemecador.secretaria.ui.view.main.screens.NotesListsScreen
 import com.chemecador.secretaria.ui.view.main.screens.NotesScreen
 import com.chemecador.secretaria.ui.view.settings.AboutUsScreen
+import com.chemecador.secretaria.ui.view.settings.SettingsScreen
+import com.chemecador.secretaria.ui.viewmodel.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -123,7 +126,7 @@ class MainActivity : ComponentActivity() {
                 route = "note_detail/{${Constants.LIST_ID}}/{${Constants.LIST_NAME}}/{${Constants.NOTE_ID}}",
                 arguments = listOf(
                     navArgument(Constants.LIST_ID) { type = NavType.StringType },
-                    navArgument(Constants.LIST_NAME)  { type = NavType.StringType },
+                    navArgument(Constants.LIST_NAME) { type = NavType.StringType },
                     navArgument(Constants.NOTE_ID) { type = NavType.StringType }
                 )
             ) { backStackEntry ->
@@ -135,7 +138,12 @@ class MainActivity : ComponentActivity() {
                     onBack = { navController.popBackStack() }
                 )
             }
+            composable(Constants.SETTINGS) {
+                val settingsViewModel: SettingsViewModel = hiltViewModel()
+                SettingsScreen(viewModel = settingsViewModel)
+            }
             composable(Constants.ABOUT_US) {
+                val email = stringResource(R.string.contact_mail)
                 val mailSubject = stringResource(R.string.label_mail_subject)
                 AboutUsScreen(
                     onGithubClick = { url ->
@@ -146,15 +154,12 @@ class MainActivity : ComponentActivity() {
                     onContactClick = {
                         val intent = Intent(Intent.ACTION_SENDTO).apply {
                             data = "mailto:".toUri()
-                            putExtra(Intent.EXTRA_EMAIL, arrayOf("soporte@tudominio.com"))
+                            putExtra(Intent.EXTRA_EMAIL, email)
                             putExtra(Intent.EXTRA_SUBJECT, mailSubject)
                         }
                         startActivity(intent)
                     }
                 )
-            }
-            composable(Constants.SETTINGS) {
-                // TODO: Implement SettingsScreen
             }
         }
     }
@@ -185,17 +190,17 @@ class MainActivity : ComponentActivity() {
                     onDismissRequest = { expanded.value = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text(stringResource(R.string.title_activity_about_us)) },
-                        onClick = {
-                            expanded.value = false
-                            navController.navigate(Constants.ABOUT_US)
-                        }
-                    )
-                    DropdownMenuItem(
                         text = { Text(stringResource(R.string.title_activity_settings)) },
                         onClick = {
                             expanded.value = false
                             navController.navigate(Constants.SETTINGS)
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.title_activity_about_us)) },
+                        onClick = {
+                            expanded.value = false
+                            navController.navigate(Constants.ABOUT_US)
                         }
                     )
                 }

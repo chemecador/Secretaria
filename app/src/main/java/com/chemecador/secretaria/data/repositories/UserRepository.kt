@@ -13,7 +13,6 @@ class UserRepository @Inject constructor(
     private val userPreferences: UserPreferences,
     private val authService: AuthService
 ) {
-    val themeMode: Flow<String> = userPreferences.themeMode
 
     val userEmail: Flow<String?> = flow {
         val user = authService.getUser()
