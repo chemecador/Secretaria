@@ -22,4 +22,5 @@ object Constants {
     const val NOTE_ID = "noteId"
     const val ABOUT_US = "about_us"
     const val SETTINGS = "settings"
+    const val FRIENDS = "friends"
 }

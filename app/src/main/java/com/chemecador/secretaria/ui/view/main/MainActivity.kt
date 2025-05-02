@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +41,7 @@ import androidx.navigation.navArgument
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.core.Constants
 import com.chemecador.secretaria.ui.theme.SecretariaTheme
+import com.chemecador.secretaria.ui.view.friends.FriendsScreen
 import com.chemecador.secretaria.ui.view.main.screens.NoteDetailScreen
 import com.chemecador.secretaria.ui.view.main.screens.NotesListsScreen
 import com.chemecador.secretaria.ui.view.main.screens.NotesScreen
@@ -161,6 +163,9 @@ class MainActivity : ComponentActivity() {
                     }
                 )
             }
+            composable(Constants.FRIENDS) {
+                FriendsScreen()
+            }
         }
     }
 
@@ -169,6 +174,7 @@ class MainActivity : ComponentActivity() {
     fun AppTopBar(navController: NavHostController, title: String) {
         val canPop = navController.previousBackStackEntry != null
         val expanded = remember { mutableStateOf(false) }
+
         TopAppBar(
             title = { Text(title) },
             navigationIcon = {
@@ -182,6 +188,13 @@ class MainActivity : ComponentActivity() {
                 }
             },
             actions = {
+                IconButton(onClick = { navController.navigate(Constants.FRIENDS) }) {
+                    Icon(
+                        imageVector = Icons.Filled.People,
+                        contentDescription = stringResource(R.string.label_friends)
+                    )
+                }
+
                 IconButton(onClick = { expanded.value = true }) {
                     Icon(Icons.Default.MoreVert, contentDescription = "Menu")
                 }
@@ -201,6 +214,13 @@ class MainActivity : ComponentActivity() {
                         onClick = {
                             expanded.value = false
                             navController.navigate(Constants.ABOUT_US)
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.label_friends)) },
+                        onClick = {
+                            expanded.value = false
+                            navController.navigate(Constants.FRIENDS)
                         }
                     )
                 }
