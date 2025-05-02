@@ -18,8 +18,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -159,13 +157,8 @@ fun NotesListsScreen(
 
     deleteDialogListId?.let { listId ->
         ConfirmationDialog(
-            onDismissRequest = { deleteDialogListId = null },
-            title = stringResource(R.string.label_confirm_delete),
-            text  = stringResource(R.string.label_confirm_delete_list),
-            confirmText = stringResource(R.string.action_confirm),
-            dismissText = stringResource(R.string.action_cancel),
-            confirmIcon = Icons.Default.Check,
-            dismissIcon = Icons.Default.Close,
+            title = stringResource(R.string.dialog_delete_list_title),
+            text = stringResource(R.string.dialog_delete_list_msg),
             onConfirm = {
                 viewModel.deleteList(listId)
                 deleteDialogListId = null
@@ -179,7 +172,7 @@ fun NotesListsScreen(
             showDialog = true,
             initialName = currentList.name,
             onDismiss = { editDialogData = null },
-            onCreate  = { newName ->
+            onCreate = { newName ->
                 viewModel.editList(currentList.copy(name = newName))
                 editDialogData = null
             }

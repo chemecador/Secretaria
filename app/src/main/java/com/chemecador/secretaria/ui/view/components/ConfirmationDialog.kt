@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -17,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,17 +30,16 @@ import com.chemecador.secretaria.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfirmationDialog(
-    onDismissRequest: () -> Unit,
-    title: String,
-    text: String,
-    confirmText: String,
-    dismissText: String,
-    confirmIcon: ImageVector,
-    dismissIcon: ImageVector,
+    title: String = stringResource(R.string.dialog_delete_title),
+    text: String = stringResource(R.string.dialog_delete_msg),
+    confirmText: String = stringResource(R.string.action_delete),
+    dismissText: String = stringResource(R.string.action_cancel),
+    confirmIcon: ImageVector = Icons.Default.Check,
+    dismissIcon: ImageVector = Icons.Default.Close,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    Dialog(onDismissRequest = onDismissRequest) {
+    Dialog(onDismissRequest = onDismiss) {
         Card(
             shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_medium)),
             modifier = Modifier.fillMaxWidth(0.9f)

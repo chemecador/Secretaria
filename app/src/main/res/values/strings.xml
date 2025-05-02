@@ -61,10 +61,14 @@
     <string name="label_not_completed">Sin completar</string>
 
     <!-- Dialogs -->
+    <string name="dialog_delete_friend_title">Eliminar amigo</string>
+    <string name="dialog_delete_friend_msg">¿Estás seguro de eliminar esta a %1$s?</string>
+    <string name="dialog_delete_title">¿Estás seguro?\nEsta acción no se puede deshacer.</string>
+    <string name="dialog_delete_msg">¿Estás seguro?\nEsta acción no se puede deshacer.</string>
+    <string name="dialog_delete_list_title">Eliminar lista</string>
+    <string name="dialog_delete_list_msg">Al eliminar esta lista, se eliminarán también todas sus notas.\nEsta acción no se puede deshacer.</string>
     <string name="dialog_delete_note_title">Eliminar nota</string>
-    <string name="dialog_delete_note_message">¿Estás seguro de eliminar esta nota?</string>
-    <string name="label_confirm_delete">¿Estás seguro?\nEsta acción no se puede deshacer.</string>
-    <string name="label_confirm_delete_list">Al eliminar esta lista, se eliminarán también todas sus notas.\nEsta acción no se puede deshacer.</string>
+    <string name="dialog_delete_note_msg">¿Estás seguro de que quieres eliminar esta nota?.\nEsta acción no se puede deshacer.</string>
     <string name="dialog_login_required_title">¡Atención!</string>
     <string name="dialog_login_required_msg">Para poder agregar amigos y compartir listas, debes crear una cuenta (¡es gratis!).\n¿Quieres crear una ahora?</string>
 

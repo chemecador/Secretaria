@@ -94,7 +94,10 @@ fun NoteDetailScreen(
 
                 is Resource.Error -> {
                     Text(
-                        text = stringResource(R.string.error_generic, (noteResource as Resource.Error).message.orEmpty()),
+                        text = stringResource(
+                            R.string.error_generic,
+                            (noteResource as Resource.Error).message.orEmpty()
+                        ),
                         modifier = Modifier.align(Alignment.Center),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyLarge
@@ -120,7 +123,7 @@ fun NoteDetailScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 val dateString = remember(note.date) {
-                                    SimpleDateFormat("dd/MM/yyyy",Locale.getDefault())
+                                    SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                                         .format(note.date.toDate())
                                 }
                                 Text(
@@ -192,7 +195,9 @@ fun NoteDetailScreen(
                                     }
                                 )
                                 Text(
-                                    text = if (checkboxState) stringResource(R.string.label_completed) else stringResource(R.string.label_not_completed),
+                                    text = if (checkboxState) stringResource(R.string.label_completed) else stringResource(
+                                        R.string.label_not_completed
+                                    ),
                                     style = MaterialTheme.typography.bodyMedium,
                                     modifier = Modifier.padding(start = dimensionResource(R.dimen.margin_small))
                                 )
@@ -209,7 +214,10 @@ fun NoteDetailScreen(
                                     OutlinedButton(
                                         onClick = { editMode = true },
                                     ) {
-                                        Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.action_edit))
+                                        Icon(
+                                            Icons.Default.Edit,
+                                            contentDescription = stringResource(R.string.action_edit)
+                                        )
                                         Spacer(modifier = Modifier.width(dimensionResource(R.dimen.margin_xsmall)))
                                         Text(stringResource(R.string.action_edit))
                                     }
@@ -219,7 +227,10 @@ fun NoteDetailScreen(
                                             contentColor = MaterialTheme.colorScheme.error
                                         )
                                     ) {
-                                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.action_delete))
+                                        Icon(
+                                            Icons.Default.Delete,
+                                            contentDescription = stringResource(R.string.action_delete)
+                                        )
                                         Spacer(modifier = Modifier.width(dimensionResource(R.dimen.margin_xsmall)))
                                         Text(stringResource(R.string.action_delete))
                                     }
@@ -239,7 +250,10 @@ fun NoteDetailScreen(
                                             }
                                         }
                                     ) {
-                                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.action_cancel))
+                                        Icon(
+                                            Icons.Default.Close,
+                                            contentDescription = stringResource(R.string.action_cancel)
+                                        )
                                         Spacer(modifier = Modifier.width(dimensionResource(R.dimen.margin_xsmall)))
                                         Text(stringResource(R.string.action_cancel))
                                     }
@@ -257,7 +271,10 @@ fun NoteDetailScreen(
                                             editMode = false
                                         }
                                     ) {
-                                        Icon(Icons.Default.Check, contentDescription = stringResource(R.string.action_confirm))
+                                        Icon(
+                                            Icons.Default.Check,
+                                            contentDescription = stringResource(R.string.action_confirm)
+                                        )
                                         Spacer(modifier = Modifier.width(dimensionResource(R.dimen.margin_xsmall)))
                                         Text(stringResource(R.string.action_confirm))
                                     }
@@ -271,13 +288,8 @@ fun NoteDetailScreen(
 
         if (showDeleteDialog) {
             ConfirmationDialog(
-                onDismissRequest = { showDeleteDialog = false },
                 title = stringResource(R.string.dialog_delete_note_title),
-                text = stringResource(R.string.dialog_delete_note_message),
-                confirmText = stringResource(R.string.action_confirm),
-                dismissText = stringResource(R.string.action_cancel),
-                confirmIcon  = Icons.Default.Check,
-                dismissIcon  = Icons.Default.Close,
+                text = stringResource(R.string.dialog_delete_note_msg),
                 onConfirm = {
                     viewModel.deleteNote(listId, noteId)
                     showDeleteDialog = false
