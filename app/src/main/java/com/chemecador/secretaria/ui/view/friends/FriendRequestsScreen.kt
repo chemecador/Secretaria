@@ -21,8 +21,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -39,9 +39,9 @@ import com.chemecador.secretaria.utils.Resource
 fun FriendRequestsScreen(
     viewModel: FriendsViewModel = hiltViewModel()
 ) {
-    val requestsRes by viewModel.friendRequests.observeAsState()
-    val acceptRes by viewModel.acceptRequestStatus.observeAsState()
-    val rejectRes by viewModel.rejectRequestStatus.observeAsState()
+    val requestsRes by viewModel.friendRequests.collectAsState()
+    val acceptRes by viewModel.acceptRequestStatus.collectAsState(null)
+    val rejectRes by viewModel.rejectRequestStatus.collectAsState(null)
 
     LaunchedEffect(Unit) { viewModel.loadFriendRequests() }
     LaunchedEffect(acceptRes, rejectRes) {

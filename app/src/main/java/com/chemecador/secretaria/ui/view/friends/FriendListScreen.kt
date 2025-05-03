@@ -22,8 +22,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,8 +43,8 @@ import com.chemecador.secretaria.utils.Resource
 fun FriendListScreen(
     viewModel: FriendsViewModel = hiltViewModel()
 ) {
-    val friendshipsRes by viewModel.friendships.observeAsState()
-    val deleteStatus by viewModel.deleteFriendStatus.observeAsState()
+    val friendshipsRes by viewModel.friendships.collectAsState()
+    val deleteStatus by viewModel.deleteFriendStatus.collectAsState(null)
     var toDelete by remember { mutableStateOf<Friendship?>(null) }
 
     LaunchedEffect(Unit) { viewModel.loadFriendships() }

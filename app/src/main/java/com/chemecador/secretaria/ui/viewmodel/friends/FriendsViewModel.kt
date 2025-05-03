@@ -1,7 +1,5 @@
 package com.chemecador.secretaria.ui.viewmodel.friends
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chemecador.secretaria.R
@@ -14,7 +12,15 @@ import com.chemecador.secretaria.data.services.AuthService
 import com.chemecador.secretaria.utils.Resource
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,139 +32,131 @@ class FriendsViewModel @Inject constructor(
     private val res: ResourceProvider
 ) : ViewModel() {
 
-    private val _friendships = MutableLiveData<Resource<List<Friendship>>>()
-    val friendships: LiveData<Resource<List<Friendship>>> = _friendships
 
-    private val _friends = MutableLiveData<Resource<List<Friend>>>()
-    val friends: LiveData<Resource<List<Friend>>> = _friends
+    private val _friendships = MutableStateFlow<Resource<List<Friendship>>>(Resource.Loading())
+    val friendships: StateFlow<Resource<List<Friendship>>> = _friendships.asStateFlow()
 
-    private val _deleteFriendStatus = MutableLiveData<Resource<Unit>>()
-    val deleteFriendStatus: LiveData<Resource<Unit>> get() = _deleteFriendStatus
+    private val _friends = MutableStateFlow<Resource<List<Friend>>>(Resource.Loading())
+    val friends: StateFlow<Resource<List<Friend>>> = _friends.asStateFlow()
 
-    private val _friendRequests = MutableLiveData<Resource<List<Friendship>>>()
-    val friendRequests: LiveData<Resource<List<Friendship>>> = _friendRequests
+    private val _friendRequests = MutableStateFlow<Resource<List<Friendship>>>(Resource.Loading())
+    val friendRequests: StateFlow<Resource<List<Friendship>>> = _friendRequests.asStateFlow()
 
-    private val _acceptRequestStatus = MutableLiveData<Resource<Unit>>()
-    val acceptRequestStatus: LiveData<Resource<Unit>> = _acceptRequestStatus
+    private val _friendRequestsSent =
+        MutableStateFlow<Resource<List<Friendship>>>(Resource.Loading())
 
-    private val _rejectRequestStatus = MutableLiveData<Resource<Unit>>()
-    val rejectRequestStatus: LiveData<Resource<Unit>> = _rejectRequestStatus
+    val friendRequestsSent: StateFlow<Resource<List<Friendship>>> =
+        _friendRequestsSent.asStateFlow()
 
-    private val _addFriendStatus = MutableLiveData<Resource<Unit>>()
-    val addFriendStatus: LiveData<Resource<Unit>> = _addFriendStatus
+    private val _userCode = MutableStateFlow<String?>(null)
+    val userCode: StateFlow<String?> = _userCode.asStateFlow()
 
-    private val _userCode = MutableLiveData<String?>()
-    val userCode: LiveData<String?> get() = _userCode
+    private val _deleteFriendStatus = MutableSharedFlow<Resource<Unit>>(replay = 1)
+    val deleteFriendStatus: SharedFlow<Resource<Unit>> = _deleteFriendStatus.asSharedFlow()
 
-    private val _friendRequestsSent = MutableLiveData<Resource<List<Friendship>>>()
-    val friendRequestSent: LiveData<Resource<List<Friendship>>> = _friendRequestsSent
+    private val _acceptRequestStatus = MutableSharedFlow<Resource<Unit>>(replay = 1)
+    val acceptRequestStatus: SharedFlow<Resource<Unit>> = _acceptRequestStatus.asSharedFlow()
 
-    private val _cancelRequestStatus = MutableLiveData<Resource<Unit>>()
-    val cancelRequestStatus: LiveData<Resource<Unit>> = _cancelRequestStatus
+    private val _rejectRequestStatus = MutableSharedFlow<Resource<Unit>>(replay = 1)
+    val rejectRequestStatus: SharedFlow<Resource<Unit>> = _rejectRequestStatus.asSharedFlow()
+
+    private val _addFriendStatus = MutableSharedFlow<Resource<Unit>>(replay = 1)
+    val addFriendStatus: SharedFlow<Resource<Unit>> = _addFriendStatus.asSharedFlow()
+
+    private val _cancelRequestStatus = MutableSharedFlow<Resource<Unit>>(replay = 1)
+    val cancelRequestStatus: SharedFlow<Resource<Unit>> = _cancelRequestStatus.asSharedFlow()
 
     fun getCurrentUserId() = FirebaseAuth.getInstance().currentUser?.uid
 
     fun loadFriendships() {
         viewModelScope.launch {
-            repository.getFriendships().collect { resource ->
-                _friendships.postValue(resource)
-            }
+            repository.getFriendships()
+                .onStart { _friendships.value = Resource.Loading() }
+                .collect { _friendships.value = it }
         }
     }
 
     fun loadFriends() {
         viewModelScope.launch {
-            repository.getFriends().collect { resource ->
-                _friends.postValue(resource)
-            }
-        }
-    }
-
-
-    fun deleteFriend(friendshipId: String) {
-        viewModelScope.launch {
-            _deleteFriendStatus.value = repository.deleteFriend(friendshipId)
+            repository.getFriends()
+                .onStart { _friends.value = Resource.Loading() }
+                .collect { _friends.value = it }
         }
     }
 
     fun loadFriendRequests() {
         viewModelScope.launch {
-            repository.getFriendRequests().collect { resource ->
-                _friendRequests.postValue(resource)
-            }
-        }
-    }
-
-    fun acceptFriendRequest(requestId: String) {
-        viewModelScope.launch {
-            val result = repository.acceptFriendRequest(requestId)
-            _acceptRequestStatus.postValue(result)
-        }
-    }
-
-    fun rejectFriendRequest(requestId: String) {
-        viewModelScope.launch {
-            val result = repository.rejectFriendRequest(requestId)
-            _rejectRequestStatus.postValue(result)
-        }
-    }
-
-    fun sendFriendRequest(friendCode: String) {
-        viewModelScope.launch {
-            _addFriendStatus.value = Resource.Loading()
-            val friendId = repository.getUserIdByUserCode(friendCode) ?: run {
-                _addFriendStatus.value =
-                    Resource.Error(res.getString(R.string.error_user_not_found))
-                return@launch
-            }
-
-            val alreadyFriends = repository.checkIfAlreadyFriends(friendId)
-            if (alreadyFriends) {
-                _addFriendStatus.value =
-                    Resource.Error(res.getString(R.string.error_already_friends))
-                return@launch
-            }
-
-            val result = repository.sendFriendRequest(friendCode)
-            _addFriendStatus.value = result
-        }
-    }
-
-    fun loadUserCode() {
-        viewModelScope.launch {
-            val userCode = userPreferences.userCodeFlow.firstOrNull()
-            if (userCode != null) {
-                _userCode.postValue(userCode)
-            } else {
-                val newUserCode = authService.getUserCode()
-                if (newUserCode != null) {
-                    userPreferences.saveUserCode(newUserCode)
-                    _userCode.postValue(newUserCode)
-                } else {
-                    _userCode.postValue(null)
-                }
-            }
+            repository.getFriendRequests()
+                .onStart { _friendRequests.value = Resource.Loading() }
+                .collect { _friendRequests.value = it }
         }
     }
 
     fun loadFriendRequestsSent() {
         viewModelScope.launch {
-            _friendRequestsSent.value = Resource.Loading()
-            try {
-                repository.getFriendRequestsSent().collect {
-                    _friendRequestsSent.postValue(it)
+            repository.getFriendRequestsSent()
+                .onStart { _friendRequestsSent.value = Resource.Loading() }
+                .catch { e ->
+                    _friendRequestsSent.value = Resource.Error(e.localizedMessage ?: "Error")
                 }
-            } catch (e: Exception) {
-                _friendRequestsSent.value = Resource.Error(e.localizedMessage ?: "Error")
-            }
+                .collect { _friendRequestsSent.value = it }
+        }
+    }
+
+    fun deleteFriend(friendshipId: String) {
+        viewModelScope.launch {
+            _deleteFriendStatus.emit(repository.deleteFriend(friendshipId))
+        }
+    }
+
+    fun acceptFriendRequest(requestId: String) {
+        viewModelScope.launch {
+            _acceptRequestStatus.emit(repository.acceptFriendRequest(requestId))
+        }
+    }
+
+    fun rejectFriendRequest(requestId: String) {
+        viewModelScope.launch {
+            _rejectRequestStatus.emit(repository.rejectFriendRequest(requestId))
         }
     }
 
     fun cancelFriendRequest(requestId: String) {
         viewModelScope.launch {
-            val result = repository.cancelFriendRequest(requestId)
-            _cancelRequestStatus.postValue(result)
+            _cancelRequestStatus.emit(repository.cancelFriendRequest(requestId))
+        }
+    }
+
+    fun sendFriendRequest(friendCode: String) {
+        viewModelScope.launch {
+            _addFriendStatus.emit(Resource.Loading())
+            val friendId = repository.getUserIdByUserCode(friendCode)
+            if (friendId == null) {
+                _addFriendStatus.emit(Resource.Error(res.getString(R.string.error_user_not_found)))
+                return@launch
+            }
+            if (repository.checkIfAlreadyFriends(friendId)) {
+                _addFriendStatus.emit(Resource.Error(res.getString(R.string.error_already_friends)))
+                return@launch
+            }
+            _addFriendStatus.emit(repository.sendFriendRequest(friendCode))
+        }
+    }
+
+    fun loadUserCode() {
+        viewModelScope.launch {
+            val saved = userPreferences.userCodeFlow.firstOrNull()
+            if (saved != null) {
+                _userCode.value = saved
+            } else {
+                val newCode = authService.getUserCode()
+                if (newCode != null) {
+                    userPreferences.saveUserCode(newCode)
+                    _userCode.value = newCode
+                } else {
+                    _userCode.value = null
+                }
+            }
         }
     }
 }
-
