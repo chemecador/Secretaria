@@ -7,7 +7,9 @@ import com.chemecador.secretaria.data.repositories.main.MainRepository
 import com.chemecador.secretaria.utils.Resource
 import com.chemecador.secretaria.utils.SortOption
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -27,8 +29,8 @@ class NotesListViewModel @Inject constructor(
     private val _deleteStatus = MutableStateFlow<Resource<Unit>>(Resource.Success(Unit))
     val deleteStatus: StateFlow<Resource<Unit>> = _deleteStatus.asStateFlow()
 
-    private val _shareListStatus = MutableStateFlow<Resource<Unit>>(Resource.Success(Unit))
-    val shareListStatus: StateFlow<Resource<Unit>> = _shareListStatus.asStateFlow()
+    private val _shareListStatus = MutableSharedFlow<Resource<Unit>>()
+    val shareListStatus: SharedFlow<Resource<Unit>> = _shareListStatus
 
     private val _notesLists = MutableStateFlow<Resource<List<NotesList>>>(Resource.Loading())
     val notesLists: StateFlow<Resource<List<NotesList>>> = _notesLists.asStateFlow()
@@ -65,9 +67,9 @@ class NotesListViewModel @Inject constructor(
 
     fun shareListWithFriend(listId: String, friendId: String) {
         viewModelScope.launch {
-            _shareListStatus.value = Resource.Loading()
+            _shareListStatus.emit(Resource.Loading())
             val result = repository.addContributorToList(listId, friendId)
-            _shareListStatus.value = result
+            _shareListStatus.emit(result)
         }
     }
 

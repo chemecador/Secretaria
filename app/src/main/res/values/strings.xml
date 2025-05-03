@@ -23,6 +23,7 @@
     <string name="action_edit">Editar</string>
     <string name="action_delete">Eliminar</string>
     <string name="action_back">Volver</string>
+    <string name="action_close">Cerrar</string>
 
     <!-- Menu -->
     <string name="menu_about_us">Sobre nosotros…</string>

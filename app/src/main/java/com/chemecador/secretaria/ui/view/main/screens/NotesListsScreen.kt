@@ -1,6 +1,5 @@
 package com.chemecador.secretaria.ui.view.main.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +35,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -49,6 +46,7 @@ import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.ui.view.components.CascadingDropdownMenu
 import com.chemecador.secretaria.ui.view.components.ConfirmationDialog
 import com.chemecador.secretaria.ui.view.components.CreateListDialog
+import com.chemecador.secretaria.ui.view.components.ShareListDialog
 import com.chemecador.secretaria.ui.viewmodel.main.NotesListViewModel
 import com.chemecador.secretaria.utils.Resource
 import java.text.SimpleDateFormat
@@ -147,13 +145,13 @@ fun NotesListsScreen(
         )
     }
 
-    val context = LocalContext.current
-    LaunchedEffect(shareDialogListId) {
-        shareDialogListId?.let { listId ->
-            Toast.makeText(context, "Sharing list $listId", Toast.LENGTH_SHORT).show()
-            shareDialogListId = null
-        }
+    shareDialogListId?.let { listId ->
+        ShareListDialog(
+            listId = listId,
+            onDismissRequest = { shareDialogListId = null }
+        )
     }
+
 
     deleteDialogListId?.let { listId ->
         ConfirmationDialog(
