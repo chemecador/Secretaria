@@ -32,7 +32,7 @@ import com.chemecador.secretaria.R
 fun ConfirmationDialog(
     title: String = stringResource(R.string.dialog_delete_title),
     text: String = stringResource(R.string.dialog_delete_msg),
-    confirmText: String = stringResource(R.string.action_delete),
+    confirmText: String = stringResource(R.string.action_confirm),
     dismissText: String = stringResource(R.string.action_cancel),
     confirmIcon: ImageVector = Icons.Default.Check,
     dismissIcon: ImageVector = Icons.Default.Close,

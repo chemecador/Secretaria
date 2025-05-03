@@ -72,6 +72,10 @@
     <string name="dialog_delete_note_msg">¿Estás seguro de que quieres eliminar esta nota?.\nEsta acción no se puede deshacer.</string>
     <string name="dialog_login_required_title">¡Atención!</string>
     <string name="dialog_login_required_msg">Para poder agregar amigos y compartir listas, debes crear una cuenta (¡es gratis!).\n¿Quieres crear una ahora?</string>
+    <string name="dialog_cancel_request_title">Cancelar solicitud</string>
+    <string name="dialog_cancel_request_msg">¿Estás seguro de que quieres cancelar esta solicitud?</string>
+    <string name="dialog_cancel_cancel">No hacer nada</string>
+    <string name="dialog_cancel_accept">Cancelar solicitud</string>
 
     <!-- Empty -->
     <string name="label_empty_lists">¡Todavía no has añadido ninguna lista!\n\nPara crear una, pulsa en el botón de +</string>

@@ -42,10 +42,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.data.model.Friendship
+import com.chemecador.secretaria.ui.view.components.ConfirmationDialog
 import com.chemecador.secretaria.ui.view.components.SecretariaButton
 import com.chemecador.secretaria.ui.viewmodel.friends.FriendsViewModel
 import com.chemecador.secretaria.utils.Resource
-import java.text.DateFormat
 
 @Composable
 fun AddFriendScreen(
@@ -60,6 +60,12 @@ fun AddFriendScreen(
     LaunchedEffect(Unit) {
         viewModel.loadUserCode()
         viewModel.loadFriendRequestsSent()
+    }
+    LaunchedEffect(addStatus) {
+        if (addStatus is Resource.Success) {
+            viewModel.loadFriendRequestsSent()
+            friendCode = ""
+        }
     }
 
     Column(
@@ -88,7 +94,6 @@ fun AddFriendScreen(
                 friendCodeError = null
             },
             label = { Text(stringResource(R.string.label_friend_code)) },
-            placeholder = { Text("123456") },
             isError = friendCodeError != null,
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -173,8 +178,12 @@ fun RequestItem(
     request: Friendship,
     onCancel: () -> Unit
 ) {
-    val date = request.requestDate.toDate().let {
-        DateFormat.getDateTimeInstance().format(it)
+    var showConfirm by remember { mutableStateOf(false) }
+    val dateFormatter = remember {
+        java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault())
+    }
+    val date = remember(request.requestDate) {
+        dateFormatter.format(request.requestDate.toDate())
     }
     Card(
         modifier = Modifier
@@ -191,27 +200,34 @@ fun RequestItem(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(request.receiverCode, style = MaterialTheme.typography.bodyLarge)
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.margin_medium)))
                 Text(
-                    text = "Solicitud: $date",
+                    text = date,
                     style = MaterialTheme.typography.bodySmall
                 )
-                if (request.acceptanceDate != null) {
-                    val accDate = request.acceptanceDate.toDate().let {
-                        DateFormat.getDateTimeInstance().format(it)
-                    }
-                    Text(
-                        text = "Aceptado: $accDate",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
             }
-            IconButton(onClick = onCancel) {
+            IconButton(onClick = { showConfirm = true }) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.action_cancel)
                 )
             }
         }
+    }
+    if (showConfirm) {
+        ConfirmationDialog(
+            title = stringResource(R.string.dialog_cancel_request_title),
+            text = stringResource(R.string.dialog_cancel_request_msg),
+            confirmText = stringResource(R.string.dialog_cancel_cancel),
+            dismissText = stringResource(R.string.dialog_cancel_accept),
+            onConfirm = {
+                onCancel()
+                showConfirm = false
+            },
+            onDismiss = {
+                showConfirm = false
+            }
+        )
     }
 }
 

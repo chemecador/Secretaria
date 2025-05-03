@@ -47,8 +47,12 @@ fun FriendListScreen(
     val deleteStatus by viewModel.deleteFriendStatus.observeAsState()
     var toDelete by remember { mutableStateOf<Friendship?>(null) }
 
-    // Carga inicial de datos
     LaunchedEffect(Unit) { viewModel.loadFriendships() }
+    LaunchedEffect(deleteStatus) {
+        if (deleteStatus is Resource.Success) {
+            viewModel.loadFriendships()
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         when {
