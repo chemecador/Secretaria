@@ -65,7 +65,7 @@ fun FriendsScreen() {
                 )
             }
             composable(FriendRoute.Requests.route) {
-                //  FriendRequestsScreen(viewModel = hiltViewModel())
+                FriendRequestsScreen(viewModel = hiltViewModel())
             }
             composable(FriendRoute.Add.route) {
                 AddFriendScreen(viewModel = hiltViewModel())
