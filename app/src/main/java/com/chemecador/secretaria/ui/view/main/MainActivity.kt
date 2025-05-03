@@ -74,12 +74,14 @@ class MainActivity : ComponentActivity() {
 
                     Constants.ABOUT_US -> stringResource(R.string.title_activity_about_us)
 
+                    Constants.FRIENDS -> stringResource(R.string.label_friends)
+
                     Constants.SETTINGS -> stringResource(R.string.title_activity_settings)
                     else -> stringResource(R.string.app_name)
                 }
 
                 Scaffold(
-                    topBar = { AppTopBar(navController, appBarTitle) }
+                    topBar = { SecretariaTopBar(navController, appBarTitle) }
                 ) { padding ->
                     Box(
                         Modifier
@@ -171,7 +173,7 @@ class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun AppTopBar(navController: NavHostController, title: String) {
+    fun SecretariaTopBar(navController: NavHostController, title: String) {
         val canPop = navController.previousBackStackEntry != null
         val expanded = remember { mutableStateOf(false) }
 
