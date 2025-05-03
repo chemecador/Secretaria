@@ -3,8 +3,8 @@ package com.chemecador.secretaria.ui.view.friends
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.People
-import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.PersonAddAlt1
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -77,7 +77,7 @@ fun FriendsScreen() {
 sealed class FriendRoute(val route: String, @StringRes val label: Int, val icon: ImageVector) {
     object List : FriendRoute("friend_list", R.string.label_friends, Icons.Filled.People)
     object Requests :
-        FriendRoute("friend_requests", R.string.label_friend_requests, Icons.Filled.PersonAdd)
+        FriendRoute("friend_requests", R.string.label_friend_requests, Icons.Filled.Notifications)
 
     object Add : FriendRoute("add_friend", R.string.label_add_friend, Icons.Filled.PersonAddAlt1)
     companion object {
