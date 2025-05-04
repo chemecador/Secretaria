@@ -35,6 +35,9 @@ class NotesListViewModel @Inject constructor(
     private val _notesLists = MutableStateFlow<Resource<List<NotesList>>>(Resource.Loading())
     val notesLists: StateFlow<Resource<List<NotesList>>> = _notesLists.asStateFlow()
 
+    private val _contributors = MutableStateFlow<Set<String>>(emptySet())
+    val contributors: StateFlow<Set<String>> = _contributors.asStateFlow()
+
     init {
         viewModelScope.launch {
             _notesLists.value = Resource.Loading()
@@ -65,10 +68,34 @@ class NotesListViewModel @Inject constructor(
         _notesLists.value = Resource.Success(sortedList ?: emptyList())
     }
 
-    fun shareListWithFriend(listId: String, friendId: String) {
+    fun loadContributors(listId: String) {
+        viewModelScope.launch {
+            repository.getContributors(listId)
+                .collect { resource ->
+                    when (resource) {
+                        is Resource.Success -> {
+                            val ids: List<String> = resource.data.orEmpty()
+                            _contributors.value = ids.toSet()
+                        }
+                        else -> { /* Loading & Error: do nothing */}
+                    }
+                }
+        }
+    }
+
+    fun unshareList(listId: String, friendId: String) {
         viewModelScope.launch {
             _shareListStatus.emit(Resource.Loading())
-            val result = repository.addContributorToList(listId, friendId)
+            val result = repository.unshareList(listId, friendId)
+            _shareListStatus.emit(result)
+            if (result is Resource.Success) loadContributors(listId)
+        }
+    }
+
+    fun shareList(listId: String, friendId: String) {
+        viewModelScope.launch {
+            _shareListStatus.emit(Resource.Loading())
+            val result = repository.shareList(listId, friendId)
             _shareListStatus.emit(result)
         }
     }

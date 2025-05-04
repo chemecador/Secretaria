@@ -14,6 +14,10 @@ import com.chemecador.secretaria.utils.Resource
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
@@ -258,7 +262,33 @@ class MainRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addContributorToList(listId: String, friendId: String): Resource<Unit> {
+    override suspend fun getContributors(listId: String): Flow<Resource<List<String>>> = flow {
+        emit(Resource.Loading<List<String>>())
+        try {
+            val userId = userRepository.getUserId()
+                ?: return@flow emit(Resource.Error<List<String>>(res.getString(R.string.error_user_not_auth)))
+
+            val snapshot = firestore.collectionGroup(NOTES_LIST)
+                .whereArrayContains(CONTRIBUTORS, userId)
+                .get()
+                .await()
+
+            val listDoc = snapshot.documents.firstOrNull { it.id == listId }
+                ?: return@flow emit(Resource.Error<List<String>>(res.getString(R.string.error_fetching_lists)))
+
+            @Suppress("UNCHECKED_CAST")
+            val contributors = listDoc.get(CONTRIBUTORS) as? List<String> ?: emptyList()
+
+            emit(Resource.Success(contributors))
+        } catch (e: Exception) {
+            Timber.e(e)
+            emit(Resource.Error<List<String>>(res.getString(R.string.error_unknown)))
+        }
+    }.flowOn(Dispatchers.IO)
+
+
+
+    override suspend fun shareList(listId: String, friendId: String): Resource<Unit> {
         return try {
             val userId = userRepository.getUserId()
                 ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
@@ -281,6 +311,39 @@ class MainRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Timber.e(e)
             Resource.Error(res.getString(R.string.error_adding_contributor))
+        }
+    }
+
+    override suspend fun unshareList(
+        listId: String,
+        friendId: String
+    ): Resource<Unit> {
+        return try {
+            val userId = userRepository.getUserId()
+                ?: return Resource.Error(res.getString(R.string.error_user_not_auth))
+
+            val listRef = firestore.collection(USERS)
+                .document(userId)
+                .collection(NOTES_LIST)
+                .document(listId)
+
+            firestore.runTransaction { transaction ->
+                val snapshot = transaction.get(listRef)
+
+                @Suppress("UNCHECKED_CAST")
+                val contributors =
+                    snapshot.get(CONTRIBUTORS) as? MutableList<String> ?: mutableListOf()
+
+                if (contributors.contains(friendId)) {
+                    contributors.remove(friendId)
+                    transaction.update(listRef, CONTRIBUTORS, contributors)
+                }
+            }.await()
+
+            Resource.Success(Unit)
+        } catch (e: Exception) {
+            Timber.e(e)
+            Resource.Error(res.getString(R.string.error_removing_contributor))
         }
     }
 }

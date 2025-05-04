@@ -1,7 +1,6 @@
 package com.chemecador.secretaria.ui.view.components
 
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -49,24 +49,23 @@ fun ShareListDialog(
     viewModel: NotesListViewModel = hiltViewModel(),
     friendsViewModel: FriendsViewModel = hiltViewModel()
 ) {
-    val friendsResource by friendsViewModel.friends.collectAsState()
+    val friendsResource by friendsViewModel.friends.collectAsState(initial = Resource.Loading())
+    val contributors by viewModel.contributors.collectAsState(initial = emptySet())
     val context = LocalContext.current
+
     LaunchedEffect(Unit) {
         friendsViewModel.loadFriends()
+        viewModel.loadContributors(listId)
     }
+
     LaunchedEffect(Unit) {
         viewModel.shareListStatus.collect { status ->
             when (status) {
-                is Resource.Success -> {
-                    Toast.makeText(context, R.string.label_list_shared, Toast.LENGTH_SHORT).show()
-                    onDismissRequest()
-                }
+                is Resource.Error -> Toast.makeText(context, status.message, Toast.LENGTH_LONG)
+                    .show()
 
-                is Resource.Error -> {
-                    Toast.makeText(context, status.message, Toast.LENGTH_LONG).show()
+                else -> {/* Success & Loading: do nothing */
                 }
-
-                else -> { /* Loading → do nothing */ }
             }
         }
     }
@@ -89,18 +88,28 @@ fun ShareListDialog(
                     )
 
                     is Resource.Success -> {
-                        val list = (friendsResource as Resource.Success<List<Friend>>).data
-                        if (list.isNullOrEmpty()) {
+                        val friends =
+                            (friendsResource as Resource.Success<List<Friend>>).data.orEmpty()
+                        if (friends.isEmpty()) {
                             Text(
                                 stringResource(R.string.label_no_friends),
                                 Modifier.align(Alignment.Center)
                             )
                         } else {
                             LazyColumn {
-                                items(list) { friend ->
-                                    ContributorItem(friend) {
-                                        viewModel.shareListWithFriend(listId, friend.id)
-                                    }
+                                items(friends) { friend ->
+                                    val isShared = contributors.contains(friend.id)
+                                    ContributorItem(
+                                        friend = friend,
+                                        isShared = isShared,
+                                        onShareClick = { viewModel.shareList(listId, friend.id) },
+                                        onUnshareClick = {
+                                            viewModel.unshareList(
+                                                listId,
+                                                friend.id
+                                            )
+                                        }
+                                    )
                                 }
                             }
                         }
@@ -116,11 +125,12 @@ fun ShareListDialog(
     )
 }
 
-
 @Composable
 fun ContributorItem(
     friend: Friend,
-    onShareClick: () -> Unit
+    isShared: Boolean,
+    onShareClick: () -> Unit,
+    onUnshareClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -131,7 +141,6 @@ fun ContributorItem(
     ) {
         Row(
             modifier = Modifier
-                .clickable { onShareClick() }
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -145,9 +154,24 @@ fun ContributorItem(
                 Text(text = friend.name, style = MaterialTheme.typography.titleMedium)
                 Text(text = friend.email, style = MaterialTheme.typography.bodySmall)
             }
-            IconButton(onClick = onShareClick) {
-                Icon(imageVector = Icons.Default.Share, contentDescription = "Compartir")
+
+            if (isShared) {
+                IconButton(onClick = onUnshareClick) {
+                    Icon(
+                        imageVector = Icons.Default.RemoveCircle,
+                        contentDescription = stringResource(R.string.action_unshare)
+                    )
+                }
+            } else {
+                IconButton(onClick = onShareClick) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = stringResource(R.string.action_share)
+                    )
+                }
             }
         }
     }
 }
+
+

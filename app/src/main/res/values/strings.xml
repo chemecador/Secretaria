@@ -20,6 +20,7 @@
     <string name="action_confirm">Confirmar</string>
     <string name="action_search">Buscar</string>
     <string name="action_share">Compartir</string>
+    <string name="action_unshare">Dejar de compartir</string>
     <string name="action_edit">Editar</string>
     <string name="action_delete">Eliminar</string>
     <string name="action_back">Volver</string>
@@ -44,6 +45,7 @@
     <string name="label_name_list">Dale un nombre a la lista</string>
     <string name="label_list_name">Nombre de la lista</string>
     <string name="label_list_shared">Lista compartida correctamente</string>
+    <string name="label_list_unshared">Lista compartida correctamente</string>
     <string name="label_list_updated">Lista actualizada correctamente</string>
     <string name="label_list_deleted">Lista eliminada correctamente</string>
     <string name="label_checklist">Checklist</string>
@@ -97,6 +99,7 @@
     <string name="error_invalid_userid">El usuario no es válido</string>
     <string name="error_note_not_found">Nota no encontrada</string>
     <string name="error_adding_contributor">Error al compartir la lista con tu amigo</string>
+    <string name="error_removing_contributor">Error al dejar de compartir la lista con tu amigo</string>
     <string name="error_session_expired">Su sesión ha expirado. Por favor, inicie sesión de nuevo.</string>
     <string name="error_insuficient_permissions">No tienes permisos suficientes</string>
 
