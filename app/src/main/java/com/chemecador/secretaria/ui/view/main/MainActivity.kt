@@ -218,13 +218,6 @@ class MainActivity : ComponentActivity() {
                             navController.navigate(Constants.ABOUT_US)
                         }
                     )
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.label_friends)) },
-                        onClick = {
-                            expanded.value = false
-                            navController.navigate(Constants.FRIENDS)
-                        }
-                    )
                 }
             },
             modifier = Modifier.fillMaxWidth()
