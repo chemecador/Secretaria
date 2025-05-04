@@ -20,7 +20,7 @@
 
     <!-- Others -->
     <string name="what_is_secretaria_title">Secretaria es un proyecto con fines educativos, gratuito y de código abierto.</string>
-    <string name="what_is_secretaria_description">¿Quieres colaborar, o simplemente ver cómo está programada?</string>
+    <string name="what_is_secretaria_description">¿Quieres echarle un ojo al código (o incluso ayudarnos a mejorar)?</string>
     <string name="action_logout">Cerrar sesión</string>
 
 </resources>

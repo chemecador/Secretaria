@@ -21,9 +21,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.ui.view.components.SecretariaButton
@@ -55,13 +57,15 @@ fun AboutUsScreen(
         Text(
             text = stringResource(R.string.what_is_secretaria_title),
             style = MaterialTheme.typography.bodyLarge,
-            color = textColor
+            color = textColor,
+            textAlign = TextAlign.Center
         )
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(dimensionResource(R.dimen.margin_medium)))
         Text(
             text = stringResource(R.string.what_is_secretaria_description),
             style = MaterialTheme.typography.bodyMedium,
-            color = textColor
+            color = textColor,
+            textAlign = TextAlign.Center
         )
 
         Spacer(Modifier.height(24.dp))
