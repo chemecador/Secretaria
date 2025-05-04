@@ -13,10 +13,10 @@
     </string-array>
 
     <string-array name="sort_options">
-        <item>Nombre (A … Z)</item>
-        <item>Nombre (Z … A)</item>
-        <item>Fecha (↑)</item>
-        <item>Fecha (↓)</item>
+        <item>Nombre ↑</item>
+        <item>Nombre ↓</item>
+        <item>Fecha ↑</item>
+        <item>Fecha ↓</item>
     </string-array>
 
 </resources>

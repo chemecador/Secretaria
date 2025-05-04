@@ -104,12 +104,4 @@
     <string name="error_session_expired">Su sesión ha expirado. Por favor, inicie sesión de nuevo.</string>
     <string name="error_insuficient_permissions">No tienes permisos suficientes</string>
 
-
-    <!-- Accessibility -->
-    <string name="a11y_logo">Logo</string>
-    <string name="a11y_image">Imagen</string>
-    <string name="a11y_fab">Pulsa para añadir</string>
-    <string name="a11y_github">Github</string>
-    <string name="a11y_info">Más información</string>
-
 </resources>
