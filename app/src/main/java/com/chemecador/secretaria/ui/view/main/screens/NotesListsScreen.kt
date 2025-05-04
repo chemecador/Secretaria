@@ -75,6 +75,13 @@ fun NotesListsScreen(
     var deleteDialogListId by remember { mutableStateOf<String?>(null) }
     var editDialogData by remember { mutableStateOf<NotesList?>(null) }
 
+    val sortLabel = when (sortOption) {
+        SortOption.NAME_ASC -> stringArrayResource(R.array.sort_options)[0]
+        SortOption.NAME_DESC -> stringArrayResource(R.array.sort_options)[1]
+        SortOption.DATE_ASC -> stringArrayResource(R.array.sort_options)[2]
+        SortOption.DATE_DESC -> stringArrayResource(R.array.sort_options)[3]
+    }
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -97,16 +104,22 @@ fun NotesListsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        horizontal = 16.dp,
-                        vertical = dimensionResource(R.dimen.margin_xsmall)
+                        horizontal = dimensionResource(R.dimen.margin_medium),
+                        vertical = dimensionResource(R.dimen.margin_xxsmall)
                     ),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
                 Text(
                     text = stringResource(R.string.label_order_by),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.width(dimensionResource(R.dimen.margin_small)))
+                Text(
+                    text = sortLabel,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.width(dimensionResource(R.dimen.margin_medium)))
                 Box(modifier = Modifier.wrapContentSize()) {
