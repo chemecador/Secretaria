@@ -1,5 +1,6 @@
 package com.chemecador.secretaria.ui.view.main.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,15 +12,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -37,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -49,9 +55,11 @@ import com.chemecador.secretaria.ui.view.components.CreateListDialog
 import com.chemecador.secretaria.ui.view.components.ShareListDialog
 import com.chemecador.secretaria.ui.viewmodel.main.NotesListViewModel
 import com.chemecador.secretaria.utils.Resource
+import com.chemecador.secretaria.utils.SortOption
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotesListsScreen(
@@ -60,7 +68,8 @@ fun NotesListsScreen(
 ) {
 
     var showDialog by remember { mutableStateOf(false) }
-
+    var sortOption by remember { mutableStateOf(SortOption.DATE_DESC) }
+    var menuExpanded by remember { mutableStateOf(false) }
     val notesLists by viewModel.notesLists.collectAsState()
     var shareDialogListId by remember { mutableStateOf<String?>(null) }
     var deleteDialogListId by remember { mutableStateOf<String?>(null) }
@@ -79,70 +88,131 @@ fun NotesListsScreen(
                 )
             }
         }
-    ) { innerPadding ->
-        Box(
+    ) { _ ->
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
         ) {
-            when (val state = notesLists) {
-                is Resource.Loading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = dimensionResource(R.dimen.margin_xsmall)
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = stringResource(R.string.label_order_by),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.width(dimensionResource(R.dimen.margin_medium)))
+                Box(modifier = Modifier.wrapContentSize()) {
 
-                is Resource.Success -> {
-                    val lists = state.data.orEmpty()
-                    if (lists.isEmpty()) {
-                        Text(
-                            text = stringResource(R.string.label_empty_lists),
-                            modifier = Modifier.align(Alignment.Center),
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center
+                    IconButton(onClick = { menuExpanded = true }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Sort,
+                            contentDescription = stringResource(R.string.action_sort)
                         )
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(lists) { list ->
-                                val dateString = remember(list.date) {
-                                    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                                    sdf.format(list.date.toDate())
-                                }
-                                NotesListItem(
-                                    title = list.name,
-                                    creator = list.creator,
-                                    date = dateString,
-                                    onItemClick = { onListClick(list.id, list.name) },
-                                    onShare = { shareDialogListId = list.id },
-                                    onEdit = { editDialogData = list },
-                                    onDelete = { deleteDialogListId = list.id }
-                                )
+                    }
+                    DropdownMenu(
+                        expanded = menuExpanded,
+                        onDismissRequest = { menuExpanded = false },
+                        modifier = Modifier.wrapContentSize(Alignment.TopEnd)
+                    ) {
+                        stringArrayResource(R.array.sort_options).forEachIndexed { index, title ->
+                            val option = when (index) {
+                                0 -> SortOption.NAME_ASC
+                                1 -> SortOption.NAME_DESC
+                                2 -> SortOption.DATE_ASC
+                                else -> SortOption.DATE_DESC
                             }
+                            DropdownMenuItem(
+                                text = { Text(title) },
+                                onClick = {
+                                    sortOption = option
+                                    menuExpanded = false
+                                }
+                            )
                         }
                     }
                 }
+            }
 
-                is Resource.Error -> {
-                    Text(
-                        text = "Error: ${state.message}",
-                        modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center
-                    )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                when (val state = notesLists) {
+                    is Resource.Loading -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+
+                    is Resource.Success -> {
+                        val lists = state.data.orEmpty()
+                            .let { unsorted ->
+                                when (sortOption) {
+                                    SortOption.NAME_ASC -> unsorted.sortedBy { it.name.lowercase() }
+                                    SortOption.NAME_DESC -> unsorted.sortedByDescending { it.name.lowercase() }
+                                    SortOption.DATE_ASC -> unsorted.sortedBy { it.date }
+                                    SortOption.DATE_DESC -> unsorted.sortedByDescending { it.date }
+                                }
+                            }
+                        if (lists.isEmpty()) {
+                            Text(
+                                text = stringResource(R.string.label_empty_lists),
+                                modifier = Modifier.align(Alignment.Center),
+                                style = MaterialTheme.typography.bodyLarge,
+                                textAlign = TextAlign.Center
+                            )
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                                contentPadding = PaddingValues(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                items(lists) { list ->
+                                    val dateString = remember(list.date) {
+                                        val sdf =
+                                            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                                        sdf.format(list.date.toDate())
+                                    }
+                                    NotesListItem(
+                                        title = list.name,
+                                        creator = list.creator,
+                                        date = dateString,
+                                        onItemClick = { onListClick(list.id, list.name) },
+                                        onShare = { shareDialogListId = list.id },
+                                        onEdit = { editDialogData = list },
+                                        onDelete = { deleteDialogListId = list.id }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        Text(
+                            text = "Error: ${state.message}",
+                            modifier = Modifier.align(Alignment.Center),
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
-        }
 
-        CreateListDialog(
-            showDialog = showDialog,
-            onDismiss = { showDialog = false },
-            onCreate = { name -> viewModel.createList(name) }
-        )
+            CreateListDialog(
+                showDialog = showDialog,
+                onDismiss = { showDialog = false },
+                onCreate = { name -> viewModel.createList(name) }
+            )
+        }
     }
 
     shareDialogListId?.let { listId ->

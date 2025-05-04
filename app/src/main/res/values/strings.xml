@@ -19,6 +19,7 @@
     <string name="action_create">Crear</string>
     <string name="action_confirm">Confirmar</string>
     <string name="action_search">Buscar</string>
+    <string name="action_sort">Ordenar por...</string>
     <string name="action_share">Compartir</string>
     <string name="action_unshare">Dejar de compartir</string>
     <string name="action_edit">Editar</string>
