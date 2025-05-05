@@ -58,16 +58,6 @@ class NotesListViewModel @Inject constructor(
         }
     }
 
-    fun sortNotes(option: SortOption) {
-        val sortedList = when (option) {
-            SortOption.NAME_ASC -> notesLists.value.data?.sortedBy { it.name }
-            SortOption.NAME_DESC -> notesLists.value.data?.sortedByDescending { it.name }
-            SortOption.DATE_ASC -> notesLists.value.data?.sortedBy { it.date }
-            SortOption.DATE_DESC -> notesLists.value.data?.sortedByDescending { it.date }
-        }
-        _notesLists.value = Resource.Success(sortedList ?: emptyList())
-    }
-
     fun loadContributors(listId: String) {
         viewModelScope.launch {
             repository.getContributors(listId)

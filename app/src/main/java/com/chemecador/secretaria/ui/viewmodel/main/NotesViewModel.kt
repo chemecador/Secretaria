@@ -1,16 +1,20 @@
 package com.chemecador.secretaria.ui.viewmodel.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.chemecador.secretaria.data.local.UserPreferences
+import com.chemecador.secretaria.R
 import com.chemecador.secretaria.data.model.Note
+import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.chemecador.secretaria.data.repositories.UserRepository
 import com.chemecador.secretaria.data.repositories.main.MainRepository
 import com.chemecador.secretaria.utils.Resource
-import com.chemecador.secretaria.utils.SortOption
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,52 +23,51 @@ import javax.inject.Inject
 class NotesViewModel @Inject constructor(
     private val repository: MainRepository,
     private val userRepository: UserRepository,
-    private val userPreferences: UserPreferences
+    private val res: ResourceProvider
 ) : ViewModel() {
 
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String> get() = _error
+    private val _notes = MutableStateFlow<Resource<List<Note>>>(Resource.Loading())
+    val notes: StateFlow<Resource<List<Note>>> = _notes.asStateFlow()
 
-    private val _notes = MutableLiveData<Resource<List<Note>>>()
-    val notes: LiveData<Resource<List<Note>>> get() = _notes
+    private val _error = MutableSharedFlow<String>(replay = 0)
+    val error: SharedFlow<String> = _error.asSharedFlow()
 
     fun getNotes(listId: String) {
         viewModelScope.launch {
-            _notes.postValue(Resource.Loading())
-            val result = repository.getNotes(listId)
-            if (result is Resource.Success) {
-                val sortedNotes = result.data?.sortedByDescending { it.date }
-                _notes.postValue(Resource.Success(sortedNotes ?: emptyList()))
-            } else {
-                _notes.postValue(result)
+            _notes.value = Resource.Loading()
+            when (val result = repository.getNotes(listId)) {
+                is Resource.Success -> {
+                    val sorted = result.data.orEmpty()
+                        .sortedByDescending { it.date }
+                    _notes.value = Resource.Success(sorted)
+                }
+
+                is Resource.Error -> {
+                    _notes.value = result
+                    _error.emit(result.message ?: res.getString(R.string.error_unknown))
+                }
+
+                else -> { } /* Resource.Loading: do nothing */
+
             }
         }
     }
-
 
     fun createNote(listId: String, note: Note) {
         viewModelScope.launch {
-            val result = repository.createNote(listId, note)
-            if (result is Resource.Error) {
-                _error.postValue(result.message ?: "Error")
-            } else {
-                _notes.postValue(repository.getNotes(listId))
+            when (val result = repository.createNote(listId, note)) {
+                is Resource.Success -> {
+                    getNotes(listId)
+                }
+
+                is Resource.Error -> {
+                    _error.emit(result.message ?: res.getString(R.string.error_creating_note))
+                }
+
+                else -> { } /* Resource.Loading: do nothing */
             }
         }
     }
 
-    fun sortNotes(option: SortOption) {
-        val currentNotes = _notes.value?.data ?: return
-        val sortedNotes = when (option) {
-            SortOption.NAME_ASC -> currentNotes.sortedBy { it.title }
-            SortOption.NAME_DESC -> currentNotes.sortedByDescending { it.title }
-            SortOption.DATE_ASC -> currentNotes.sortedBy { it.date }
-            SortOption.DATE_DESC -> currentNotes.sortedByDescending { it.date }
-        }
-        _notes.postValue(Resource.Success(sortedNotes))
-    }
-
-
-    fun getUsername() = userRepository.getUsername() ?: ""
-
+    fun getUsername(): String = userRepository.getUsername() ?: ""
 }
