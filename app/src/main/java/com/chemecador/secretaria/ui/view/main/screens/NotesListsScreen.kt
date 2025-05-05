@@ -33,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -80,6 +81,21 @@ fun NotesListsScreen(
         SortOption.NAME_DESC -> stringArrayResource(R.array.sort_options)[1]
         SortOption.DATE_ASC -> stringArrayResource(R.array.sort_options)[2]
         SortOption.DATE_DESC -> stringArrayResource(R.array.sort_options)[3]
+    }
+
+    LaunchedEffect(viewModel.updateStatus) {
+        viewModel.updateStatus.collect { status ->
+            if (status is Resource.Success) {
+                viewModel.fetchLists()
+            }
+        }
+    }
+    LaunchedEffect(viewModel.deleteStatus) {
+        viewModel.deleteStatus.collect { status ->
+            if (status is Resource.Success) {
+                viewModel.fetchLists()
+            }
+        }
     }
 
     Scaffold(

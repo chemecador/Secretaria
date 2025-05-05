@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.chemecador.secretaria.data.model.NotesList
 import com.chemecador.secretaria.data.repositories.main.MainRepository
 import com.chemecador.secretaria.utils.Resource
-import com.chemecador.secretaria.utils.SortOption
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,6 +38,10 @@ class NotesListViewModel @Inject constructor(
     val contributors: StateFlow<Set<String>> = _contributors.asStateFlow()
 
     init {
+        fetchLists()
+    }
+
+    fun fetchLists() {
         viewModelScope.launch {
             _notesLists.value = Resource.Loading()
             val lists = repository.getLists()
@@ -67,7 +70,9 @@ class NotesListViewModel @Inject constructor(
                             val ids: List<String> = resource.data.orEmpty()
                             _contributors.value = ids.toSet()
                         }
-                        else -> { /* Loading & Error: do nothing */}
+
+                        else -> { /* Loading & Error: do nothing */
+                        }
                     }
                 }
         }
