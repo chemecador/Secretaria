@@ -97,6 +97,7 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.crashlytics.ktx)
 
+
     // Logs
     implementation(libs.timber)
 
