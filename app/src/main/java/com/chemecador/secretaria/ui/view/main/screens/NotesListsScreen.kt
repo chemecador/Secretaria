@@ -32,6 +32,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -67,20 +69,24 @@ fun NotesListsScreen(
     viewModel: NotesListViewModel = hiltViewModel(),
     onListClick: (listId: String, listName: String) -> Unit = { _, _ -> }
 ) {
-
     var showDialog by remember { mutableStateOf(false) }
     var sortOption by remember { mutableStateOf(SortOption.DATE_DESC) }
     var menuExpanded by remember { mutableStateOf(false) }
+
+    var isRefreshing by remember { mutableStateOf(false) }
+    val pullState = rememberPullToRefreshState()
+
     val notesLists by viewModel.notesLists.collectAsState()
     var shareDialogListId by remember { mutableStateOf<String?>(null) }
     var deleteDialogListId by remember { mutableStateOf<String?>(null) }
     var editDialogData by remember { mutableStateOf<NotesList?>(null) }
 
+    val sortOptions = stringArrayResource(R.array.sort_options)
     val sortLabel = when (sortOption) {
-        SortOption.NAME_ASC -> stringArrayResource(R.array.sort_options)[0]
-        SortOption.NAME_DESC -> stringArrayResource(R.array.sort_options)[1]
-        SortOption.DATE_ASC -> stringArrayResource(R.array.sort_options)[2]
-        SortOption.DATE_DESC -> stringArrayResource(R.array.sort_options)[3]
+        SortOption.NAME_ASC -> sortOptions[0]
+        SortOption.NAME_DESC -> sortOptions[1]
+        SortOption.DATE_ASC -> sortOptions[2]
+        SortOption.DATE_DESC -> sortOptions[3]
     }
 
     LaunchedEffect(viewModel.updateStatus) {
@@ -90,11 +96,18 @@ fun NotesListsScreen(
             }
         }
     }
+
     LaunchedEffect(viewModel.deleteStatus) {
         viewModel.deleteStatus.collect { status ->
             if (status is Resource.Success) {
                 viewModel.fetchLists()
             }
+        }
+    }
+
+    LaunchedEffect(notesLists) {
+        if (isRefreshing && notesLists is Resource.Success) {
+            isRefreshing = false
         }
     }
 
@@ -151,8 +164,8 @@ fun NotesListsScreen(
                         onDismissRequest = { menuExpanded = false },
                         modifier = Modifier.wrapContentSize(Alignment.TopEnd)
                     ) {
-                        stringArrayResource(R.array.sort_options).forEachIndexed { index, title ->
-                            val option = when (index) {
+                        sortOptions.forEachIndexed { idx, title ->
+                            val option = when (idx) {
                                 0 -> SortOption.NAME_ASC
                                 1 -> SortOption.NAME_DESC
                                 2 -> SortOption.DATE_ASC
@@ -170,9 +183,14 @@ fun NotesListsScreen(
                 }
             }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = {
+                    isRefreshing = true
+                    viewModel.fetchLists()
+                },
+                state = pullState,
+                modifier = Modifier.fillMaxSize()
             ) {
                 when (val state = notesLists) {
                     is Resource.Loading -> {
@@ -200,15 +218,13 @@ fun NotesListsScreen(
                             )
                         } else {
                             LazyColumn(
-                                modifier = Modifier.fillMaxSize(),
                                 contentPadding = PaddingValues(8.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 items(lists) { list ->
                                     val dateString = remember(list.date) {
-                                        val sdf =
-                                            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                                        sdf.format(list.date.toDate())
+                                        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                                            .format(list.date.toDate())
                                     }
                                     NotesListItem(
                                         title = list.name,
@@ -250,7 +266,6 @@ fun NotesListsScreen(
             onDismissRequest = { shareDialogListId = null }
         )
     }
-
 
     deleteDialogListId?.let { listId ->
         ConfirmationDialog(

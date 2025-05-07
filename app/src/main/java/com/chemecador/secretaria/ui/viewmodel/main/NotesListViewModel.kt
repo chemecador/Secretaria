@@ -2,7 +2,9 @@ package com.chemecador.secretaria.ui.viewmodel.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chemecador.secretaria.R
 import com.chemecador.secretaria.data.model.NotesList
+import com.chemecador.secretaria.data.provider.ResourceProvider
 import com.chemecador.secretaria.data.repositories.main.MainRepository
 import com.chemecador.secretaria.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotesListViewModel @Inject constructor(
-    private val repository: MainRepository
+    private val repository: MainRepository,
+    private val res: ResourceProvider
 ) : ViewModel() {
 
     private val _error = MutableStateFlow<String?>(null)
@@ -44,11 +47,19 @@ class NotesListViewModel @Inject constructor(
     fun fetchLists() {
         viewModelScope.launch {
             _notesLists.value = Resource.Loading()
-            val lists = repository.getLists()
-            val sortedLists = lists.data?.sortedByDescending { it.date }
-            _notesLists.value = Resource.Success(sortedLists ?: emptyList())
+            when (val result = repository.getLists()) {
+                is Resource.Success -> {
+                    val sorted = result.data?.sortedByDescending { it.date }
+                    _notesLists.value = Resource.Success(sorted)
+                }
+                is Resource.Error ->
+                    _notesLists.value = Resource.Error(result.message ?: res.getString(R.string.error_unknown))
+
+                else -> { /* Loading: do nothing */ }
+            }
         }
     }
+
 
     fun createList(name: String) {
         viewModelScope.launch {
@@ -71,8 +82,7 @@ class NotesListViewModel @Inject constructor(
                             _contributors.value = ids.toSet()
                         }
 
-                        else -> { /* Loading & Error: do nothing */
-                        }
+                        else -> {} /* Loading & Error: do nothing */
                     }
                 }
         }
