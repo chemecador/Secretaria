@@ -37,6 +37,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -76,19 +78,29 @@ fun NotesScreen(
     var sortOption by remember { mutableStateOf(SortOption.DATE_DESC) }
     var menuExpanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = listId) {
-        viewModel.getNotes(listId)
-    }
+
+    var isRefreshing by remember { mutableStateOf(false) }
+    val pullState = rememberPullToRefreshState()
 
     val notesState by viewModel.notes.collectAsState(initial = Resource.Loading())
 
+    val sortOptions = stringArrayResource(R.array.sort_options)
     val sortLabel = when (sortOption) {
-        SortOption.NAME_ASC -> stringArrayResource(R.array.sort_options)[0]
-        SortOption.NAME_DESC -> stringArrayResource(R.array.sort_options)[1]
-        SortOption.DATE_ASC -> stringArrayResource(R.array.sort_options)[2]
-        SortOption.DATE_DESC -> stringArrayResource(R.array.sort_options)[3]
+        SortOption.NAME_ASC -> sortOptions[0]
+        SortOption.NAME_DESC -> sortOptions[1]
+        SortOption.DATE_ASC -> sortOptions[2]
+        SortOption.DATE_DESC -> sortOptions[3]
     }
 
+    LaunchedEffect(listId) {
+        viewModel.fetchNotes(listId)
+    }
+
+    LaunchedEffect(notesState) {
+        if (isRefreshing && notesState is Resource.Success) {
+            isRefreshing = false
+        }
+    }
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -138,12 +150,7 @@ fun NotesScreen(
                         onDismissRequest = { menuExpanded = false },
                         modifier = Modifier.wrapContentSize(Alignment.TopEnd)
                     ) {
-                        listOf(
-                            stringArrayResource(R.array.sort_options)[0],
-                            stringArrayResource(R.array.sort_options)[1],
-                            stringArrayResource(R.array.sort_options)[2],
-                            stringArrayResource(R.array.sort_options)[3],
-                        ).forEachIndexed { index, title ->
+                        sortOptions.forEachIndexed { index, title ->
                             val option = when (index) {
                                 0 -> SortOption.NAME_ASC
                                 1 -> SortOption.NAME_DESC
@@ -162,7 +169,15 @@ fun NotesScreen(
                 }
             }
 
-            Box(Modifier.fillMaxSize()) {
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = {
+                    isRefreshing = true
+                    viewModel.fetchNotes(listId)
+                },
+                state = pullState,
+                modifier = Modifier.fillMaxSize()
+            ) {
                 when (val state = notesState) {
                     is Resource.Loading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
                     is Resource.Error -> Text(
@@ -227,7 +242,6 @@ fun NotesScreen(
         }
     )
 }
-
 
 @Composable
 fun NoteItem(

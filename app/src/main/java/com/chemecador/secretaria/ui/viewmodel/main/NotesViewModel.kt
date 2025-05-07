@@ -32,7 +32,7 @@ class NotesViewModel @Inject constructor(
     private val _error = MutableSharedFlow<String>(replay = 0)
     val error: SharedFlow<String> = _error.asSharedFlow()
 
-    fun getNotes(listId: String) {
+    fun fetchNotes(listId: String) {
         viewModelScope.launch {
             _notes.value = Resource.Loading()
             when (val result = repository.getNotes(listId)) {
@@ -47,8 +47,7 @@ class NotesViewModel @Inject constructor(
                     _error.emit(result.message ?: res.getString(R.string.error_unknown))
                 }
 
-                else -> { } /* Resource.Loading: do nothing */
-
+                else -> {} /* Resource.Loading: do nothing */
             }
         }
     }
@@ -57,14 +56,14 @@ class NotesViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = repository.createNote(listId, note)) {
                 is Resource.Success -> {
-                    getNotes(listId)
+                    fetchNotes(listId)
                 }
 
                 is Resource.Error -> {
                     _error.emit(result.message ?: res.getString(R.string.error_creating_note))
                 }
 
-                else -> { } /* Resource.Loading: do nothing */
+                else -> {} /* Resource.Loading: do nothing */
             }
         }
     }
