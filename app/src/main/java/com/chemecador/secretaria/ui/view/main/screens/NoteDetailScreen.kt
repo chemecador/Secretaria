@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,6 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.data.model.Note
 import com.chemecador.secretaria.ui.view.components.ConfirmationDialog
+import com.chemecador.secretaria.ui.view.components.SecretariaCheckbox
 import com.chemecador.secretaria.ui.viewmodel.main.NoteDetailViewModel
 import com.chemecador.secretaria.utils.Resource
 import com.google.firebase.Timestamp
@@ -187,7 +187,7 @@ fun NoteDetailScreen(
                             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.margin_large)))
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Checkbox(
+                                SecretariaCheckbox(
                                     checked = checkboxState,
                                     onCheckedChange = {
                                         checkboxState = it
