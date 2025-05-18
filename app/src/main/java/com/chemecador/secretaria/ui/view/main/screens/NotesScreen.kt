@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -264,12 +265,16 @@ fun NoteItem(
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = note.title,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        textDecoration = if (note.completed) TextDecoration.LineThrough else TextDecoration.None
+                    )
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = note.content,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        textDecoration = if (note.completed) TextDecoration.LineThrough else TextDecoration.None
+                    ),
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -286,7 +291,7 @@ fun NoteItem(
                     if (note.completed) {
                         Icon(
                             imageVector = Icons.Default.Check,
-                            contentDescription = "Completado",
+                            contentDescription = stringResource(R.string.label_completed),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -310,5 +315,3 @@ fun NoteItem(
         }
     }
 }
-
-
