@@ -1,5 +1,8 @@
 package com.chemecador.secretaria.ui.view.main.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -29,13 +37,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.chemecador.secretaria.R
 import com.chemecador.secretaria.data.model.Note
@@ -66,6 +78,7 @@ fun NoteDetailScreen(
     var contentText by remember { mutableStateOf("") }
     var checkboxState by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var selectedColor by remember { mutableIntStateOf(Color.White.toArgb()) }
 
     LaunchedEffect(noteResource) {
         if (noteResource is Resource.Success) {
@@ -74,6 +87,7 @@ fun NoteDetailScreen(
                     titleText = note.title
                     contentText = note.content
                     checkboxState = note.completed
+                    selectedColor = note.color
                 }
             }
         }
@@ -120,17 +134,34 @@ fun NoteDetailScreen(
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                val dateString = remember(note.date) {
-                                    SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                                        .format(note.date.toDate())
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .background(
+                                                color = Color(selectedColor),
+                                                shape = CircleShape
+                                            )
+                                            .border(
+                                                width = 1.dp,
+                                                color = Color.Gray,
+                                                shape = CircleShape
+                                            )
+                                    )
+                                    Spacer(modifier = Modifier.width(dimensionResource(R.dimen.margin_small)))
+                                    val dateString = remember(note.date) {
+                                        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                                            .format(note.date.toDate())
+                                    }
+                                    Text(
+                                        text = dateString,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.secondary
+                                    )
                                 }
-                                Text(
-                                    text = dateString,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.secondary
-                                )
                                 Text(
                                     text = note.creator,
                                     style = MaterialTheme.typography.bodySmall,
@@ -205,6 +236,14 @@ fun NoteDetailScreen(
 
                             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.margin_large)))
 
+                            if (editMode) {
+                                ColorSelector(
+                                    selectedColor = selectedColor,
+                                    onColorSelected = { selectedColor = it }
+                                )
+
+                                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.margin_large)))
+                            }
 
                             if (!editMode) {
                                 Row(
@@ -247,6 +286,7 @@ fun NoteDetailScreen(
                                                 titleText = it.title
                                                 contentText = it.content
                                                 checkboxState = it.completed
+                                                selectedColor = it.color
                                             }
                                         }
                                     ) {
@@ -265,7 +305,8 @@ fun NoteDetailScreen(
                                                 content = contentText,
                                                 date = Timestamp.now(),
                                                 creator = viewModel.getUsername(),
-                                                completed = checkboxState
+                                                completed = checkboxState,
+                                                color = selectedColor
                                             )
                                             viewModel.editNote(listId, updatedNote)
                                             editMode = false
@@ -296,6 +337,124 @@ fun NoteDetailScreen(
                     onBack()
                 },
                 onDismiss = { showDeleteDialog = false }
+            )
+        }
+    }
+}
+
+@Composable
+fun ColorSelector(
+    selectedColor: Int,
+    onColorSelected: (Int) -> Unit
+) {
+    val colors = listOf(
+        Color.White.toArgb(),
+        Color(0xFFE0E0E0).toArgb(),
+        Color(0xFFBDBDBD).toArgb(),
+        Color(0xFF9E9E9E).toArgb(),
+
+        Color(0xFFFFCDD2).toArgb(),
+        Color(0xFFF8BBD0).toArgb(),
+        Color(0xFFE91E63).toArgb(),
+        Color(0xFFFF5722).toArgb(),
+        Color(0xFFF44336).toArgb(),
+
+        Color(0xFFE1BEE7).toArgb(),
+        Color(0xFFD1C4E9).toArgb(),
+        Color(0xFF9C27B0).toArgb(),
+        Color(0xFF673AB7).toArgb(),
+        Color(0xFF3F51B5).toArgb(),
+
+        Color(0xFFBBDEFB).toArgb(),
+        Color(0xFF90CAF9).toArgb(),
+        Color(0xFF2196F3).toArgb(),
+        Color(0xFF1976D2).toArgb(),
+        Color(0xFF0D47A1).toArgb(),
+
+        Color(0xFFB2DFDB).toArgb(),
+        Color(0xFF80CBC4).toArgb(),
+        Color(0xFF009688).toArgb(),
+        Color(0xFF00BCD4).toArgb(),
+        Color(0xFF0097A7).toArgb(),
+
+        Color(0xFFC8E6C9).toArgb(),
+        Color(0xFFA5D6A7).toArgb(),
+        Color(0xFF4CAF50).toArgb(),
+        Color(0xFF8BC34A).toArgb(),
+        Color(0xFF689F38).toArgb(),
+
+        Color(0xFFF0F4C3).toArgb(),
+        Color(0xFFFFF9C4).toArgb(),
+        Color(0xFFFFEB3B).toArgb(),
+        Color(0xFFCDDC39).toArgb(),
+        Color(0xFFAFB42B).toArgb(),
+
+        Color(0xFFFFE0B2).toArgb(),
+        Color(0xFFFFB74D).toArgb(),
+        Color(0xFFFF9800).toArgb(),
+        Color(0xFFFFC107).toArgb(),
+        Color(0xFFFF8F00).toArgb(),
+
+        Color(0xFFD7CCC8).toArgb(),
+        Color(0xFFBCAAA4).toArgb(),
+        Color(0xFF795548).toArgb(),
+        Color(0xFF607D8B).toArgb(),
+        Color(0xFF455A64).toArgb()
+
+    )
+    Column {
+        Text(
+            text = stringResource(R.string.label_note_color),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.margin_small))
+        )
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(6),
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_small)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_small)),
+            modifier = Modifier.heightIn(max = 300.dp)
+        ) {
+            items(colors) { color ->
+                ColorOption(
+                    color = color,
+                    isSelected = color == selectedColor,
+                    onClick = { onColorSelected(color) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ColorOption(
+    color: Int,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .clickable { onClick() }
+            .background(
+                color = Color(color),
+                shape = CircleShape
+            )
+            .border(
+                width = if (isSelected) 3.dp else 1.dp,
+                color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray,
+                shape = CircleShape
+            )
+            .padding(4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        if (isSelected) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = stringResource(R.string.label_color_selected),
+                tint = if (color == Color.White.toArgb()) Color.Black else Color.White,
+                modifier = Modifier.size(24.dp)
             )
         }
     }

@@ -58,12 +58,14 @@
     <string name="label_note_name">Nombre de la nota</string>
     <string name="label_note_title">Título</string>
     <string name="label_note_content">Contenido</string>
+    <string name="label_note_color">Color de la nota</string>
     <string name="label_observations_optional">Observaciones (opcional)</string>
     <string name="label_note_updated">Nota actualizada correctamente</string>
     <string name="label_note_deleted">Nota eliminada correctamente</string>
     <string name="label_note_not_found">Nota no encontrada</string>
     <string name="label_completed">Completada</string>
     <string name="label_not_completed">Sin completar</string>
+    <string name="label_color_selected">Color seleccionado</string>
 
     <!-- Dialogs -->
     <string name="dialog_delete_friend_title">Eliminar amigo</string>
