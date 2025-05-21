@@ -46,4 +46,7 @@
     <dimen name="corner_radius_medium">8dp</dimen>
     <dimen name="corner_radius_large">16dp</dimen>
     <dimen name="corner_radius_xlarge">32dp</dimen>
+
+    <!-- Text field-->
+    <dimen name="text_field_min_height">120dp</dimen>
 </resources>
