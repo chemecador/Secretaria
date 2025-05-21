@@ -1,5 +1,10 @@
 package com.chemecador.secretaria.ui.view.main.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,16 +23,21 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -47,6 +57,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.chemecador.secretaria.R
@@ -79,6 +90,8 @@ fun NoteDetailScreen(
     var checkboxState by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var selectedColor by remember { mutableIntStateOf(Color.White.toArgb()) }
+
+    val scrollState = rememberScrollState()
 
     LaunchedEffect(noteResource) {
         if (noteResource is Resource.Success) {
@@ -131,6 +144,7 @@ fun NoteDetailScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(dimensionResource(R.dimen.margin_medium))
+                                .verticalScroll(scrollState)
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -174,7 +188,9 @@ fun NoteDetailScreen(
                             if (!editMode) {
                                 Text(
                                     text = titleText,
-                                    style = MaterialTheme.typography.titleLarge
+                                    style = MaterialTheme.typography.titleLarge.copy(
+                                        textDecoration = if (checkboxState) TextDecoration.LineThrough else TextDecoration.None
+                                    )
                                 )
                             } else {
                                 OutlinedTextField(
@@ -201,7 +217,9 @@ fun NoteDetailScreen(
                             if (!editMode) {
                                 Text(
                                     text = contentText,
-                                    style = MaterialTheme.typography.bodyLarge
+                                    style = MaterialTheme.typography.bodyLarge.copy(
+                                        textDecoration = if (checkboxState) TextDecoration.LineThrough else TextDecoration.None
+                                    )
                                 )
                             } else {
                                 OutlinedTextField(
@@ -236,14 +254,21 @@ fun NoteDetailScreen(
 
                             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.margin_large)))
 
-                            if (editMode) {
-                                ColorSelector(
-                                    selectedColor = selectedColor,
-                                    onColorSelected = { selectedColor = it }
-                                )
+                            ColorSelector(
+                                selectedColor = selectedColor,
+                                onColorSelected = {
+                                    if (selectedColor != it) {
+                                        selectedColor = it
+                                        if (!editMode) {
+                                            editMode = true
+                                        }
+                                    } else {
+                                        selectedColor = it
+                                    }
+                                }
+                            )
 
-                                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.margin_large)))
-                            }
+                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.margin_large)))
 
                             if (!editMode) {
                                 Row(
@@ -321,6 +346,8 @@ fun NoteDetailScreen(
                                     }
                                 }
                             }
+
+                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.margin_large)))
                         }
                     }
                 }
@@ -347,6 +374,8 @@ fun ColorSelector(
     selectedColor: Int,
     onColorSelected: (Int) -> Unit
 ) {
+    var isExpanded by remember { mutableStateOf(false) }
+
     val colors = listOf(
         Color.White.toArgb(),
         Color(0xFFE0E0E0).toArgb(),
@@ -400,28 +429,74 @@ fun ColorSelector(
         Color(0xFF795548).toArgb(),
         Color(0xFF607D8B).toArgb(),
         Color(0xFF455A64).toArgb()
-
     )
-    Column {
-        Text(
-            text = stringResource(R.string.label_note_color),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.margin_small))
-        )
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(6),
-            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_small)),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_small)),
-            modifier = Modifier.heightIn(max = 300.dp)
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            items(colors) { color ->
-                ColorOption(
-                    color = color,
-                    isSelected = color == selectedColor,
-                    onClick = { onColorSelected(color) }
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.label_note_color),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
+                Spacer(modifier = Modifier.width(dimensionResource(R.dimen.margin_small)))
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .background(
+                            color = Color(selectedColor),
+                            shape = CircleShape
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = Color.Gray,
+                            shape = CircleShape
+                        )
+                )
+            }
+
+            IconButton(
+                onClick = { isExpanded = !isExpanded }
+            ) {
+                Icon(
+                    imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    contentDescription = if (isExpanded)
+                        stringResource(R.string.action_collapse_colors)
+                    else
+                        stringResource(R.string.action_expand_colors),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = isExpanded,
+            enter = expandVertically() + fadeIn(),
+            exit = shrinkVertically() + fadeOut()
+        ) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(6),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_small)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_small)),
+                modifier = Modifier
+                    .heightIn(max = 300.dp)
+                    .padding(top = dimensionResource(R.dimen.margin_small))
+            ) {
+                items(colors) { color ->
+                    ColorOption(
+                        color = color,
+                        isSelected = color == selectedColor,
+                        onClick = {
+                            onColorSelected(color)
+                        }
+                    )
+                }
             }
         }
     }
@@ -452,7 +527,7 @@ fun ColorOption(
         if (isSelected) {
             Icon(
                 imageVector = Icons.Default.Check,
-                contentDescription = stringResource(R.string.label_color_selected),
+                contentDescription = "Color seleccionado",
                 tint = if (color == Color.White.toArgb()) Color.Black else Color.White,
                 modifier = Modifier.size(24.dp)
             )

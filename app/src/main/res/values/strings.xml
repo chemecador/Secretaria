@@ -66,6 +66,8 @@
     <string name="label_completed">Completada</string>
     <string name="label_not_completed">Sin completar</string>
     <string name="label_color_selected">Color seleccionado</string>
+    <string name="action_expand_colors">Expandir selector de colores</string>
+    <string name="action_collapse_colors">Colapsar selector de colores</string>
 
     <!-- Dialogs -->
     <string name="dialog_delete_friend_title">Eliminar amigo</string>
