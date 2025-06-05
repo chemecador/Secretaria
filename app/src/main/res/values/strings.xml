@@ -7,6 +7,7 @@
     <string name="title_activity_main">Secretaria</string>
     <string name="title_activity_settings">Configuración</string>
     <string name="title_activity_about_us">Acerca de nosotros</string>
+    <string name="title_sign_out">Cerrar sesión</string>
     <string name="title_noteslist">Tus listas</string>
     <string name="title_notes">Notas de ‘%1$s’</string>
     <string name="title_note_detail">Detalles de la nota</string>

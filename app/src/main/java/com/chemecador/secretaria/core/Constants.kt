@@ -23,4 +23,5 @@ object Constants {
     const val ABOUT_US = "about_us"
     const val SETTINGS = "settings"
     const val FRIENDS = "friends"
+    const val SIGN_OUT = "signOut"
 }

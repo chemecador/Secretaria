@@ -1,10 +1,16 @@
 package com.chemecador.secretaria.ui.view.main
 
 
+import android.Manifest
+import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,9 +34,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -42,19 +52,30 @@ import com.chemecador.secretaria.R
 import com.chemecador.secretaria.core.Constants
 import com.chemecador.secretaria.ui.theme.SecretariaTheme
 import com.chemecador.secretaria.ui.view.friends.FriendsScreen
+import com.chemecador.secretaria.ui.view.login.LoginActivity
 import com.chemecador.secretaria.ui.view.main.screens.NoteDetailScreen
 import com.chemecador.secretaria.ui.view.main.screens.NotesListsScreen
 import com.chemecador.secretaria.ui.view.main.screens.NotesScreen
 import com.chemecador.secretaria.ui.view.settings.AboutUsScreen
 import com.chemecador.secretaria.ui.view.settings.SettingsScreen
+import com.chemecador.secretaria.ui.viewmodel.main.MainViewModel
 import com.chemecador.secretaria.ui.viewmodel.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val requestNotificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (!isGranted) {
+            showNotificationPermissionDialog()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestNotificationPermission()
         setContent {
             SecretariaTheme {
                 val navController = rememberNavController()
@@ -72,11 +93,14 @@ class MainActivity : ComponentActivity() {
                         backStackEntry?.arguments?.getString(Constants.LIST_NAME)
                             ?: stringResource(R.string.title_note_detail)
 
-                    Constants.ABOUT_US -> stringResource(R.string.title_activity_about_us)
-
                     Constants.FRIENDS -> stringResource(R.string.label_friends)
 
+                    Constants.ABOUT_US -> stringResource(R.string.title_activity_about_us)
+
                     Constants.SETTINGS -> stringResource(R.string.title_activity_settings)
+
+                    Constants.SIGN_OUT -> stringResource(R.string.title_sign_out)
+
                     else -> stringResource(R.string.app_name)
                 }
 
@@ -142,6 +166,9 @@ class MainActivity : ComponentActivity() {
                     onBack = { navController.popBackStack() }
                 )
             }
+            composable(Constants.FRIENDS) {
+                FriendsScreen()
+            }
             composable(Constants.SETTINGS) {
                 val settingsViewModel: SettingsViewModel = hiltViewModel()
                 SettingsScreen(viewModel = settingsViewModel)
@@ -165,9 +192,6 @@ class MainActivity : ComponentActivity() {
                     }
                 )
             }
-            composable(Constants.FRIENDS) {
-                FriendsScreen()
-            }
         }
     }
 
@@ -176,7 +200,8 @@ class MainActivity : ComponentActivity() {
     fun SecretariaTopBar(navController: NavHostController, title: String) {
         val canPop = navController.previousBackStackEntry != null
         val expanded = remember { mutableStateOf(false) }
-
+        val context = LocalContext.current
+        val viewModel: MainViewModel = viewModel()
         TopAppBar(
             title = { Text(title) },
             navigationIcon = {
@@ -218,9 +243,75 @@ class MainActivity : ComponentActivity() {
                             navController.navigate(Constants.ABOUT_US)
                         }
                     )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.title_sign_out)) },
+                        onClick = {
+                            expanded.value = false
+
+                            AlertDialog.Builder(context)
+                                .setTitle(R.string.title_sign_out)
+                                .setMessage(R.string.msg_sign_out)
+                                .setPositiveButton(R.string.res_yes) { _, _ ->
+                                    viewModel.signOut()
+                                    startActivity(
+                                        Intent(
+                                            context,
+                                            LoginActivity::class.java
+                                        )
+                                    )
+                                    finish()
+                                }
+                                .setNegativeButton(R.string.action_cancel, null)
+                                .setCancelable(true)
+                                .show()
+                        }
+                    )
                 }
             },
             modifier = Modifier.fillMaxWidth()
         )
+    }
+
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permission = Manifest.permission.POST_NOTIFICATIONS
+            val permissionStatus = ContextCompat.checkSelfPermission(this, permission)
+
+            when {
+                permissionStatus == PackageManager.PERMISSION_GRANTED -> {}
+                shouldShowRequestPermissionRationale(permission) -> {
+                    showNotificationPermissionDialog()
+                }
+                else -> requestNotificationPermissionLauncher.launch(permission)
+            }
+        } else {
+            if (!NotificationManagerCompat.from(this).areNotificationsEnabled()) {
+                showNotificationSettingsDialog()
+            }
+        }
+    }
+
+
+    private fun showNotificationPermissionDialog() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    private fun showNotificationSettingsDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.title_notifications)
+            .setMessage(R.string.msg_notifications)
+            .setPositiveButton(R.string.res_go_to_settings) { _, _ ->
+                val intent = Intent().apply {
+                    action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                    putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                }
+                startActivity(intent)
+            }
+            .setNegativeButton(R.string.res_no) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 }

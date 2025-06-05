@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_notifications">Activar notificaciones</string>
+    <string name="msg_notifications">Necesitamos activar el permiso de notificaciones para poder avisarte cuando compartan una lista contigo o te envíen una petición de amistad.</string>
+
+    <string name="msg_sign_out">¿Quieres cerrar sesión y cambiar de usuario?</string>
+
+    <string name="res_go_to_settings">Activar</string>
+    <string name="res_no">Ahora no</string>
+    <string name="res_yes">Sí</string>
+
+</resources>
