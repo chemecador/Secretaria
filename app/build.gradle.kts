@@ -54,6 +54,7 @@ android {
             signingConfig = signingConfigs.getByName("unified")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -96,6 +97,7 @@ dependencies {
     implementation(libs.play.services.auth)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.crashlytics.ktx)
+    implementation(libs.firebase.messaging)
 
 
     // Logs

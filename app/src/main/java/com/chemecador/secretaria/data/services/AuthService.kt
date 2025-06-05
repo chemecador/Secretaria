@@ -32,6 +32,8 @@ class AuthService @Inject constructor(
     private val res: ResourceProvider,
 ) {
 
+    fun getCurrentUserId() = firebaseAuth.currentUser?.uid
+
     fun getUser() = firebaseAuth.currentUser
 
     suspend fun getUserCode(): String? {
