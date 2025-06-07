@@ -82,7 +82,7 @@ class NotesListViewModel @Inject constructor(
                             _contributors.value = ids.toSet()
                         }
 
-                        else -> {} /* Loading & Error: do nothing */
+                        else -> { /* Loading & Error: do nothing */ }
                     }
                 }
         }
@@ -102,6 +102,7 @@ class NotesListViewModel @Inject constructor(
             _shareListStatus.emit(Resource.Loading())
             val result = repository.shareList(listId, friendId)
             _shareListStatus.emit(result)
+            if (result is Resource.Success) loadContributors(listId)
         }
     }
 
