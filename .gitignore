@@ -43,3 +43,4 @@ replay_pid*
 **/TO-DO.md
 .DS_Store
 /build
+/functions/lib
