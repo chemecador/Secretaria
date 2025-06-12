@@ -11,6 +11,7 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,9 +39,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -61,21 +62,27 @@ import com.chemecador.secretaria.ui.view.settings.SettingsScreen
 import com.chemecador.secretaria.ui.viewmodel.main.MainViewModel
 import com.chemecador.secretaria.ui.viewmodel.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Calendar
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    private val viewModel: MainViewModel by viewModels()
     private val requestNotificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (!isGranted) {
-            showNotificationPermissionDialog()
+            showNotificationSettingsDialog()
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestNotificationPermission()
+
+        if (shouldRequestNotificationPermissionToday()) {
+            requestNotificationPermission()
+        }
+
         setContent {
             SecretariaTheme {
                 val navController = rememberNavController()
@@ -201,7 +208,6 @@ class MainActivity : ComponentActivity() {
         val canPop = navController.previousBackStackEntry != null
         val expanded = remember { mutableStateOf(false) }
         val context = LocalContext.current
-        val viewModel: MainViewModel = viewModel()
         TopAppBar(
             title = { Text(title) },
             navigationIcon = {
@@ -272,6 +278,41 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    private fun shouldRequestNotificationPermissionToday(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED
+            ) {
+                return false
+            }
+        } else {
+            if (NotificationManagerCompat.from(this).areNotificationsEnabled()) {
+                return false
+            }
+        }
+
+        val sharedPrefs = getSharedPreferences("secretaria_prefs", MODE_PRIVATE)
+        val lastRequestDate = sharedPrefs.getString("last_notification_request_date", "")
+        val todayDate = getCurrentDateString()
+
+        return lastRequestDate != todayDate
+    }
+
+    private fun getCurrentDateString(): String {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH) + 1
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        return "$year-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}"
+    }
+
+    private fun markPermissionRequestedToday() {
+        val sharedPrefs = getSharedPreferences("secretaria_prefs", MODE_PRIVATE)
+        sharedPrefs.edit {
+            putString("last_notification_request_date", getCurrentDateString())
+        }
+    }
+
     private fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val permission = Manifest.permission.POST_NOTIFICATIONS
@@ -280,22 +321,18 @@ class MainActivity : ComponentActivity() {
             when {
                 permissionStatus == PackageManager.PERMISSION_GRANTED -> {}
                 shouldShowRequestPermissionRationale(permission) -> {
-                    showNotificationPermissionDialog()
+                    showNotificationSettingsDialog()
                 }
-                else -> requestNotificationPermissionLauncher.launch(permission)
+                else -> {
+                    requestNotificationPermissionLauncher.launch(permission)
+                }
             }
         } else {
             if (!NotificationManagerCompat.from(this).areNotificationsEnabled()) {
                 showNotificationSettingsDialog()
             }
         }
-    }
-
-
-    private fun showNotificationPermissionDialog() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
+        markPermissionRequestedToday()
     }
 
     private fun showNotificationSettingsDialog() {
