@@ -1,7 +1,4 @@
-import {
-  onDocumentUpdated,
-  onDocumentCreated,
-} from "firebase-functions/v2/firestore";
+import { onDocumentUpdated } from "firebase-functions/v2/firestore";
 import * as admin from "firebase-admin";
 
 admin.initializeApp();
@@ -48,41 +45,6 @@ export const onListShared = onDocumentUpdated(
 
         await admin.messaging().send(message);
       }
-    }
-  }
-);
-
-export const onNoteCreated = onDocumentCreated(
-  "users/{userId}/noteslist/{listId}/notes/{noteId}",
-  async (event) => {
-    console.log("¡Nota creada!", event.params);
-    const noteData = event.data?.data();
-    const userId = event.params.userId;
-
-    const tokensSnapshot = await admin
-      .firestore()
-      .collection("users")
-      .doc(userId)
-      .collection("fcm_tokens")
-      .get();
-
-    if (!tokensSnapshot.empty) {
-      const token = tokensSnapshot.docs[0].data().token;
-
-      const message = {
-        notification: {
-          title: "Nueva nota creada",
-          body: `Has creado: ${noteData?.title || "Sin título"}`,
-        },
-        android: {
-          notification: {
-            icon: "ic_notification",
-          },
-        },
-        token: token,
-      };
-
-      await admin.messaging().send(message);
     }
   }
 );
